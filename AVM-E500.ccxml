@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<configurations XML_version="1.2" id="configurations_0">
+<configuration XML_version="1.2" id="Blackhawk XDS560v2-USB System Trace Emulator_0">
+        <instance XML_version="1.2" desc="Blackhawk XDS560v2-USB System Trace Emulator_0" href="connections/BH-XDS560v2-USB_Connection.xml" id="Blackhawk XDS560v2-USB System Trace Emulator_0" xml="BH-XDS560v2-USB_Connection.xml" xmlpath="connections"/>
+        <connection XML_version="1.2" id="Blackhawk XDS560v2-USB System Trace Emulator_0">
+            <instance XML_version="1.2" href="drivers/tixds560icepick_d.xml" id="drivers" xml="tixds560icepick_d.xml" xmlpath="drivers"/>
+            <instance XML_version="1.2" href="drivers/tixds560arm9.xml" id="drivers" xml="tixds560arm9.xml" xmlpath="drivers"/>
+            <instance XML_version="1.2" href="drivers/tixds560cs_dap.xml" id="drivers" xml="tixds560cs_dap.xml" xmlpath="drivers"/>
+            <instance XML_version="1.2" href="drivers/tixds560cortexM.xml" id="drivers" xml="tixds560cortexM.xml" xmlpath="drivers"/>
+            <instance XML_version="1.2" href="drivers/tixds560cs_child.xml" id="drivers" xml="tixds560cs_child.xml" xmlpath="drivers"/>
+            <instance XML_version="1.2" href="drivers/tixds560c66xx.xml" id="drivers" xml="tixds560c66xx.xml" xmlpath="drivers"/>
+            <instance XML_version="1.2" href="drivers/tixds560dap_pc.xml" id="drivers" xml="tixds560dap_pc.xml" xmlpath="drivers"/>
+            <instance XML_version="1.2" href="drivers/tixds560cortexA15.xml" id="drivers" xml="tixds560cortexA15.xml" xmlpath="drivers"/>
+            <instance XML_version="1.2" href="drivers/tixds560csstm.xml" id="drivers" xml="tixds560csstm.xml" xmlpath="drivers"/>
+            <instance XML_version="1.2" href="drivers/tixds560etbcs.xml" id="drivers" xml="tixds560etbcs.xml" xmlpath="drivers"/>
+            <instance XML_version="1.2" href="drivers/tixds560arp32.xml" id="drivers" xml="tixds560arp32.xml" xmlpath="drivers"/>
+            <instance XML_version="1.2" href="drivers/tixds560pru.xml" id="drivers" xml="tixds560pru.xml" xmlpath="drivers"/>
+            <property Type="choicelist" Value="1" id="JTAG TCLK Frequency (MHz)">
+                <choice Name="Adaptive with user specified limit" value="adaptive">
+                    <property Type="stringfield" Value="1MHz" id="-- Enter a value from 0.50MHz to 48.0MHz"/>
+                </choice>
+            </property>
+            <platform XML_version="1.2" id="platform_0">
+                <instance XML_version="1.2" desc="ADAS-S28_0" href="devices/ADAS-S28.xml" id="ADAS-S28_0" xml="ADAS-S28.xml" xmlpath="devices"/>
+                <device HW_revision="1.0" XML_version="1.2" description="ADAS-S28 NDA device" id="ADAS-S28_0" partnum="ADAS-S28" simulation="no">
+                    <router HW_revision="1.0" XML_version="1.2" description="ICEPick_D Router" id="IcePick_D_0" isa="ICEPICK_D">
+                        <subpath id="IPU_1_C1">
+                            <router HW_revision="1.0" XML_version="1.2" description="CS_DAP Router" id="CS_DAP_2" isa="CS_DAP">
+                                <subpath id="CortexM4_IPU_1_C1">
+                                    <cpu HW_revision="1.0" XML_version="1.2" desc="ICECrusherCS_1" description="Cross Triggering" deviceSim="false" id="ICECrusherCS_0" isa="cs_child"/>
+                                <cpu HW_revision="1.0" XML_version="1.2" description="Cortex_M4 CPU" id="Cortex_M4_1" isa="Cortex_M4">
+                                        <property Type="filepathfield" Value="..\ti_components\ccs_config\DRA7xx\DRA7xx_cortexM4_startup.gel" id="GEL File"/>
+                                    </cpu>
+                                </subpath>
+                            </router>
+                        </subpath>
+                        <subpath id="IPU_2_C0">
+                            <router HW_revision="1.0" XML_version="1.2" description="CS_DAP Router" id="CS_DAP_3" isa="CS_DAP">
+                                <subpath id="CortexM4_IPU_2_C0">
+                                    <cpu HW_revision="1.0" XML_version="1.2" desc="ICECrusherCS_2" description="Cross Triggering" deviceSim="false" id="ICECrusherCS_0" isa="cs_child"/>
+                                <cpu HW_revision="1.0" XML_version="1.2" description="Cortex_M4 CPU" deviceSim="false" id="Cortex_M4_2" isa="Cortex_M4">
+                                        <property Type="choicelist" Value="1" id="bypass"/>
+                                    </cpu>
+                                </subpath>
+                            </router>
+                        </subpath>
+                        <subpath id="IPU_2_C1">
+                            <router HW_revision="1.0" XML_version="1.2" description="CS_DAP Router" id="CS_DAP_4" isa="CS_DAP">
+                                <subpath id="CortexM4_IPU_2_C1">
+                                    <cpu HW_revision="1.0" XML_version="1.2" desc="ICECrusherCS_3" description="Cross Triggering" deviceSim="false" id="ICECrusherCS_0" isa="cs_child"/>
+                                <cpu HW_revision="1.0" XML_version="1.2" description="Cortex_M4 CPU" deviceSim="false" id="Cortex_M4_3" isa="Cortex_M4">
+                                        <property Type="choicelist" Value="1" id="bypass"/>
+                                    </cpu>
+                                </subpath>
+                            </router>
+                        </subpath>
+                        <subpath id="dap">
+                            <router HW_revision="1.0" XML_version="1.2" description="CS_DAP Router" id="CS_DAP_0" isa="CS_DAP">
+                                <property Type="filepathfield" Value="..\ti_components\ccs_config\DRA7xx\DRA7xx_dap_startup.gel" desc="GEL File_0" id="GEL File"/>
+                            <subpath id="PRU_ICSS1">
+                                    <cpu HW_revision="1.0" XML_version="1.2" description="PRU CPU" deviceSim="false" id="PRU_0_ICSS1" isa="TMS192C2026">
+                                        <property Type="choicelist" Value="1" id="bypass"/>
+                                    </cpu>
+                                    <cpu HW_revision="1.0" XML_version="1.2" description="PRU Accelerator" deviceSim="false" id="PRU_1_ICSS1" isa="TMS192C2026">
+                                        <property Type="choicelist" Value="1" id="bypass"/>
+                                    </cpu>
+                                </subpath>
+                                <subpath id="PRU_ICSS2">
+                                    <cpu HW_revision="1.0" XML_version="1.2" description="PRU CPU" deviceSim="false" id="PRU_0_ICSS2" isa="TMS192C2026">
+                                        <property Type="choicelist" Value="1" id="bypass"/>
+                                    </cpu>
+                                    <cpu HW_revision="1.0" XML_version="1.2" description="PRU CPU" deviceSim="false" id="PRU_1_ICSS2" isa="TMS192C2026">
+                                        <property Type="choicelist" Value="1" id="bypass"/>
+                                    </cpu>
+                                </subpath>
+                                <subpath id="Cortex_A15_MPUSS">
+                                    <router HW_revision="1.0" XML_version="1.2" description="CS_DAP_PC Router" id="CS_DAP_PC_0" isa="CS_DAP_PC">
+                                        <subpath id="cortex_a15_1">
+                                            <cpu HW_revision="1.0" XML_version="1.2" description="CortexA15 CPU" deviceSim="false" id="CortexA15_1" isa="CortexA15">
+                                                <property Type="choicelist" Value="1" id="bypass"/>
+                                            </cpu>
+                                        </subpath>
+                                    <property Type="filepathfield" Value="..\ti_components\ccs_config\DRA7xx\DRA7xx_CS_DAP_PC_Utility.gel" id="GEL File"/>
+                                        <subpath id="cortex_a15_0">
+                                            <cpu HW_revision="1.0" XML_version="1.2" description="CortexA15 CPU" id="CortexA15_0" isa="CortexA15">
+                                                <property Type="filepathfield" Value="..\ti_components\ccs_config\DRA7xx\DRA7xx_cortexa15_cpu0_startup.gel" id="GEL File"/>
+                                            </cpu>
+                                        </subpath>
+                                    </router>
+                                </subpath>
+                            </router>
+                        </subpath>
+                        <property Type="filepathfield" Value="..\ti_components\ccs_config\DRA7xx\DRA7xx_ICEPickD_Utility.gel" desc="GEL File_1" id="GEL File"/>
+                    <subpath id="IVA_iCONT1">
+                            <cpu HW_revision="1.0" XML_version="1.2" description="ARM9_ICONT1" deviceSim="false" id="ARM9_ICONT1" isa="ARM9">
+                                <property Type="choicelist" Value="1" id="bypass"/>
+                            </cpu>
+                        </subpath>
+                        <subpath id="IVA_iCONT2">
+                            <cpu HW_revision="1.0" XML_version="1.2" description="ARM9_ICONT2" deviceSim="false" id="ARM9_ICONT2" isa="ARM9">
+                                <property Type="choicelist" Value="1" id="bypass"/>
+                            </cpu>
+                        </subpath>
+                    <subpath id="IPU_1_C0">
+                            <router HW_revision="1.0" XML_version="1.2" description="CS_DAP Router" id="CS_DAP_1" isa="CS_DAP">
+                                <subpath id="CortexM4_IPU_1_C0">
+                                    <cpu HW_revision="1.0" XML_version="1.2" description="Cortex_M4 CPU" id="Cortex_M4_0" isa="Cortex_M4">
+                                        <property Type="filepathfield" Value="..\ti_components\ccs_config\DRA7xx\DRA7xx_cortexM4_startup.gel" id="GEL File"/>
+                                    </cpu>
+                                </subpath>
+                            </router>
+                        </subpath>
+                        <subpath id="DSP_1">
+                            <cpu HW_revision="1.0" XML_version="1.2" description="C66xx CGEM+FP CPU" id="C66xx_DSP1" isa="TMS320C66XX">
+                                <property Type="filepathfield" Value="..\ti_components\ccs_config\DRA7xx\DRA7xx_dsp_startup.gel" id="GEL File"/>
+                            </cpu>
+                        </subpath>
+                        <subpath id="DSP_2">
+                            <cpu HW_revision="1.0" XML_version="1.2" description="C66xx CGEM+FP CPU" id="C66xx_DSP2" isa="TMS320C66XX">
+                                <property Type="filepathfield" Value="..\ti_components\ccs_config\DRA7xx\DRA7xx_dsp_startup.gel" id="GEL File"/>
+                            </cpu>
+                        </subpath>
+                    </router>
+                </device>
+            </platform>
+        </connection>
+    </configuration>
+</configurations>

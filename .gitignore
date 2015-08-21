@@ -1,0 +1,6 @@
+/binaries
+*.ccsproject
+*.cproject
+*.project
+*.settings
+.xdchelp

@@ -1,0 +1,1 @@
+C:\ti\ccsv6\ccs_base\scripting\bin\dss.bat launch_visionsdk_tda2xx-avm-e500.js
