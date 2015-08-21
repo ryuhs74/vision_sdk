@@ -1,0 +1,31 @@
+# (c) Texas Instruments 
+
+include RULES.MK
+include $(BASE_DIR)/COMMON_HEADER.MK
+
+exe:
+	$(MAKE) depend
+	$(MAKE) libs
+	$(MAKE) -fMAKEFILE.MK -C$(BASE_DIR)/../network_ctrl/src MODULE=network_ctrl exe
+	$(MAKE) -fMAKEFILE.MK -C$(BASE_DIR)/../network_tx/src MODULE=network_tx exe
+	$(MAKE) -fMAKEFILE.MK -C$(BASE_DIR)/../network_rx/src MODULE=network_rx exe
+					
+libs:
+	$(MAKE) -fMAKEFILE.MK -C$(BASE_DIR)/../common/src MODULE=common $(TARGET) 	
+	$(MAKE) -fMAKEFILE.MK -C$(BASE_DIR)/../network_ctrl/src MODULE=network_ctrl $(TARGET)
+	$(MAKE) -fMAKEFILE.MK -C$(BASE_DIR)/../network_tx/src MODULE=network_tx $(TARGET)
+	$(MAKE) -fMAKEFILE.MK -C$(BASE_DIR)/../network_rx/src MODULE=network_rx $(TARGET)
+							
+all:
+	$(MAKE) clean
+	$(MAKE) exe 
+
+clean:
+	$(MAKE) libs TARGET=clean 
+			
+depend:
+	$(MAKE) libs TARGET=depend  
+	
+
+.PHONY : install clean depend all exe  
+	

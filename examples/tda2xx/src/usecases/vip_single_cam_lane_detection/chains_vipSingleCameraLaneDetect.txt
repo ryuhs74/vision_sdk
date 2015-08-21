@@ -1,0 +1,7 @@
+UseCase: chains_vipSingleCameraLaneDetect
+
+Capture -> Dup_capture (DSP1) -> Merge_alg (DSP1)
+
+Dup_capture -> Alg_LaneDetect (DSP1) -> Merge_alg -> Sync_alg (DSP1) -> Alg_LaneDetectDraw (DSP1) -> Display_alg
+
+GrpxSrc -> Display_Grpx

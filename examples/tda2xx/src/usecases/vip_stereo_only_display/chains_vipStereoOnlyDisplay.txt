@@ -1,0 +1,11 @@
+UseCase: chains_vipStereoOnlyDisplay
+
+Capture -> Alg_SoftIsp (EVE1) -> VPE_softisp -> Alg_RemapMerge (EVE2) -> Dup_softisp
+
+Dup_softisp -> VPE_orgdisp -> Sync_org -> Alg_DmaSwMs -> Display_org
+
+Dup_softisp -> Sync_disp -> Dup_RemapOut -> Alg_Census (EVE2) -> Alg_DisparityHamDist (EVE3) -> Merge -> Alg_StereoPostProcess (DSP1) -> VPE_disparity ->Display_disparity
+
+Dup_RemapOut -> Merge
+
+GrpxSrc -> Display_Grpx

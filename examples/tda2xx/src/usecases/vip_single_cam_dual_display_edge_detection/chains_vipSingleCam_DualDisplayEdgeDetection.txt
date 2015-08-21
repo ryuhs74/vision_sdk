@@ -1,0 +1,7 @@
+UseCase: chains_vipSingleCam_DualDisplayEdgeDetection
+
+Capture -> Dup_Capture 
+Dup_Capture -> Display_HDMI
+Dup_Capture -> Alg_EdgeDetect (EVE1) -> Display_LCD
+Dup_Capture -> VPE -> Display_PIP
+GrpxSrc -> Display_Grpx

@@ -1,0 +1,69 @@
+/*******************************************************************************
+ *                                                                             *
+ * Copyright (c) 2013 Texas Instruments Incorporated - http://www.ti.com/      *
+ *                        ALL RIGHTS RESERVED                                  *
+ *                                                                             *
+ ******************************************************************************/
+
+/*
+ *  ======== config_a15.bld ========
+ */
+
+var platformMem = java.lang.System.getenv("DDR_MEM");
+var A15TargetOS = java.lang.System.getenv("A15_TARGET_OS");
+
+if (platformMem == "DDR_MEM_1024M")
+{
+  if(A15TargetOS == "Linux")
+  {	
+    var MemSegDefine = xdc.loadCapsule("mem_segment_definition_1024mb_linux.xs");
+  }
+  if(A15TargetOS == "Bios")
+  {
+    var MemSegDefine = xdc.loadCapsule("mem_segment_definition_1024mb_bios.xs");
+  }
+}
+
+var CurrentPlatform = java.lang.System.getenv("PLATFORM");
+xdc.print("# !!!  Current build platform is [" + CurrentPlatform + "] !!!" );
+
+var Build = xdc.useModule('xdc.bld.BuildEnvironment'); 
+
+var buildReleaseConfig = true;
+
+var Build         = xdc.useModule('xdc.bld.BuildEnvironment');
+var A15            = xdc.useModule('gnu.targets.arm.A15F');
+
+A15.rootDir        = java.lang.System.getenv("CGTOOLS_A15");
+
+A15.ccOpts.suffix  +=
+
+A15.lnkOpts.suffix +=
+
+//set default platform and list of all interested platforms for A15
+
+A15.platforms = ["ti.platforms.evmDRA7XX:Cortex_A15",
+                ];
+
+A15.platform = A15.platforms[0];
+
+Build.targets     = [
+                    A15,                                  
+                    ];
+
+var core = java.lang.System.getenv("CORE");
+
+/* Currently using same memory section for code and data to avoid bug in BIOS.
+ * If different, load and run address for .data sections mismatch which is not
+ * handled in BIOS 6.41.01.36 - to be fixed in BIOS post Mar 2015.
+ */
+Build.platformTable["ti.platforms.evmDRA7XX:Cortex_A15"] =
+{
+    externalMemoryMap: MemSegDefine.getMemSegmentDefinition_external(core),
+    codeMemory:"A15_0_DATA_MEM",
+    dataMemory:"A15_0_DATA_MEM",
+    stackMemory:"A15_0_DATA_MEM"
+};
+
+
+

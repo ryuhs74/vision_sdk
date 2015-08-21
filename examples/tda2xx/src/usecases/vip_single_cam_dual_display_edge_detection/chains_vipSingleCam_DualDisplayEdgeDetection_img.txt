@@ -1,0 +1,36 @@
+digraph chains_vipSingleCam_DualDisplayEdgeDetection {
+
+       ColorScheme [shape=none, margin=0, label=<
+       <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+       <TR><TD bgcolor="lightblue">IPU1_0</TD></TR>
+       <TR><TD bgcolor="yellow">EVE1</TD></TR>
+       </TABLE>>];
+
+       /************** LINKS ************************/
+       Capture [color=lightblue, style=filled]
+       Dup_Capture [color=lightblue, style=filled]
+       IPCOut_IPU1_0_EVE1_0 [color=lightblue, style=filled]
+       IPCIn_EVE1_IPU1_0_0 [color=yellow, style=filled]
+       Alg_EdgeDetect [color=yellow, style=filled]
+       IPCOut_EVE1_IPU1_0_0 [color=yellow, style=filled]
+       IPCIn_IPU1_0_EVE1_0 [color=lightblue, style=filled]
+       Display_LCD [color=lightblue, style=filled]
+       VPE [color=lightblue, style=filled]
+       Display_PIP [color=lightblue, style=filled]
+       Display_HDMI [color=lightblue, style=filled]
+       GrpxSrc [color=lightblue, style=filled]
+       Display_Grpx [color=lightblue, style=filled]
+
+       /************** CONNECTIONS ************************/
+       Dup_Capture -> Display_HDMI[taillabel=Q0, minlen=2, labeldistance=3]
+       Dup_Capture -> VPE[taillabel=Q2, minlen=2, labeldistance=3]
+       Dup_Capture -> IPCOut_IPU1_0_EVE1_0[taillabel=Q1, minlen=2, labeldistance=3]
+       Capture -> Dup_Capture
+       Alg_EdgeDetect -> IPCOut_EVE1_IPU1_0_0
+       VPE -> Display_PIP
+       GrpxSrc -> Display_Grpx
+       IPCOut_IPU1_0_EVE1_0 -> IPCIn_EVE1_IPU1_0_0
+       IPCIn_EVE1_IPU1_0_0 -> Alg_EdgeDetect
+       IPCOut_EVE1_IPU1_0_0 -> IPCIn_IPU1_0_EVE1_0
+       IPCIn_IPU1_0_EVE1_0 -> Display_LCD
+}

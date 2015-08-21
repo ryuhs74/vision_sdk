@@ -1,0 +1,5 @@
+UseCase: chains_avbRx_Dec_Display
+
+AvbRx (IPU1_1) -> Decode -> VPE -> Sync -> Alg_DmaSwMs -> Display_Video
+
+GrpxSrc -> Display_Grpx

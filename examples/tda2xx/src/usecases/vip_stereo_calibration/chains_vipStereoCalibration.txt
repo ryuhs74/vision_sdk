@@ -1,0 +1,5 @@
+UseCase: chains_vipStereoCalibration
+
+Capture -> Alg_SoftIsp (EVE1) -> VPE_softisp -> Alg_RemapMerge (EVE2) -> VPE_orgdisp -> Sync_org -> Alg_DmaSwMs -> Display_org
+
+GrpxSrc -> Display_Grpx

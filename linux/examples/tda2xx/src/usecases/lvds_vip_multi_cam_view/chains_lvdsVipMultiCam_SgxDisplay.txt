@@ -1,0 +1,3 @@
+UseCase: chains_lvdsVipMultiCam_SgxDisplay
+
+Capture ->  Sync ->  SgxDisplay (A15)

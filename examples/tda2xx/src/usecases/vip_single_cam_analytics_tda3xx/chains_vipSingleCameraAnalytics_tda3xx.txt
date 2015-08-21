@@ -1,0 +1,22 @@
+UseCase: chains_vipSingleCameraAnalytics_tda3xx
+
+Capture -> Dup_capture
+
+//PD TSR
+Dup_capture -> Merge_pd_tsr
+Dup_capture -> Alg_FeaturePlaneComputation (EVE1) -> Alg_ObjectDetection (DSP1) -> Merge_pd_tsr -> Sync_pd_tsr -> Alg_ObjectDraw -> Merge_alg
+
+//LD
+Dup_capture -> Merge_ld (DSP2)
+Dup_capture -> Alg_LaneDetect (DSP2) -> Merge_ld -> Sync_ld (DSP2) -> Alg_LaneDetectDraw (DSP2) -> Merge_alg
+
+//SOF
+Dup_capture -> Merge_sof (DSP2)
+Dup_capture -> Alg_SparseOpticalFlow (EVE1) -> Merge_sof -> Sync_sof (DSP2) -> Alg_SparseOpticalFlowDraw (DSP2) -> Merge_alg
+
+
+//Display
+Merge_alg -> Sync_alg -> Alg_DmaSwMs -> Display_alg
+
+GrpxSrc -> Display_Grpx
+

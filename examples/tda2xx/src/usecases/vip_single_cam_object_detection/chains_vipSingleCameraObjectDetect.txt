@@ -1,0 +1,7 @@
+UseCase: chains_vipSingleCameraObjectDetect
+
+Capture -> Dup_capture -> Merge_alg
+
+Dup_capture -> Alg_FeaturePlaneComputation (EVE1) -> Alg_ObjectDetection (DSP1) -> Merge_alg -> Sync_alg -> Alg_ObjectDraw -> Display_alg
+
+GrpxSrc -> Display_Grpx

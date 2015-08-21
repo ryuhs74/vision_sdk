@@ -1,0 +1,11 @@
+UseCase: chains_networkTxCapture
+
+
+Capture -> Dup -> Display_Video 
+
+Dup -> Null (A15)
+
+GrpxSrc -> Display_Grpx
+
+
+

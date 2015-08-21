@@ -1,0 +1,37 @@
+UseCase: chains_vipStereoCameraAnalytics
+
+// Capture for PD+TSR+LD+SOF
+NullSource (A15) -> Decode -> Dup_alg_capture 
+Dup_alg_capture -> Dup_ld_sof (A15)
+
+// PD+TSR
+Dup_alg_capture -> Merge_pd_tsr
+Dup_alg_capture -> Alg_FeaturePlaneComputation (EVE4) -> Alg_ObjectDetection (DSP1) -> Merge_pd_tsr -> Sync_pd_tsr -> Alg_ObjectDraw -> Merge_alg
+
+// LD
+Dup_ld_sof -> Merge_ld (A15)
+Dup_alg_capture -> Alg_LaneDetect (DSP1) -> Merge_ld (A15) -> Sync_ld (A15) -> Alg_LaneDetectDraw (A15) -> Merge_ld_sof (A15)
+
+
+// SOF 
+Dup_ld_sof -> Merge_sof (A15)
+Dup_alg_capture -> Alg_SparseOpticalFlow (EVE1) -> Merge_sof (A15) -> Sync_sof (A15) -> Alg_SparseOpticalFlowDraw (A15) -> Merge_ld_sof
+
+
+// Display for PD+TSR+LD+SOF
+Merge_ld_sof -> Merge_alg
+Merge_alg -> Sync_alg -> Alg_DmaSwMs_alg -> Display_alg
+
+// Capture for Stereo
+Capture -> Alg_SoftIsp (EVE1) -> VPE_softisp -> Alg_RemapMerge (EVE2) -> Dup_softisp (DSP2)
+
+// Display for live camera video
+Dup_softisp -> VPE_org_stereo -> Sync_org_stereo -> Alg_DmaSwMs_stereo -> Display_org_stereo
+
+// Stereo processing and display
+Dup_softisp -> Sync_disparity (DSP2) -> Dup_disparity (DSP2)
+Dup_disparity -> Alg_Census (EVE2) -> Alg_DisparityHamDist (EVE3) -> Merge_disparity (DSP2) -> Alg_StereoPostProcess (DSP2) -> VPE_disparity -> Display_disparity
+Dup_disparity -> Merge_disparity
+
+// Graphics Display
+GrpxSrc -> Display_Grpx

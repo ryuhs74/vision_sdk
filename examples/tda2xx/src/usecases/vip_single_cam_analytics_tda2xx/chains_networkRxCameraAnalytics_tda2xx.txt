@@ -1,0 +1,17 @@
+UseCase: chains_networkRxCameraAnalytics_tda2xx
+
+NullSource (A15) -> Decode -> Dup_capture -> Merge_pd_tsr
+
+Dup_capture -> Alg_FeaturePlaneComputation (EVE1) -> Alg_ObjectDetection (DSP1) -> Merge_pd_tsr -> Sync_pd_tsr -> Alg_ObjectDraw -> Merge_alg
+
+Dup_capture -> Merge_ld (A15)
+
+Dup_capture -> Alg_LaneDetect (DSP2) -> Merge_ld -> Sync_ld (A15) -> Alg_LaneDetectDraw (A15) -> Merge_alg
+
+Dup_capture -> Merge_sof (A15)
+
+Dup_capture -> Alg_SparseOpticalFlow (EVE2) -> Merge_sof -> Sync_sof (A15) -> Alg_SparseOpticalFlowDraw (A15) -> Merge_alg
+
+Merge_alg -> Sync_alg -> Alg_DmaSwMs -> Display_alg
+
+GrpxSrc -> Display_Grpx

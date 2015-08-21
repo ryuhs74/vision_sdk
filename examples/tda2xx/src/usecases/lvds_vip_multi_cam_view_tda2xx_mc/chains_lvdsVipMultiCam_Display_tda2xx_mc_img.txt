@@ -1,0 +1,14 @@
+digraph chains_lvdsVipMultiCam_Display_tda2xx_mc {
+
+       ColorScheme [shape=none, margin=0, label=<
+       <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+       <TR><TD bgcolor="lightblue">IPU1_0</TD></TR>
+       </TABLE>>];
+
+       /************** LINKS ************************/
+       Capture [color=lightblue, style=filled]
+       Display_video [color=lightblue, style=filled]
+
+       /************** CONNECTIONS ************************/
+       Capture -> Display_video
+}

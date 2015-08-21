@@ -1,0 +1,2 @@
+fdtfile=dra7-evm-infoadas.dtb
+mmcargs=part uuid mmc 0:2 uuid; setenv bootargs "console=ttyO0,115200n8 vram=16M root=PARTUUID=${uuid} rw rootwait ip=dhcp mem=1024M"

@@ -1,0 +1,111 @@
+digraph chains_networkRxCameraAnalytics_tda2xx {
+
+       ColorScheme [shape=none, margin=0, label=<
+       <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+       <TR><TD bgcolor="lightblue">IPU1_0</TD></TR>
+       <TR><TD bgcolor="palegreen">DSP1</TD></TR>
+       <TR><TD bgcolor="darkolivegreen1">DSP2</TD></TR>
+       <TR><TD bgcolor="yellow">EVE1</TD></TR>
+       <TR><TD bgcolor="gold">EVE2</TD></TR>
+       <TR><TD bgcolor="lightsalmon">A15</TD></TR>
+       </TABLE>>];
+
+       /************** LINKS ************************/
+       NullSource [color=lightsalmon, style=filled]
+       IPCOut_A15_0_IPU1_0_0 [color=lightsalmon, style=filled]
+       IPCIn_IPU1_0_A15_0_0 [color=lightblue, style=filled]
+       Decode [color=lightblue, style=filled]
+       Dup_capture [color=lightblue, style=filled]
+       IPCOut_IPU1_0_EVE2_4 [color=lightblue, style=filled]
+       IPCIn_EVE2_IPU1_0_0 [color=gold, style=filled]
+       Alg_SparseOpticalFlow [color=gold, style=filled]
+       IPCOut_EVE2_A15_0_0 [color=gold, style=filled]
+       IPCIn_A15_0_EVE2_3 [color=lightsalmon, style=filled]
+       IPCOut_IPU1_0_A15_0_3 [color=lightblue, style=filled]
+       IPCIn_A15_0_IPU1_0_2 [color=lightsalmon, style=filled]
+       Merge_sof [color=lightsalmon, style=filled]
+       Sync_sof [color=lightsalmon, style=filled]
+       Alg_SparseOpticalFlowDraw [color=lightsalmon, style=filled]
+       IPCOut_A15_0_IPU1_0_2 [color=lightsalmon, style=filled]
+       IPCIn_IPU1_0_A15_0_3 [color=lightblue, style=filled]
+       IPCOut_IPU1_0_DSP2_2 [color=lightblue, style=filled]
+       IPCIn_DSP2_IPU1_0_0 [color=darkolivegreen1, style=filled]
+       Alg_LaneDetect [color=darkolivegreen1, style=filled]
+       IPCOut_DSP2_A15_0_0 [color=darkolivegreen1, style=filled]
+       IPCIn_A15_0_DSP2_1 [color=lightsalmon, style=filled]
+       IPCOut_IPU1_0_A15_0_1 [color=lightblue, style=filled]
+       IPCIn_A15_0_IPU1_0_0 [color=lightsalmon, style=filled]
+       Merge_ld [color=lightsalmon, style=filled]
+       Sync_ld [color=lightsalmon, style=filled]
+       Alg_LaneDetectDraw [color=lightsalmon, style=filled]
+       IPCOut_A15_0_IPU1_0_1 [color=lightsalmon, style=filled]
+       IPCIn_IPU1_0_A15_0_2 [color=lightblue, style=filled]
+       IPCOut_IPU1_0_EVE1_0 [color=lightblue, style=filled]
+       IPCIn_EVE1_IPU1_0_0 [color=yellow, style=filled]
+       Alg_FeaturePlaneComputation [color=yellow, style=filled]
+       IPCOut_EVE1_DSP1_0 [color=yellow, style=filled]
+       IPCIn_DSP1_EVE1_0 [color=palegreen, style=filled]
+       Alg_ObjectDetection [color=palegreen, style=filled]
+       IPCOut_DSP1_IPU1_0_0 [color=palegreen, style=filled]
+       IPCIn_IPU1_0_DSP1_1 [color=lightblue, style=filled]
+       Merge_pd_tsr [color=lightblue, style=filled]
+       Sync_pd_tsr [color=lightblue, style=filled]
+       Alg_ObjectDraw [color=lightblue, style=filled]
+       Merge_alg [color=lightblue, style=filled]
+       Sync_alg [color=lightblue, style=filled]
+       Alg_DmaSwMs [color=lightblue, style=filled]
+       Display_alg [color=lightblue, style=filled]
+       GrpxSrc [color=lightblue, style=filled]
+       Display_Grpx [color=lightblue, style=filled]
+
+       /************** CONNECTIONS ************************/
+       Merge_pd_tsr -> Sync_pd_tsr
+       Dup_capture -> Merge_pd_tsr[headlabel=Q0, taillabel=Q0, minlen=2, labeldistance=3]
+       Dup_capture -> IPCOut_IPU1_0_EVE1_0[taillabel=Q1, minlen=2, labeldistance=3]
+       Dup_capture -> IPCOut_IPU1_0_A15_0_1[taillabel=Q2, minlen=2, labeldistance=3]
+       Dup_capture -> IPCOut_IPU1_0_DSP2_2[taillabel=Q3, minlen=2, labeldistance=3]
+       Dup_capture -> IPCOut_IPU1_0_A15_0_3[taillabel=Q4, minlen=2, labeldistance=3]
+       Dup_capture -> IPCOut_IPU1_0_EVE2_4[taillabel=Q5, minlen=2, labeldistance=3]
+       Decode -> Dup_capture
+       NullSource -> IPCOut_A15_0_IPU1_0_0
+       Merge_alg -> Sync_alg
+       Alg_ObjectDraw -> Merge_alg[headlabel=Q0 minlen=2, labeldistance=3]
+       Sync_pd_tsr -> Alg_ObjectDraw
+       Alg_ObjectDetection -> IPCOut_DSP1_IPU1_0_0
+       Alg_FeaturePlaneComputation -> IPCOut_EVE1_DSP1_0
+       Merge_ld -> Sync_ld
+       Alg_LaneDetectDraw -> IPCOut_A15_0_IPU1_0_1
+       Sync_ld -> Alg_LaneDetectDraw
+       Alg_LaneDetect -> IPCOut_DSP2_A15_0_0
+       Merge_sof -> Sync_sof
+       Alg_SparseOpticalFlowDraw -> IPCOut_A15_0_IPU1_0_2
+       Sync_sof -> Alg_SparseOpticalFlowDraw
+       Alg_SparseOpticalFlow -> IPCOut_EVE2_A15_0_0
+       Alg_DmaSwMs -> Display_alg
+       Sync_alg -> Alg_DmaSwMs
+       GrpxSrc -> Display_Grpx
+       IPCOut_A15_0_IPU1_0_0 -> IPCIn_IPU1_0_A15_0_0
+       IPCIn_IPU1_0_A15_0_0 -> Decode
+       IPCOut_IPU1_0_EVE1_0 -> IPCIn_EVE1_IPU1_0_0
+       IPCIn_EVE1_IPU1_0_0 -> Alg_FeaturePlaneComputation
+       IPCOut_EVE1_DSP1_0 -> IPCIn_DSP1_EVE1_0
+       IPCIn_DSP1_EVE1_0 -> Alg_ObjectDetection
+       IPCOut_DSP1_IPU1_0_0 -> IPCIn_IPU1_0_DSP1_1
+       IPCIn_IPU1_0_DSP1_1 -> Merge_pd_tsr[headlabel=Q1 minlen=2, labeldistance=3]
+       IPCOut_IPU1_0_A15_0_1 -> IPCIn_A15_0_IPU1_0_0
+       IPCIn_A15_0_IPU1_0_0 -> Merge_ld[headlabel=Q0 minlen=2, labeldistance=3]
+       IPCOut_IPU1_0_DSP2_2 -> IPCIn_DSP2_IPU1_0_0
+       IPCIn_DSP2_IPU1_0_0 -> Alg_LaneDetect
+       IPCOut_DSP2_A15_0_0 -> IPCIn_A15_0_DSP2_1
+       IPCIn_A15_0_DSP2_1 -> Merge_ld[headlabel=Q1 minlen=2, labeldistance=3]
+       IPCOut_A15_0_IPU1_0_1 -> IPCIn_IPU1_0_A15_0_2
+       IPCIn_IPU1_0_A15_0_2 -> Merge_alg[headlabel=Q1 minlen=2, labeldistance=3]
+       IPCOut_IPU1_0_A15_0_3 -> IPCIn_A15_0_IPU1_0_2
+       IPCIn_A15_0_IPU1_0_2 -> Merge_sof[headlabel=Q0 minlen=2, labeldistance=3]
+       IPCOut_IPU1_0_EVE2_4 -> IPCIn_EVE2_IPU1_0_0
+       IPCIn_EVE2_IPU1_0_0 -> Alg_SparseOpticalFlow
+       IPCOut_EVE2_A15_0_0 -> IPCIn_A15_0_EVE2_3
+       IPCIn_A15_0_EVE2_3 -> Merge_sof[headlabel=Q1 minlen=2, labeldistance=3]
+       IPCOut_A15_0_IPU1_0_2 -> IPCIn_IPU1_0_A15_0_3
+       IPCIn_IPU1_0_A15_0_3 -> Merge_alg[headlabel=Q2 minlen=2, labeldistance=3]
+}

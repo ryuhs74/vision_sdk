@@ -1,0 +1,2 @@
+fdtfile=dra7-evm-infoadas.dtb
+mmcargs=setenv bootargs 'console=ttyO0,115200n8 vram=16M root=/dev/nfs rw nfsroot=172.24.170.60:/datalocal1/user/shiju/ADAS/vision_sdk/linux/targetfs rootwait ip=dhcp mem=1024M'

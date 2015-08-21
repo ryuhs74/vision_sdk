@@ -1,0 +1,4 @@
+UseCase: chains_vipSingleCam_EncDec_Display
+
+Capture -> Encode -> Decode -> VPE -> Display_Video
+GrpxSrc -> Display_Grpx

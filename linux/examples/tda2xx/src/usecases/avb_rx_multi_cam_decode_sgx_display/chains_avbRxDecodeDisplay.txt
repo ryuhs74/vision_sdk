@@ -1,0 +1,3 @@
+UseCase: chains_avbRxDecodeDisplay
+
+AvbRx (IPU1_0) -> Decode -> Sync_sv -> SgxDisplay (A15)
