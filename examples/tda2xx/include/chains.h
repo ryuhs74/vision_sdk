@@ -99,6 +99,7 @@ extern "C" {
 #include <examples/tda2xx/include/video_sensor.h>
 #include <examples/tda2xx/include/hdmi_recvr.h>
 #include <examples/tda2xx/include/hdmi_tx.h>
+#include <examples/tda2xx/include/component.h>
 #include <examples/tda2xx/include/draw2d.h>
 
 #include <src/utils_common/include/utils_uart.h>
@@ -121,8 +122,8 @@ extern "C" {
  */
 
  typedef enum {
-     CHAINS_DISPLAY_TYPE_LCD_7_INCH = 0,
-     /**< Output displayed on 7-inch LCD */
+	 CHAINS_DISPLAY_TYPE_CH7026_480P = 0,
+     /**< Output displayed on 480P Component */
 
      CHAINS_DISPLAY_TYPE_LCD_10_INCH,
     /**< Output displayed on 10-inch LCD */
@@ -141,6 +142,7 @@ extern "C" {
 
      CHAINS_DISPLAY_TYPE_HDMI_XGA_TDM
      /**< Output displayed on HDMI in XGA resolution using 8bit TDM mode */
+
 
  } Chains_DisplayType;
 

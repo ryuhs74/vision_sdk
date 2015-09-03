@@ -35,6 +35,7 @@ typedef struct {
     HdmiRecvr_CreateParams                  hdmiRecvrPrm;
     Lcd_CreateParams                        lcdPrm;
     HdmiTx_CreateParams                     hdmiTxPrm;
+	Component_CreateParams 					componentPrm;
 
     DisplayCtrlLink_ConfigParams            dctrlCfgPrms;
     DisplayCtrlLink_OvlyPipeParams  pipeParams[4];
@@ -887,8 +888,8 @@ Void ChainsCommon_GetDisplayWidthHeight(
 {
     switch(displayType)
     {
-        case CHAINS_DISPLAY_TYPE_LCD_7_INCH:
-            *displayWidth = 800;
+        case CHAINS_DISPLAY_TYPE_CH7026_480P:
+            *displayWidth = 720;
             *displayHeight = 480;
             break;
         case CHAINS_DISPLAY_TYPE_LCD_10_INCH:
@@ -947,44 +948,59 @@ static Void ChainsCommon_SetDctrlConfig(
     pVInfo = &pPrm->vencInfo[0];
 
     pVInfo->tdmMode = DISPLAYCTRL_LINK_TDM_DISABLE;
-    if(displayType == CHAINS_DISPLAY_TYPE_LCD_7_INCH)
+    if(displayType == CHAINS_DISPLAY_TYPE_CH7026_480P)
     {
+
         pPrm->deviceId = DISPLAYCTRL_LINK_USE_LCD;
         pVInfo->vencId = SYSTEM_DCTRL_DSS_VENC_LCD1;
         pVInfo->outputPort = SYSTEM_DCTRL_DSS_DPI1_OUTPUT;
-        pVInfo->vencOutputInfo.vsPolarity    =   SYSTEM_DCTRL_POLARITY_ACT_LOW;
-        pVInfo->vencOutputInfo.hsPolarity    =   SYSTEM_DCTRL_POLARITY_ACT_LOW;
+        pVInfo->vencOutputInfo.vsPolarity       =   SYSTEM_DCTRL_POLARITY_ACT_LOW;
+        pVInfo->vencOutputInfo.hsPolarity       =   SYSTEM_DCTRL_POLARITY_ACT_LOW;
 
         /* Below are of dont care for EVM LCD */
         pVInfo->vencOutputInfo.fidPolarity      =   SYSTEM_DCTRL_POLARITY_ACT_LOW;
         pVInfo->vencOutputInfo.actVidPolarity   =   SYSTEM_DCTRL_POLARITY_ACT_LOW;
-
-        pVInfo->mInfo.standard                  =   SYSTEM_STD_CUSTOM;
-        pVInfo->mInfo.width                     =   displayWidth;
-        pVInfo->mInfo.height                    =   displayHeight;
-        pVInfo->mInfo.scanFormat                =   SYSTEM_SF_PROGRESSIVE;
-        pVInfo->mInfo.pixelClock                =   29232u;
-        pVInfo->mInfo.fps                       =   60U;
-        pVInfo->mInfo.hFrontPorch               =   40u;
-        pVInfo->mInfo.hBackPorch                =   40u;
-        pVInfo->mInfo.hSyncLen                  =   48u;
-        pVInfo->mInfo.vFrontPorch               =   13u;
-        pVInfo->mInfo.vBackPorch                =   29u;
-        pVInfo->mInfo.vSyncLen                  =   3u;
-        pVInfo->vencDivisorInfo.divisorLCD      =   1;
-        pVInfo->vencDivisorInfo.divisorPCD      =   4;
 
         pVInfo->vencOutputInfo.dataFormat       =   SYSTEM_DF_RGB24_888;
         pVInfo->vencOutputInfo.dvoFormat        =
                                     SYSTEM_DCTRL_DVOFMT_GENERIC_DISCSYNC;
         pVInfo->vencOutputInfo.videoIfWidth     =   SYSTEM_VIFW_24BIT;
 
-        pVInfo->vencOutputInfo.pixelClkPolarity =   SYSTEM_DCTRL_POLARITY_ACT_HIGH;
+        pVInfo->vencOutputInfo.pixelClkPolarity =   SYSTEM_DCTRL_POLARITY_ACT_LOW;
         pVInfo->vencOutputInfo.aFmt             =   SYSTEM_DCTRL_A_OUTPUT_MAX;
+        pVInfo->mInfo.standard                  =   SYSTEM_STD_CUSTOM;
+
+
+        //{FVID2_STD_480P,           720,  480,  FVID2_SF_PROGRESSIVE, 27000,  60, 16, 60, 62, 9, 30, 6},
+        pVInfo->mInfo.width                     =   displayWidth;
+        pVInfo->mInfo.height                    =   displayHeight;
+        pVInfo->mInfo.scanFormat                =   SYSTEM_SF_PROGRESSIVE;
+        pVInfo->mInfo.pixelClock                =   27000;
+
+       // UInt32              hFrontPorch;		16
+       // UInt32              hBackPorch;		60
+       // UInt32              hSyncLen;			62
+       // UInt32              vFrontPorch;		9
+       // UInt32              vBackPorch;		30
+       // UInt32              vSyncLen;			6
+
+        pVInfo->mInfo.fps                       =   60U;
+        pVInfo->mInfo.hSyncLen                  =   62U;
+        pVInfo->mInfo.hFrontPorch               =   16U;
+        pVInfo->mInfo.hBackPorch                =   60U;
+
+        pVInfo->mInfo.vFrontPorch               =   9U;
+        pVInfo->mInfo.vSyncLen                  =   6U;
+        pVInfo->mInfo.vBackPorch                =   30U;
+
+        pVInfo->vencDivisorInfo.divisorLCD      =   1;
+        pVInfo->vencDivisorInfo.divisorPCD      =   1;
 
         /* Configure overlay params */
 
-        ovlyPrms->vencId                       = SYSTEM_DCTRL_DSS_VENC_LCD1;
+        ovlyPrms->vencId                        = SYSTEM_DCTRL_DSS_VENC_LCD1;
+
+
     }
     if(displayType == CHAINS_DISPLAY_TYPE_LCD_10_INCH)
     {
@@ -1637,18 +1653,20 @@ Chains_DisplayType lcdType, UInt32 displayLCDWidth, UInt32 displayLCDHeight)
     pVInfo->mInfo.width                     = displayLCDWidth;
     pVInfo->mInfo.height                    = displayLCDHeight;
 
-    if(lcdType == CHAINS_DISPLAY_TYPE_LCD_7_INCH)
+    if(lcdType == CHAINS_DISPLAY_TYPE_CH7026_480P)
     {
-    pVInfo->mInfo.pixelClock                = 29232u;
-    pVInfo->mInfo.fps                       =   60U;
-    pVInfo->mInfo.hFrontPorch               = 40u;
-    pVInfo->mInfo.hBackPorch                = 40u;
-    pVInfo->mInfo.hSyncLen                  = 48u;
-    pVInfo->mInfo.vFrontPorch               = 13u;
-    pVInfo->mInfo.vBackPorch                = 29u;
-    pVInfo->mInfo.vSyncLen                  = 3u;
-    pVInfo->vencDivisorInfo.divisorLCD      = 1;
-    pVInfo->vencDivisorInfo.divisorPCD      = 4;
+        pVInfo->mInfo.pixelClock                =   27000;
+        pVInfo->mInfo.fps                       =   60U;
+        pVInfo->mInfo.hSyncLen                  =   62U;
+        pVInfo->mInfo.hFrontPorch               =   16U;
+        pVInfo->mInfo.hBackPorch                =   60U;
+
+        pVInfo->mInfo.vFrontPorch               =   9U;
+        pVInfo->mInfo.vSyncLen                  =   6U;
+        pVInfo->mInfo.vBackPorch                =   30U;
+
+		pVInfo->vencDivisorInfo.divisorLCD      = 1;
+		pVInfo->vencDivisorInfo.divisorPCD      = 1;
     }
     else if(lcdType == CHAINS_DISPLAY_TYPE_LCD_10_INCH)
     {
@@ -2510,18 +2528,14 @@ Int32 ChainsCommon_StartDisplayDevice(UInt32 displayType)
 {
     Int32 status=0;
 
-    if (displayType == CHAINS_DISPLAY_TYPE_LCD_7_INCH
-        ||
-        displayType == CHAINS_DISPLAY_TYPE_LCD_10_INCH
-    )
+    if (displayType == CHAINS_DISPLAY_TYPE_LCD_10_INCH )
     {
         ChainsCommon_SetLcdPrms(&gChains_commonObj.lcdPrm);
 
         gChains_commonObj.lcdInstId = gChains_commonObj.lcdPrm.drvId;
-
         status = Lcd_turnOn(gChains_commonObj.lcdInstId, &gChains_commonObj.lcdPrm);
         UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
-    }
+    }else
     if(displayType == CHAINS_DISPLAY_TYPE_HDMI_720P
         ||
       displayType == CHAINS_DISPLAY_TYPE_HDMI_1080P
@@ -2558,7 +2572,16 @@ Int32 ChainsCommon_StartDisplayDevice(UInt32 displayType)
                                     NULL);
             UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
         }
-    }
+    }else
+    if (displayType == CHAINS_DISPLAY_TYPE_CH7026_480P)
+	{
+		Component_CreateStatus componentStatus;
+		gChains_commonObj.componentPrm.standard        =  SYSTEM_STD_480P;
+		gChains_commonObj.componentPrm.boardMode       =  BSP_BOARD_MODE_VIDEO_24BIT;
+
+		status = Component_create(&gChains_commonObj.componentPrm, &componentStatus);
+		UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+	}
 
     return status;
 }
@@ -2574,10 +2597,7 @@ Int32 ChainsCommon_StopDisplayDevice(UInt32 displayType)
 {
     Int32 status=0;
 
-    if (displayType == CHAINS_DISPLAY_TYPE_LCD_7_INCH
-        ||
-        displayType == CHAINS_DISPLAY_TYPE_LCD_10_INCH
-        )
+    if ( displayType == CHAINS_DISPLAY_TYPE_LCD_10_INCH )
     {
         Lcd_turnOff(gChains_commonObj.lcdInstId);
     }

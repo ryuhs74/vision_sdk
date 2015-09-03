@@ -9,4 +9,5 @@ SRCS_ipu1_0 += \
 		video_sensor_imx224.c \
 		lcd.c \
 		hdmi_recvr.c \
-		hdmi_tx.c
+		hdmi_tx.c\
+		component.c

@@ -100,7 +100,7 @@ Int32 Board_init()
     I2c_DevInitParams       i2cDevInitParams[BSP_DEVICE_I2C_INST_ID_MAX];
     /* Initialized using BSP APIs */
     Bsp_DeviceInitParams deviceInitPrms;
-    Bsp_PlatformId platformId = BSP_PLATFORM_ID_UNKNOWN;
+//    Bsp_PlatformId platformId = BSP_PLATFORM_ID_UNKNOWN;
 
     do
     {
@@ -120,13 +120,13 @@ Int32 Board_init()
 
 
         /* Override I2C init for non-EVM builds */
-        platformId = Bsp_platformGetId();
+  //      platformId = Bsp_platformGetId();
 
 
-        if (platformId != BSP_PLATFORM_ID_EVM)
+/*        if (platformId != BSP_PLATFORM_ID_EVM)
         {
             nIsI2cInitReq = (uint32_t) FALSE;
-        }
+        }*/
 
         if (nIsI2cInitReq == (uint32_t) TRUE)
         {
@@ -196,7 +196,7 @@ Int32 Board_init()
              * be a I2C address conflict between the SII9127 present in the
              * Vayu VISION board and one of the deserializer chip.
              */
-            deviceInitPrms.isI2cProbingReq = FALSE;
+            deviceInitPrms.isI2cProbingReq = TRUE;
             nStatus = Bsp_deviceInit(&deviceInitPrms);
 
             if (SYSTEM_LINK_STATUS_SOK != nStatus)

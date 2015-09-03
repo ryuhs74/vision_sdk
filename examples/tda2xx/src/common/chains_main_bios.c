@@ -212,7 +212,7 @@ char gChains_menuDisplaySettings[] = {
     "\r\n Display Settings"
     "\r\n ================"
     "\r\n "
-    "\r\n 1: LCD  7-inch 800x480@60fps"
+    "\r\n 1: Component 480P"
     "\r\n 2: LCD  10-inch 1280x720@60fps"
     "\r\n 3: HDMI 1080P60 "
     "\r\n 4: HDMI 720P60 "
@@ -539,7 +539,7 @@ Void Chains_showDisplaySettingsMenu()
         switch(ch)
         {
             case '1':
-                gChains_usecaseCfg.displayType = CHAINS_DISPLAY_TYPE_LCD_7_INCH;
+                gChains_usecaseCfg.displayType = CHAINS_DISPLAY_TYPE_CH7026_480P;
                 displaySelectDone = TRUE;
                 break;
             case '2':
@@ -1342,7 +1342,7 @@ Void Chains_menuDualDisplayRun()
                 if(Bsp_platformIsTda2xxFamilyBuild())
                 {
                     usecaseCfg = gChains_usecaseCfg;
-                    if( usecaseCfg.displayType != CHAINS_DISPLAY_TYPE_LCD_7_INCH &&
+                    if( usecaseCfg.displayType != CHAINS_DISPLAY_TYPE_CH7026_480P &&
                         usecaseCfg.displayType != CHAINS_DISPLAY_TYPE_LCD_10_INCH)
                     {
                         Vps_printf(" ### This usecase displays on HDMI and LCD");
@@ -1357,7 +1357,7 @@ Void Chains_menuDualDisplayRun()
                 if(Bsp_platformIsTda2xxFamilyBuild() && (BSP_PLATFORM_SOC_ID_TDA2EX != Bsp_platformGetSocId()))
                 {
                     usecaseCfg = gChains_usecaseCfg;
-                    if( usecaseCfg.displayType != CHAINS_DISPLAY_TYPE_LCD_7_INCH &&
+                    if( usecaseCfg.displayType != CHAINS_DISPLAY_TYPE_CH7026_480P &&
                         usecaseCfg.displayType != CHAINS_DISPLAY_TYPE_LCD_10_INCH)
                     {
                         Vps_printf(" ### This usecase displays on HDMI and LCD");
@@ -1383,7 +1383,7 @@ Void Chains_menuDualDisplayRun()
                             Vps_printf(" ### Please choose OV10635 as Capture Source using option 's'\n");
                             break;
                         }
-                        if( usecaseCfg.displayType != CHAINS_DISPLAY_TYPE_LCD_7_INCH &&
+                        if( usecaseCfg.displayType != CHAINS_DISPLAY_TYPE_CH7026_480P &&
                             usecaseCfg.displayType != CHAINS_DISPLAY_TYPE_LCD_10_INCH)
                         {
                             Vps_printf(" ### This usecase displays on HDMI and LCD");
