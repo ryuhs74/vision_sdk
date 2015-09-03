@@ -2620,7 +2620,12 @@ Int32 ChainsCommon_StopDisplayDevice(UInt32 displayType)
                                     NULL);
             UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
         }
-    }
+    }else
+	if (displayType == CHAINS_DISPLAY_TYPE_CH7026_480P)
+	{
+		status = Component_delete(&gChains_commonObj.componentPrm, NULL);
+		UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+	}
 
     return status;
 }
