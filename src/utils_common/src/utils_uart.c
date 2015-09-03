@@ -109,6 +109,10 @@ Void System_uartInit()
 
     Uart_init();
 
+#ifdef AVM_E500_BUILD		///craven@150901
+    strcpy(uartName, "/uart1");
+    devId = 1;
+#else
     if(Bsp_platformIsTda2xxFamilyBuild())
     {
         if(Bsp_boardGetId() == BSP_BOARD_MONSTERCAM)
@@ -134,6 +138,7 @@ Void System_uartInit()
         strcpy(uartName, "/uart0");
         devId = 0;
     }
+#endif
 
     uartParams              = Uart_PARAMS;
     uartParams.opMode       = UART_OPMODE_INTERRUPT;
