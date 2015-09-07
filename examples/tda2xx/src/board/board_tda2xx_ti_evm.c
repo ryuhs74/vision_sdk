@@ -118,16 +118,16 @@ Int32 Board_init()
 
         Vps_printf(" BOARD: Board Init Done !!!\n");
 
-
+#if 0	///craven@150907
         /* Override I2C init for non-EVM builds */
-  //      platformId = Bsp_platformGetId();
+        platformId = Bsp_platformGetId();
 
 
-/*        if (platformId != BSP_PLATFORM_ID_EVM)
+        if (platformId != BSP_PLATFORM_ID_EVM)
         {
             nIsI2cInitReq = (uint32_t) FALSE;
-        }*/
-
+        }
+#endif
         if (nIsI2cInitReq == (uint32_t) TRUE)
         {
             pI2cData = Bsp_boardGetI2cData();
