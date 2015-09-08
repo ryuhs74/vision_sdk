@@ -265,6 +265,7 @@ char gChains_menuCaptureSrc[] = {
     "\r\n 6: AR0140  Sensor 720P60 - Parallel (TDA3x ONLY)"
     "\r\n 7: IMX224  Sensor 1280x960 - CSI2 (TDA3x ONLY)"
     "\r\n 8: AR0132  Sensor 720P60 DM388 - Parallel (TDA2x MonsterCam ONLY)"
+	"\r\n 9: ISX016  (AVM_C500)"
     "\r\n "
     "\r\n x: Exit "
     "\r\n "
@@ -696,6 +697,10 @@ Void Chains_showCaptureSettingsMenu()
                 {
                     Vps_printf(" This sensor NOT supported on current platform\n");
                 }
+            break;
+            case '9':
+				gChains_usecaseCfg.captureSrc = CHAINS_CAPTURE_SRC_ISX016;
+				captSrcSelectDone = TRUE;
             break;
 
             case 'x':

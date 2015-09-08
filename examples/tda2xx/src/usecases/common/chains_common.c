@@ -243,7 +243,21 @@ Void ChainsCommon_SingleCam_SetCapturePrms(
             pInprms->dataFormat =   SYSTEM_DF_BAYER_GRBG;
             pInprms->scanFormat =   SYSTEM_SF_PROGRESSIVE;
         }
-        else
+        else if(captureSrc == CHAINS_CAPTURE_SRC_ISX016)
+        {
+
+            pInstPrm->vipInstId     =   SYSTEM_CAPTURE_INST_VIP2_SLICE2_PORTB;
+            pInstPrm->videoIfMode   =   SYSTEM_VIFM_SCH_DS_HSYNC_VSYNC;
+            pInstPrm->videoIfWidth  =   SYSTEM_VIFW_8BIT;
+            pInstPrm->bufCaptMode   =   SYSTEM_CAPT_BCM_FRM_DROP;
+            pInstPrm->numStream     =   1;
+
+            pInprms->width      =   captureInWidth;
+            pInprms->height     =   captureInHeight;
+            pInprms->dataFormat =   SYSTEM_DF_YUV422P;
+            pInprms->scanFormat =   SYSTEM_SF_PROGRESSIVE;
+
+        }else
         {
             /* Nothing here. To avoid MISRA C warnings */
         }
@@ -1494,6 +1508,17 @@ static Void ChainsCommon_SetVidSensorPrms(
 
         pPrm->vipInstId[1] = SYSTEM_CAPTURE_INST_VIP3_SLICE2_PORTA;
     }
+    if(sensorId==VID_SENSOR_ISX016)
+    {
+        pPrm->sensorId      = VID_SENSOR_ISX016;
+        pPrm->vipInstId[0]     = SYSTEM_CAPTURE_INST_VIP2_SLICE2_PORTB;
+        pPrm->standard      = SYSTEM_STD_720P_60;
+        pPrm->dataformat    = SYSTEM_DF_YUV422P;
+        pPrm->videoIfWidth  = SYSTEM_VIFW_8BIT;
+        pPrm->fps           = SYSTEM_FPS_60;
+        pPrm->isLVDSCaptMode = FALSE;
+        pPrm->numChan       = 1;
+    }
 }
 
 /**
@@ -2074,11 +2099,20 @@ Void ChainsCommon_InitCaptureDevice(Chains_CaptureSrc captureSrc)
                 captureSrc
                 );
     }
-    else
-    {
-        /* Un Recognized Capture source */
-        UTILS_assert(FALSE);
-    }
+	else if (captureSrc == CHAINS_CAPTURE_SRC_ISX016)
+	{
+		ChainsCommon_SetVidSensorPrms(
+				&gChains_commonObj.vidSensorPrm,
+				VID_SENSOR_ISX016,
+				NULL,
+				4U,
+				captureSrc);
+	}
+	else
+	{
+		/* Un Recognized Capture source */
+		UTILS_assert(FALSE);
+	}
 
     Vps_printf(" CHAINS: Sensor init ... DONE !!!\n");
 }
@@ -2200,6 +2234,15 @@ Int32 ChainsCommon_StartCaptureDevice(Chains_CaptureSrc captureSrc,
                 captureSrc
                 );
     }
+	else if (captureSrc == CHAINS_CAPTURE_SRC_ISX016)
+	{
+		ChainsCommon_SetVidSensorPrms(
+				&gChains_commonObj.vidSensorPrm,
+				VID_SENSOR_ISX016,
+				NULL,
+				4U,
+				captureSrc);
+	}
     else if(captureSrc == CHAINS_CAPTURE_SRC_DM388)
     {
         /* Nothing to be done for MonsterCam */
@@ -2227,6 +2270,8 @@ Int32 ChainsCommon_StartCaptureDevice(Chains_CaptureSrc captureSrc,
        captureSrc == CHAINS_CAPTURE_SRC_AR0140BAYER_PARALLEL
         ||
        captureSrc == CHAINS_CAPTURE_SRC_UB960_TIDA00262
+        ||
+       captureSrc == CHAINS_CAPTURE_SRC_ISX016
         )
     {
         if (captureSrc == CHAINS_CAPTURE_SRC_UB960_TIDA00262)
@@ -2488,6 +2533,8 @@ Int32 ChainsCommon_StopCaptureDevice(Chains_CaptureSrc captureSrc)
        captureSrc == CHAINS_CAPTURE_SRC_AR0140BAYER_PARALLEL
         ||
        captureSrc == CHAINS_CAPTURE_SRC_UB960_TIDA00262
+        ||
+       captureSrc == CHAINS_CAPTURE_SRC_ISX016
         )
     {
         if (captureSrc == CHAINS_CAPTURE_SRC_UB960_TIDA00262)
