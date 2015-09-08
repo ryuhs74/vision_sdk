@@ -169,6 +169,10 @@ Int32 VidSensor_create(VidSensor_CreateParams *createParams,
     {
         sensorDrvId = FVID2_VID_SENSOR_SONY_IMX224_CSI2_DRV;
     }
+    else if(createParams->sensorId==VID_SENSOR_ISX016)
+    {
+        sensorDrvId = FVID2_VID_SENSOR_SONY_ISX016_DRV;
+    }
     else
     {
         /* unsupported sensor */
@@ -527,6 +531,10 @@ Int32 VidSensor_delete(VidSensor_CreateParams *createParams,
     else if(createParams->sensorId==VID_SENSOR_IMX224_CSI2)
     {
         sensorDrvId = FVID2_VID_SENSOR_SONY_IMX224_CSI2_DRV;
+    }
+    else if(createParams->sensorId==VID_SENSOR_ISX016)
+    {
+        sensorDrvId = FVID2_VID_SENSOR_SONY_ISX016_DRV;
     }
     else
     {

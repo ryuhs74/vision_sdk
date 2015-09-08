@@ -208,6 +208,9 @@ extern "C" {
       *     could be connected.
       *     Each TIDA00262 module, has AR0140AT video sensor
       */
+     CHAINS_CAPTURE_SRC_ISX016,
+     /**< Capture source is ISX016
+      */
      CHAINS_CAPTURE_SRC_MAX
      /**< Max number of capture source's */
 

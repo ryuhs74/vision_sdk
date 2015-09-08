@@ -258,6 +258,8 @@ typedef enum {
     /**< Sony IMX224 CSI sensor*/
     VID_SENSOR_AR0132_MONOCHROME,
     /**< Aptina AR0132 Monochrome sensor */
+    VID_SENSOR_ISX016,
+    /**< Aptina ISX016 Monochrome sensor */
     VID_SENSOR_MAX = 0xFFFFu,
     /**<Max */
     VID_SENSOR_FORCE32BITS = 0x7FFFFFFF
