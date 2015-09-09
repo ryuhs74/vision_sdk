@@ -57,13 +57,13 @@ Int32 Draw2D_getBmpProperty(Draw2D_BmpPrm *pPrm, Draw2D_BmpProperty *pProp)
         return SYSTEM_LINK_STATUS_EINVALID_PARAMS;
 
     /* default */
-    Draw2D_getBmpProperty00(pProp); /* default */
+    //Draw2D_getBmpProperty00(pProp); /* default */ //ryuhs74@20150909 - Del TI Logo
 
     if(pPrm!=NULL)
     {
-        if(pPrm->bmpIdx==DRAW2D_BMP_IDX_TI_LOGO)
-            Draw2D_getBmpProperty00(pProp);
-        else
+        //if(pPrm->bmpIdx==DRAW2D_BMP_IDX_TI_LOGO)
+        //    Draw2D_getBmpProperty00(pProp);
+        //else
         //if(pPrm->bmpIdx==DRAW2D_BMP_IDX_TI_LOGO_1) //ryuhs74@20150909 - Del TI Logo
         //    Draw2D_getBmpProperty10(pProp);
         //else
