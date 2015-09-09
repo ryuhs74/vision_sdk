@@ -1102,6 +1102,7 @@ Void Chains_menuMultiCameraLvdsRun()
                 if ((Bsp_platformIsTda2xxFamilyBuild()) ||
                     (Bsp_platformIsTda3xxFamilyBuild()))
                 {
+#if 0 ///craven@1509
                     if(Board_isMultiDesConnected())
                     {
                         gChains_usecaseCfg.algProcId = System_getSelfProcId();
@@ -1131,6 +1132,11 @@ Void Chains_menuMultiCameraLvdsRun()
                     {
                         Vps_printf(" ### Cannot run usecase. MulitDes Board Not Connected \n");
                     }
+#endif
+                    gChains_usecaseCfg.algProcId = System_getSelfProcId();
+                    gChains_usecaseCfg.numLvdsCh = VIDEO_SENSOR_NUM_LVDS_CAMERAS;
+                    usecaseCfg = gChains_usecaseCfg;
+                    Chains_lvdsVipMultiCam_Display_tda2xx(&gChains_usecaseCfg);
                 }
                 break;
 

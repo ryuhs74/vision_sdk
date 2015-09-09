@@ -592,26 +592,22 @@ Void ChainsCommon_MultiCam_SetCapturePrms(
     {
         pInstPrm = &pPrm->vipInst[i];
 
-        if(BSP_BOARD_MONSTERCAM == Bsp_boardGetId())
-        {
-            if (i == 0)
-            {
-                pInstPrm->vipInstId     =   SYSTEM_CAPTURE_INST_VIP3_SLICE1_PORTA;
-            }
-            else if(i == 1)
-            {
-                pInstPrm->vipInstId     =   SYSTEM_CAPTURE_INST_VIP2_SLICE1_PORTA;
-            }
-            else
-            {
-                pInstPrm->vipInstId     =   SYSTEM_CAPTURE_INST_VIP3_SLICE2_PORTA;
-            }
-        }
-        else
-        {
-            UTILS_assert(portId != NULL);
-            pInstPrm->vipInstId     =   portId[i];
-        }
+		if (i == 0)
+		{
+			pInstPrm->vipInstId     =   SYSTEM_CAPTURE_INST_VIP2_SLICE2_PORTA;
+		}
+		else if(i == 1)
+		{
+			pInstPrm->vipInstId     =   SYSTEM_CAPTURE_INST_VIP1_SLICE2_PORTA;
+		}
+		else if(i == 2)
+		{
+			pInstPrm->vipInstId     =   SYSTEM_CAPTURE_INST_VIP3_SLICE1_PORTA;
+		}
+		else
+		{
+			pInstPrm->vipInstId     =   SYSTEM_CAPTURE_INST_VIP1_SLICE1_PORTA;
+		}
 
         pInstPrm->videoIfMode   =   SYSTEM_VIFM_SCH_DS_HSYNC_VSYNC;
         pInstPrm->videoIfWidth  =   SYSTEM_VIFW_8BIT;
@@ -1511,13 +1507,23 @@ static Void ChainsCommon_SetVidSensorPrms(
     if(sensorId==VID_SENSOR_ISX016)
     {
         pPrm->sensorId      = VID_SENSOR_ISX016;
-        pPrm->vipInstId[0]     = SYSTEM_CAPTURE_INST_VIP2_SLICE2_PORTB;
-        pPrm->standard      = SYSTEM_STD_720P_60;
+        if(numCh == 1)
+        {
+			pPrm->vipInstId[0]     = SYSTEM_CAPTURE_INST_VIP2_SLICE2_PORTB;
+        }
+        else
+        {
+			pPrm->vipInstId[0]     = SYSTEM_CAPTURE_INST_VIP2_SLICE2_PORTA;
+			pPrm->vipInstId[1]     = SYSTEM_CAPTURE_INST_VIP1_SLICE2_PORTA;
+			pPrm->vipInstId[2]     = SYSTEM_CAPTURE_INST_VIP3_SLICE1_PORTA;
+			pPrm->vipInstId[3]     = SYSTEM_CAPTURE_INST_VIP1_SLICE1_PORTA;
+        }
+        pPrm->standard      = SYSTEM_STD_AUTO_DETECT;
         pPrm->dataformat    = SYSTEM_DF_YUV422P;
         pPrm->videoIfWidth  = SYSTEM_VIFW_8BIT;
-        pPrm->fps           = SYSTEM_FPS_60;
+        pPrm->fps           = SYSTEM_FPS_30;
         pPrm->isLVDSCaptMode = FALSE;
-        pPrm->numChan       = 1;
+        pPrm->numChan       = numCh;
     }
 }
 
@@ -2105,7 +2111,7 @@ Void ChainsCommon_InitCaptureDevice(Chains_CaptureSrc captureSrc)
 				&gChains_commonObj.vidSensorPrm,
 				VID_SENSOR_ISX016,
 				NULL,
-				4U,
+				1U,
 				captureSrc);
 	}
 	else
@@ -2240,7 +2246,7 @@ Int32 ChainsCommon_StartCaptureDevice(Chains_CaptureSrc captureSrc,
 				&gChains_commonObj.vidSensorPrm,
 				VID_SENSOR_ISX016,
 				NULL,
-				4U,
+				1U,
 				captureSrc);
 	}
     else if(captureSrc == CHAINS_CAPTURE_SRC_DM388)
@@ -2345,11 +2351,11 @@ Int32 ChainsCommon_MultiCam_StartCaptureDevice( Chains_CaptureSrc captureSrc,
     Int32 status = SYSTEM_LINK_STATUS_SOK;
     VidSensor_CreateStatus vidSensorStatus;
 
-    UTILS_assert(captureSrc==CHAINS_CAPTURE_SRC_OV10635);
+//    UTILS_assert(captureSrc==CHAINS_CAPTURE_SRC_OV10635);
 
     ChainsCommon_SetVidSensorPrms(
             &gChains_commonObj.vidSensorPrm,
-            VID_SENSOR_MULDES_OV1063X,
+			VID_SENSOR_ISX016,
             portId,
             numLvdsCh,
             captureSrc
