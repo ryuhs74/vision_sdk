@@ -61,12 +61,14 @@ Int32 Draw2D_getBmpProperty(Draw2D_BmpPrm *pPrm, Draw2D_BmpProperty *pProp)
 
     if(pPrm!=NULL)
     {
-        //if(pPrm->bmpIdx==DRAW2D_BMP_IDX_TI_LOGO)
-        //    Draw2D_getBmpProperty00(pProp);
-        //else
-        //if(pPrm->bmpIdx==DRAW2D_BMP_IDX_TI_LOGO_1) //ryuhs74@20150909 - Del TI Logo
-        //    Draw2D_getBmpProperty10(pProp);
-        //else
+    	/*
+        if(pPrm->bmpIdx==DRAW2D_BMP_IDX_TI_LOGO)
+            Draw2D_getBmpProperty00(pProp);
+        else
+        if(pPrm->bmpIdx==DRAW2D_BMP_IDX_TI_LOGO_1) //ryuhs74@20150909 - Del TI Logo
+            Draw2D_getBmpProperty10(pProp);
+        else
+         */
         if(pPrm->bmpIdx==DRAW2D_BMP_IDX_SURROUND_VIEW)
             Draw2D_getBmpProperty01(pProp);
         else
