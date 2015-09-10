@@ -238,8 +238,8 @@ endif
 
 ifeq ($(PLATFORM), tda2xx-evm)
 ifeq ($(DDR_MEM), )
-#  DDR_MEM := DDR_MEM_256M
-  DDR_MEM := DDR_MEM_1024M
+  DDR_MEM := DDR_MEM_256M
+#  DDR_MEM := DDR_MEM_1024M
 endif
 endif
 
