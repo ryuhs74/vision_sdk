@@ -518,6 +518,28 @@ Void Chains_showMainMenu()
     Vps_printf(gChains_menuUseCases);
 }
 
+//ryuhs74@20150909 - For HW Test
+Void Chains_showAVM_E500()
+{
+    char ipAddr[20];
+
+    Utils_netGetIpAddrStr(ipAddr);
+
+    Vps_printf(" \n");
+    Vps_printf(" AVM-E500 System Settings,\n");
+    Vps_printf(" ========================\n");
+    Vps_printf(" Capture Source : ISX016  (AVM_C500) \n");
+    Vps_printf(" My IP address  : %s \n", ipAddr );
+    Chains_showIssSettings();
+
+    Vps_printf(" \n");
+    Vps_printf(" ============\r\n");
+    Vps_printf(" Usecase Menu\r\n");
+    Vps_printf(" ============\r\n");
+
+    Vps_printf("Multi-Camera LVDS Use-cases\n4CH VIP Capture + Mosaic Display\n");
+}
+
 /**
  *******************************************************************************
  *
@@ -1141,6 +1163,7 @@ Void Chains_menuMultiCameraLvdsRun()
                 break;
 
             case '2':
+#if 0
                 if(Bsp_platformIsTda2xxFamilyBuild())
                 {
                     if(Board_isMultiDesConnected())
@@ -1169,6 +1192,23 @@ Void Chains_menuMultiCameraLvdsRun()
                         Vps_printf(" ### Cannot run usecase.  MulitDes Board Not Connected \n");
                     }
                 }
+#else
+                gChains_usecaseCfg.numLvdsCh = 4;
+				gChains_usecaseCfg.svOutputMode = ALGORITHM_LINK_SRV_OUTPUT_2D;
+				gChains_usecaseCfg.enableCarOverlayInAlg = 0;
+				usecaseCfg = gChains_usecaseCfg;
+
+				usecaseCfg.displayType = CHAINS_DISPLAY_TYPE_HDMI_1080P;
+
+				if( usecaseCfg.captureSrc!= CHAINS_CAPTURE_SRC_ISX016 )
+				{
+					Vps_printf(" ### ONLY OV10635 Sensor supported for this usecase ");
+					Vps_printf(" ### Please choose OV10635 as Capture Source using option 's'\n");
+					break;
+				}
+
+				Chains_lvdsVipSurroundViewStandalone(&gChains_usecaseCfg);
+#endif
                 break;
 
             case '3':
@@ -1655,6 +1695,7 @@ Void Chains_main(UArg arg0, UArg arg1)
 
             while(!done)
             {
+#if 0 //ryuhs74@20150909 - Start 4CH VIP Capture + Mosaic Display
                 Chains_showMainMenu();
 
                 ch = Chains_readChar();
@@ -1701,7 +1742,35 @@ Void Chains_main(UArg arg0, UArg arg1)
                         done = TRUE;
                         break;
                 }
+#else //ryuhs74@20150909 - Start 4CH VIP Capture + Mosaic Display
+                Chains_showAVM_E500();
+                gChains_usecaseCfg.captureSrc = CHAINS_CAPTURE_SRC_ISX016;
+
+                Chains_statCollectorReset();
+
+                gChains_usecaseCfg.algProcId = System_getSelfProcId();
+                gChains_usecaseCfg.numLvdsCh = VIDEO_SENSOR_NUM_LVDS_CAMERAS;
+                Vps_printf(" 1\n");
+                Chains_lvdsVipMultiCam_Display_tda2xx(&gChains_usecaseCfg);
+                Vps_printf(" 2\n");
+
+
+                ch = Chains_readChar();
+
+                Vps_printf(" \r\n");
+
+				  switch(ch)
+                {
+                
+                    case 'x':
+                    case 'X':
+                        done = TRUE;
+                        break;
+                }
+
+#endif //ryuhs74@20150909 - Start 4CH VIP Capture + Mosaic Display
             }
+
         }
     }
 
