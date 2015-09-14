@@ -238,8 +238,8 @@ endif
 
 ifeq ($(PLATFORM), tda2xx-evm)
 ifeq ($(DDR_MEM), )
-  DDR_MEM := DDR_MEM_256M
-#  DDR_MEM := DDR_MEM_1024M
+#  DDR_MEM := DDR_MEM_256M
+  DDR_MEM := DDR_MEM_1024M
 endif
 endif
 
@@ -294,9 +294,9 @@ endif
 # Supported profiles: release & debug
 ifeq ($(PROFILE), )
 # Enable debug profile for all cores
-# PROFILE = debug
+ PROFILE = debug
 # Enable release profile for all cores
- PROFILE = release
+# PROFILE = release
 endif
 
 ifeq ($(PROFILE_ipu1_0), )
