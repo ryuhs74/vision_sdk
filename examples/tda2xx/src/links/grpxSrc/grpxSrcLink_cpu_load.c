@@ -12,6 +12,7 @@
  *******************************************************************************
  */
 #include "grpxSrcLink_priv.h"
+#include <src/utils_common/include/utils_temperature.h>
 
 #define RGB888_TO_RGB565(r,g,b)     ((((UInt32)(r>>3) & 0x1F) << 11) | (((UInt32)(g>>2) & 0x3F) << 5) | (((UInt32)(b>>3) & 0x1F)))
 
@@ -223,5 +224,16 @@ Int32 GrpxSrcLink_drawCpuLoad(GrpxSrcLink_Obj *pObj,
 
            startX += fontProp.width*6 + padX;
     }
+
+    snprintf(loadString, GRPX_SRC_LINK_STR_SZ,
+                  "TEMP : %d\n",
+				  Utils_tempGetCurrTemperature(0)
+                  );
+    Draw2D_drawString(pObj->draw2DHndl,
+              startX,
+              y,
+              loadString,
+              &fontPrm
+              );
     return 0;
 }
