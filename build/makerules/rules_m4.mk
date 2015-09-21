@@ -213,6 +213,7 @@ BSPLIB_PATH +=$(DEST_ROOT)/lib/$(PLATFORM)/$(ISA)/$(PROFILE_$(CORE))/utils_platf
 BSPLIB_PATH +=$(DEST_ROOT)/lib/$(PLATFORM)/$(ISA)/$(PROFILE_$(CORE))/sys_config.aem4
 BSPLIB_PATH +=$(DEST_ROOT)/lib/$(PLATFORM)/$(ISA)/$(PROFILE_$(CORE))/starterware_pm_hal.aem4
 BSPLIB_PATH +=$(DEST_ROOT)/lib/$(PLATFORM)/$(ISA)/$(PROFILE_$(CORE))/starterware_pm_lib.aem4
+BSPLIB_PATH +=$(DEST_ROOT)/lib/$(PLATFORM)/$(ISA)/$(PROFILE_$(CORE))/bsp_sdspi.aem4
 ifeq ($(SOCFAMILY),tda3xx)
 BSPLIB_PATH += $(DEST_ROOT)/lib/$(PLATFORM)/$(ISA)/$(PROFILE_$(CORE))/sbl_lib.aem4
 endif
