@@ -54,6 +54,7 @@ include $(MODULE_SRC_BASE_PATH)/tda2xx/src/board/SRC_FILES.MK
 include $(MODULE_SRC_BASE_PATH)/tda2xx/src/devices/SRC_FILES.MK
 include $(MODULE_SRC_BASE_PATH)/tda2xx/src/links/grpxSrc/SRC_FILES.MK
 include $(MODULE_SRC_BASE_PATH)/tda2xx/src/links/split/SRC_FILES.MK
+include $(MODULE_SRC_BASE_PATH)/tda2xx/src/links/uartCmd/SRC_FILES.MK
 include $(MODULE_SRC_BASE_PATH)/tda2xx/src/links/ultrasonic_capture/SRC_FILES.MK
 include $(MODULE_SRC_BASE_PATH)/tda2xx/src/links/link_stats_monitor/SRC_FILES.MK
 include $(MODULE_SRC_BASE_PATH)/tda2xx/src/usecases/vip_stereo_calibration/SRC_FILES.MK
