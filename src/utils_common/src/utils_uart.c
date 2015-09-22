@@ -38,27 +38,31 @@
 #include <boards/bsp_board.h>
 #include <src/utils_common/include/utils_uart.h>
 
+
+
+static char       uartReadBuffer[UART_BUFFER_SIZE];
+
+
 /**
  *******************************************************************************
  * \brief Buffer to read from UART console
  *******************************************************************************
  */
 #pragma DATA_ALIGN(uartReadBuffer, 128);
-static char       uartReadBuffer[UART_BUFFER_SIZE];
-
+static char uartName[UART_CH_MAX][16]; /* device name MUST be global or static variable */
 /**
  *******************************************************************************
  * \brief UART handle for input stream
  *******************************************************************************
  */
-GIO_Handle       uartRxHandle;
+GIO_Handle       uartRxHandle[UART_CH_MAX];
 
 /**
  *******************************************************************************
  * \brief UART handle for output stream
  *******************************************************************************
  */
-GIO_Handle       uartTxHandle;
+GIO_Handle       uartTxHandle[UART_CH_MAX];
 
 /**
  *******************************************************************************
@@ -91,103 +95,69 @@ Bool System_isUartInitDone()
  *
  *******************************************************************************
  */
+
 Void System_uartInit()
 {
     Uart_ChanParams chanParams;
     Error_Block eb;
     GIO_Params  ioParams;
-    static char uartName[16]; /* device name MUST be global or static variable */
     Uart_Params   uartParams;
     int devId;
+    int i;
 
-    Error_init(&eb);
 
-    /*
-     * Initialize channel attributes.
-     */
-    GIO_Params_init(&ioParams);
+	/*
+	 * Initialize channel attributes.
+	 */
+	GIO_Params_init(&ioParams);
 
-    Uart_init();
+	Uart_init();
 
-#ifdef AVM_E500_BUILD		///craven@150901
-    strcpy(uartName, "/uart1");
-    devId = 1;
-#else
-    if(Bsp_platformIsTda2xxFamilyBuild())
+	uartParams              = Uart_PARAMS;
+	uartParams.opMode       = UART_OPMODE_INTERRUPT;
+	uartParams.rxThreshold  = UART_RXTRIGLVL_8;
+	uartParams.txThreshold  = UART_TXTRIGLVL_56;
+	uartParams.baudRate     = UART_BAUDRATE_115_2K;
+	uartParams.prcmDevId    = 0;
+
+	uartParams.enableCache = FALSE;
+
+	/* initialise the edma library and get the EDMA handle */
+	chanParams.hEdma = NULL;
+
+	/* If cross bar events are being used then make isCrossBarIntEn = TRUE and
+	 * choose appropriate interrupt number to be mapped (assign it to
+	 * intNumToBeMapped)
+	 */
+	chanParams.crossBarEvtParam.isCrossBarIntEn = FALSE;
+
+	chanParams.crossBarEvtParam.intNumToBeMapped = 0xFF;
+
+	ioParams.chanParams = (Ptr)&chanParams;
+
+    for(i=0; i<UART_CH_MAX; i++)
     {
-        if(Bsp_boardGetId() == BSP_BOARD_MONSTERCAM)
-        {
-            strcpy(uartName, "/uart2");
-            devId = 2;
-        }
-        else
-        {
-            strcpy(uartName, "/uart0");
-            devId = 0;
-        }
-    }
-    else
-    if(Bsp_platformIsTda3xxFamilyBuild())
-    {
-        strcpy(uartName, "/uart2");
-        devId = 2;
-    }
-    else
-    {
-        /* default */
-        strcpy(uartName, "/uart0");
-        devId = 0;
-    }
-#endif
+		Error_init(&eb);
 
-    uartParams              = Uart_PARAMS;
-    uartParams.opMode       = UART_OPMODE_INTERRUPT;
-    uartParams.hwiNumber    = 8u;
-    uartParams.rxThreshold  = UART_RXTRIGLVL_8;
-    uartParams.txThreshold  = UART_TXTRIGLVL_56;
-    uartParams.baudRate     = UART_BAUDRATE_115_2K;
-    uartParams.prcmDevId    = 0;
+		sprintf(uartName[i], "/uart%d",i);
+		devId = i;
 
-    if(uartParams.opMode == UART_OPMODE_POLLED)
-    {
-        printf(" SYSTEM: UART: POLLED Mode is Selected \n");
-    }
-    else if(uartParams.opMode == UART_OPMODE_INTERRUPT)
-    {
-        printf(" SYSTEM: UART: INTERRUPT Mode is Selected \n");
-    }
-    else
-    {
-        /* MISRA WARNING */
-    }
-    uartParams.enableCache = FALSE;
+		uartParams.hwiNumber    = 8u;
 
-    /* initialise the edma library and get the EDMA handle */
-    chanParams.hEdma = NULL;
+		GIO_addDevice(uartName[i], (Ptr)&Uart_IOMFXNS, NULL, devId, &uartParams);
 
-    /* If cross bar events are being used then make isCrossBarIntEn = TRUE and
-     * choose appropriate interrupt number to be mapped (assign it to
-     * intNumToBeMapped)
-     */
-    chanParams.crossBarEvtParam.isCrossBarIntEn = FALSE;
+		/* create the required channels(TX/RX) for the UART demo */
+		uartTxHandle[i] = GIO_create(uartName[i], GIO_OUTPUT, &ioParams, &eb);
+		uartRxHandle[i] = GIO_create(uartName[i], GIO_INPUT, &ioParams, &eb);
 
-    chanParams.crossBarEvtParam.intNumToBeMapped = 0xFF;
-
-    ioParams.chanParams = (Ptr)&chanParams;
-
-    GIO_addDevice(uartName, (Ptr)&Uart_IOMFXNS, NULL, devId, &uartParams);
-
-    /* create the required channels(TX/RX) for the UART demo */
-    uartTxHandle = GIO_create(uartName, GIO_OUTPUT, &ioParams, &eb);
-    uartRxHandle = GIO_create(uartName, GIO_INPUT, &ioParams, &eb);
-
-    if ((NULL == uartRxHandle) || (NULL == uartTxHandle))
-    {
-        printf(" SYSTEM: UART: ERROR: GIO_create(%s) Failed !!!\n", uartName);
-    }
-    else
-    {
-        InitDone = TRUE;
+		if ((NULL == uartRxHandle) || (NULL == uartTxHandle))
+		{
+			printf(" SYSTEM: UART: ERROR: GIO_create(%s) Failed !!!\n", uartName[i]);
+		}
+		else
+		{
+			InitDone = TRUE;
+		}
     }
 }
 
@@ -212,7 +182,7 @@ void uartPrint(char *string)
         len = strlen(string);
 
         /* Transmit the string*/
-        status = GIO_write(uartTxHandle, string, &len);
+        status = GIO_write(uartTxHandle[UART_CH_DEBUG], string, &len);
 
         if (IOM_COMPLETED != status)
         {
@@ -244,7 +214,7 @@ Void uartRead(Int8 *pOption)
     Int32   nStatus  = IOM_COMPLETED;
     size_t  nLen    = 1u ;
 
-    nStatus = GIO_read(uartRxHandle, &uartReadBuffer, &nLen);
+    nStatus = GIO_read(uartRxHandle[UART_CH_DEBUG], &uartReadBuffer, &nLen);
     if (IOM_COMPLETED != nStatus)
     {
         printf(" SYSTEM: UART: ERROR: GIO_read failed (status = %d) !!! \n",nStatus);
@@ -253,3 +223,40 @@ Void uartRead(Int8 *pOption)
     /* copy only one char */
     *pOption = uartReadBuffer[nLen -1];
 }
+
+
+Int32 UtillUartRead(Utils_UART_Channel channel, uint8_t* rdBuf, size_t* nLen)
+{
+    Int32   nStatus  = IOM_COMPLETED;
+
+    while(InitDone != TRUE)
+    {
+        BspOsal_sleep(100);
+    }
+    nStatus = GIO_read(uartRxHandle[channel], rdBuf, nLen);
+    if (IOM_COMPLETED != nStatus)
+    {
+    	printf(" SYSTEM: UART: ERROR: GIO_read failed (status = %d) !!! \n",nStatus);
+    }
+
+    return nStatus;
+}
+
+Int32 UtillUartWrite(Utils_UART_Channel channel, uint8_t* wrBuf, size_t* nLen)
+{
+    Int32   nStatus  = IOM_COMPLETED;
+
+    while(InitDone != TRUE)
+    {
+        BspOsal_sleep(100);
+    }
+    /* Transmit the string*/
+    nStatus = GIO_write(uartTxHandle[channel], wrBuf, nLen);
+    if (IOM_COMPLETED != nStatus)
+    {
+    	printf(" SYSTEM: UART: ERROR: GIO_read failed (status = %d) !!! \n",nStatus);
+    }
+
+    return nStatus;
+}
+

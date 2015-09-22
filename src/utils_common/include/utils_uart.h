@@ -50,6 +50,13 @@ extern "C"
  *******************************************************************************
  */
 
+typedef enum
+{
+	UART_CH_MICOM =	0,
+	UART_CH_DEBUG =	1,
+	UART_CH_MAX	  =	2
+}Utils_UART_Channel;
+
  /**
  *******************************************************************************
  *
@@ -68,6 +75,9 @@ Void System_uartInit();
 Bool System_isUartInitDone();
 Void uartPrint(char *string);
 Void uartRead(Int8 *pOption);
+
+Int32 UtillUartRead(Utils_UART_Channel channel, uint8_t* rdBuf, size_t* nLen);
+Int32 UtillUartWrite(Utils_UART_Channel channel, uint8_t* wrBuf, size_t* nLen);
 
 #ifdef __cplusplus
 }
