@@ -1693,11 +1693,19 @@ Void Chains_main(UArg arg0, UArg arg1)
             char ch;
             Bool done;
 
+            Chains_showAVM_E500();
+
+            Chains_statCollectorReset();
+
+            gChains_usecaseCfg.captureSrc = CHAINS_CAPTURE_SRC_ISX016;
+            gChains_usecaseCfg.algProcId = System_getSelfProcId();
+            gChains_usecaseCfg.numLvdsCh = VIDEO_SENSOR_NUM_LVDS_CAMERAS;
+            Chains_lvdsVipMultiCam_Display_tda2xx(&gChains_usecaseCfg);
+
             done = FALSE;
 
             while(!done)
             {
-#if 0 //ryuhs74@20150909 - Start 4CH VIP Capture + Mosaic Display
                 Chains_showMainMenu();
 
                 ch = Chains_readChar();
@@ -1744,35 +1752,7 @@ Void Chains_main(UArg arg0, UArg arg1)
                         done = TRUE;
                         break;
                 }
-#else //ryuhs74@20150909 - Start 4CH VIP Capture + Mosaic Display
-                Chains_showAVM_E500();
-                gChains_usecaseCfg.captureSrc = CHAINS_CAPTURE_SRC_ISX016;
-
-                Chains_statCollectorReset();
-
-                gChains_usecaseCfg.algProcId = System_getSelfProcId();
-                gChains_usecaseCfg.numLvdsCh = VIDEO_SENSOR_NUM_LVDS_CAMERAS;
-                Vps_printf(" 1\n");
-                Chains_lvdsVipMultiCam_Display_tda2xx(&gChains_usecaseCfg);
-                Vps_printf(" 2\n");
-
-
-                ch = Chains_readChar();
-
-                Vps_printf(" \r\n");
-
-				  switch(ch)
-                {
-                
-                    case 'x':
-                    case 'X':
-                        done = TRUE;
-                        break;
-                }
-
-#endif //ryuhs74@20150909 - Start 4CH VIP Capture + Mosaic Display
             }
-
         }
     }
 
