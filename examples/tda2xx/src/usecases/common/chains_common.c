@@ -1509,14 +1509,14 @@ static Void ChainsCommon_SetVidSensorPrms(
         pPrm->sensorId      = VID_SENSOR_ISX016;
         if(numCh == 1)
         {
-			pPrm->vipInstId[0]     = SYSTEM_CAPTURE_INST_VIP2_SLICE2_PORTB;
+			pPrm->vipInstId[0]     = SYSTEM_CAPTURE_INST_VIP2_SLICE2_PORTB; //ADAS
         }
         else
         {
-			pPrm->vipInstId[0]     = SYSTEM_CAPTURE_INST_VIP2_SLICE2_PORTA;
-			pPrm->vipInstId[1]     = SYSTEM_CAPTURE_INST_VIP1_SLICE2_PORTA;
-			pPrm->vipInstId[2]     = SYSTEM_CAPTURE_INST_VIP3_SLICE1_PORTA;
-			pPrm->vipInstId[3]     = SYSTEM_CAPTURE_INST_VIP1_SLICE1_PORTA;
+			pPrm->vipInstId[0]     = SYSTEM_CAPTURE_INST_VIP2_SLICE2_PORTA; //ryuhs74@20151002 - REAR Camera
+			pPrm->vipInstId[1]     = SYSTEM_CAPTURE_INST_VIP1_SLICE2_PORTA; //Left
+			pPrm->vipInstId[2]     = SYSTEM_CAPTURE_INST_VIP3_SLICE1_PORTA; //Right
+			pPrm->vipInstId[3]     = SYSTEM_CAPTURE_INST_VIP1_SLICE1_PORTA; //Front
         }
         pPrm->standard      = SYSTEM_STD_AUTO_DETECT;
         pPrm->dataformat    = SYSTEM_DF_YUV422P;
