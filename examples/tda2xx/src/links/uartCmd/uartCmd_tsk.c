@@ -76,6 +76,7 @@ static int UART_SendCmd(uint8_t targetId, uint8_t srcId, uint8_t *data, uint16_t
 }
 
 
+extern int gisCapture;
 
 static int UART_ParseCmd(uint8_t *rxBuf)
 {
@@ -130,6 +131,8 @@ static int UART_ParseCmd(uint8_t *rxBuf)
 		case CMD_REQ_MICOM_VER:		// Recv version of AVM MICOM
 			break;
 		case CMD_SEND_IRDA_KEY:		// Recv IrDA command with Key value
+			gisCapture = 1;
+			Vps_printf("**********************************gisCapture : %d\n", gisCapture);
 			break;
 		case CMD_SEND_RGEAR:		// Recv Rear Gear On/Off
 			break;
