@@ -716,8 +716,8 @@ UInt8 filesave_tskStack_right[1024*4];
 
 UInt8 rear_dataAddr[FILE_SIZE+1];
 UInt8 front_dataAddr[FILE_SIZE+1];
-//UInt8 left_dataAddr[FILE_SIZE+1];
-// UInt8 right_dataAddr[FILE_SIZE+1];
+UInt8 left_dataAddr[FILE_SIZE];
+UInt8 right_dataAddr[FILE_SIZE];
 
 
 
@@ -834,8 +834,8 @@ Void filesave_tsk_left(UArg arg0, UArg arg1)
 
 		sprintf(loadstring,"%s File Save Start", tmpName);
 		//Draw2D_drawString(pCtx, 100, 100, loadstring, pPrm);
-		//memcpy(left_dataAddr, videoFrame->bufAddr[0], FILE_SIZE);
-		ret = fwrite(videoFrame->bufAddr[0], 1, FILE_SIZE, fp);
+		memcpy(left_dataAddr, videoFrame->bufAddr[0], FILE_SIZE);
+		ret = fwrite(left_dataAddr/*videoFrame->bufAddr[0]*/, 1, FILE_SIZE, fp);
 
 		if( ret == 0)
 			Vps_printf(" ************************* file Write Fail %s!!!\n", tmpName);
@@ -862,6 +862,7 @@ Void filesave_tsk_right(UArg arg0, UArg arg1)
 	int chnum = 0;
 	FILE* fp = NULL;
 	char loadstring[50] = {0,};
+	//UInt8* dataAddr = NULL;
 
 	System_VideoFrameBuffer* videoFrame = (System_VideoFrameBuffer*)arg0;
 
@@ -876,9 +877,18 @@ Void filesave_tsk_right(UArg arg0, UArg arg1)
 	if( fp != NULL){
 		int ret = 0;
 
+
+		//dataAddr = (UInt8*)Utils_memAlloc(UTILS_HEAPID_L2_LOCAL, sizeof(UInt8), FILE_SIZE);
+		//if( dataAddr == NULL){
+		//	gisCaptureCh_right = 1;
+		//	Vps_printf(" ========> RIGHT Camer Mem Fail %s!!! <========\n", tmpName);
+		//	return;
+		//}
+
 		sprintf(loadstring,"%s File Save Start", tmpName);
 		//Draw2D_drawString(pCtx, 100, 100, loadstring, pPrm);
-		//memcpy(right_dataAddr, videoFrame->bufAddr[0], FILE_SIZE);
+		//memcpy(dataAddr, videoFrame->bufAddr[0], FILE_SIZE);
+		//ret = fwrite(dataAddr, 1, FILE_SIZE, fp);
 		ret = fwrite(videoFrame->bufAddr[0], 1, FILE_SIZE, fp);
 
 		if( ret == 0)
@@ -894,6 +904,8 @@ Void filesave_tsk_right(UArg arg0, UArg arg1)
 	} else {
 		Vps_printf(" ************************* file Open Fail %s!!!\n", tmpName);
 	}
+
+	//free(dataAddr);
 
 	fclose(fp);
 	fp = NULL;

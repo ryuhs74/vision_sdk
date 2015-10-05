@@ -467,6 +467,7 @@ static Void chains_lvdsVipMultiCam_Display_SwitchDisplayChannel(
  *
  *******************************************************************************
 */
+extern int gisCapture;
 Void Chains_lvdsVipMultiCam_Display_tda2xx(Chains_Ctrl *chainsCfg)
 {
     char ch;
@@ -498,6 +499,10 @@ Void Chains_lvdsVipMultiCam_Display_tda2xx(Chains_Ctrl *chainsCfg)
             case '1':
                 chains_lvdsVipMultiCam_Display_SwitchDisplayChannel(&chainsObj);
                 break;
+            case '2':
+            	gisCapture = 1;
+            	Vps_printf("**********************************gisCapture : %d\n", gisCapture);
+            	break;
             default:
                 Vps_printf("\nUnsupported option '%c'. Please try again\n", ch);
                 break;
