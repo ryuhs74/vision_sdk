@@ -1773,6 +1773,8 @@ char gChains_runTimeMenu[] = {
     "\r\n 0: Stop Chain"
     "\r\n "
     "\r\n 1: Change Display Channel (Support 4CH LVDS + Mosaic use-case only)"
+	"\r\n "
+	"\r\n 2: Capture 4ch YUV"
     "\r\n "
     "\r\n p: Print Performance Statistics "
     "\r\n "
