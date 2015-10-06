@@ -88,12 +88,18 @@ ifeq ($(VSDK_BOARD_TYPE),TDA2XX_EVM)
 	$(MAKE) -C $(starterware_PATH) nor_flash_writer  $(SBL_TDA2XX_OPTIONS)
 endif
 
+sbl_nor_updater:
+ifeq ($(VSDK_BOARD_TYPE),TDA2XX_EVM)
+	$(MAKE) -C $(starterware_PATH) nor_flash_updater  $(SBL_TDA2XX_OPTIONS)
+endif
+
 sbl_clean:
 ifeq ($(PLATFORM),$(filter $(PLATFORM), tda2xx-evm tda2xx-mc))
 	$(MAKE) -C $(starterware_PATH) sbl_all_clean  $(SBL_TDA2XX_OPTIONS)
 	$(MAKE) -C $(starterware_PATH) sbl_all_clean  $(SBL_TDA2XX_MC_OPTIONS) 
 	$(MAKE) -C $(starterware_PATH) qspiFlashWriter_clean  $(SBL_TDA2XX_OPTIONS) 
 	$(MAKE) -C $(starterware_PATH) nor_flash_writer_clean  $(SBL_TDA2XX_OPTIONS) 
+	$(MAKE) -C $(starterware_PATH) nor_flash_updater_clean  $(SBL_TDA2XX_OPTIONS) 
 endif
 ifeq ($(PLATFORM),tda3XX-evm)
 	$(MAKE) -C $(starterware_PATH) sbl_all_clean $(SBL_TDA3XX_OPTIONS) 

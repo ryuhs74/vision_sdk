@@ -205,6 +205,7 @@ BSPLIB_PATH +=$(DEST_ROOT)/lib/$(PLATFORM)/$(ISA)/$(PROFILE_$(CORE))/bsp_vps.aem
 BSPLIB_PATH +=$(DEST_ROOT)/lib/$(PLATFORM)/$(ISA)/$(PROFILE_$(CORE))/bsp_examples_utility.aem4
 BSPLIB_PATH +=$(DEST_ROOT)/lib/$(PLATFORM)/$(ISA)/$(PROFILE_$(CORE))/bsp_osal.aem4
 BSPLIB_PATH +=$(DEST_ROOT)/lib/$(PLATFORM)/$(ISA)/$(PROFILE_$(CORE))/i2c_lib.aem4
+BSPLIB_PATH +=$(DEST_ROOT)/lib/$(PLATFORM)/$(ISA)/$(PROFILE_$(CORE))/norflash_lib.aem4
 BSPLIB_PATH +=$(DEST_ROOT)/lib/$(PLATFORM)/$(ISA)/$(PROFILE_$(CORE))/qspi_flashlib.aem4
 BSPLIB_PATH +=$(DEST_ROOT)/lib/$(PLATFORM)/$(ISA)/$(PROFILE_$(CORE))/starterware_hal.aem4
 BSPLIB_PATH +=$(DEST_ROOT)/lib/$(PLATFORM)/$(ISA)/$(PROFILE_$(CORE))/starterware_common.aem4

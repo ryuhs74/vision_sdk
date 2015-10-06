@@ -17,6 +17,7 @@ starterware:
 	$(MAKE) -C $(starterware_PATH)/utils/common       $(TARGET) CORE=m4vpss PROFILE_m4vpss=$(PROFILE_ipu1_0)
 	$(MAKE) -C $(starterware_PATH)/platform           $(TARGET) CORE=m4vpss PROFILE_m4vpss=$(PROFILE_ipu1_0)
 	$(MAKE) -C $(starterware_PATH)/qspilib/qspi_flash $(TARGET) CORE=m4vpss PROFILE_m4vpss=$(PROFILE_ipu1_0)
+	$(MAKE) -C $(starterware_PATH)/norflashlib        $(TARGET) CORE=m4vpss PROFILE_m4vpss=$(PROFILE_ipu1_0)
 	$(MAKE) -C $(starterware_PATH)/system_config      $(TARGET) CORE=m4 PROFILE_m4=$(PROFILE_ipu1_0)
 	$(MAKE) -C $(starterware_PATH)/pm/pmhal           $(TARGET) CORE=m4 PROFILE_m4=$(PROFILE_ipu1_0)
 	$(MAKE) -C $(starterware_PATH)/pm/pmlib           $(TARGET) CORE=m4 PROFILE_m4=$(PROFILE_ipu1_0)

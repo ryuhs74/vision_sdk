@@ -211,6 +211,9 @@ sbl_qspi_sd:
 sbl_nor:
 	$(MAKE) -C ./build/makerules -fbuild_sbl.mk sbl_nor
 
+sbl_nor_updater:
+	$(MAKE) -C ./build/makerules -fbuild_sbl.mk sbl_nor_updater
+	
 sbl_clean:
 	$(MAKE) -C ./build/makerules -fbuild_sbl.mk sbl_clean
 
