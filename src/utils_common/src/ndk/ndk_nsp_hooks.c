@@ -350,7 +350,7 @@ GMACSW_Config *GMACSW_getConfig(void)
          * port is connected to a PHY with address = 3.
          */
 #ifndef TDA2EX_BUILD
-        pGMACSWConfig->macInitCfg[i].phyMask = 0x1 << (2 + i);
+        pGMACSWConfig->macInitCfg[i].phyMask = 0x1 << (3 - i);
 #else
 	pGMACSWConfig->macInitCfg[i].phyMask = 0x8 >> (i*2);
 #endif
