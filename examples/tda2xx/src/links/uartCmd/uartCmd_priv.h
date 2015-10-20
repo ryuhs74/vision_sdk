@@ -95,6 +95,9 @@ typedef enum
 	CMD_REQ_LVDS_STATUS,
 	CMD_REQ_AUDIO_OUT,
 
+	CMD_SEND_HDMI_ONOFF = (0x39),
+	CMD_SEND_ETHERNET_ONOFF = (0x40),
+
 } CMD_EXTMICOM_TO_DSP;
 #if 0
 #define CMD_REQ_DSP_STANDBY		(0x11)	// Send standby command when ACC off, and then perprom power sequencing
