@@ -72,7 +72,8 @@ char gChains_menuUseCases[] = {
     "\r\n 5: ISS Use-cases, (TDA3x ONLY)"
     "\r\n 6: Stereo Use-cases, (TDA2x MonsterCam ONLY)"
     "\r\n 7: Network RX/TX Use-cases"
-    "\r\n "
+	"\r\n 8: AVM-E500 Start"
+	"\r\n "
     "\r\n s: System Settings "
     "\r\n "
     "\r\n x: Exit "
@@ -352,6 +353,8 @@ char gChains_menuIssSettings_1[] = {
     "\r\n Enter Choice: "
     "\r\n "
 };
+
+char Chains_readChar2(); //ryuhs74@20151020 - HDMA On/Off
 
 void Chains_showIssSettings()
 {
@@ -1658,6 +1661,8 @@ Void Chains_menuNetworkRxTxRun()
  *
  *******************************************************************************
 */
+void Start_AVM_E500(); //ryuhs74@20151020 - Add HDMI On/Off Test
+
 Void Chains_main(UArg arg0, UArg arg1)
 {
     ChainsCommon_Init();
@@ -1693,14 +1698,7 @@ Void Chains_main(UArg arg0, UArg arg1)
             char ch;
             Bool done;
 
-            Chains_showAVM_E500();
-
-            Chains_statCollectorReset();
-
-            gChains_usecaseCfg.captureSrc = CHAINS_CAPTURE_SRC_ISX016;
-            gChains_usecaseCfg.algProcId = System_getSelfProcId();
-            gChains_usecaseCfg.numLvdsCh = VIDEO_SENSOR_NUM_LVDS_CAMERAS;
-            Chains_lvdsVipMultiCam_Display_tda2xx(&gChains_usecaseCfg);
+            Start_AVM_E500();
 
             done = FALSE;
 
@@ -1708,7 +1706,7 @@ Void Chains_main(UArg arg0, UArg arg1)
             {
                 Chains_showMainMenu();
 
-                ch = Chains_readChar();
+                ch = Chains_readChar2();
 
                 Vps_printf(" \r\n");
 
@@ -1741,7 +1739,9 @@ Void Chains_main(UArg arg0, UArg arg1)
                     case '7':
                         Chains_menuNetworkRxTxRun();
                         break;
-
+                    case '8':
+                    	Start_AVM_E500();
+						break;
                     case 's':
                     case 'S':
                         Chains_showSystemSettingsMenu();
@@ -1759,6 +1759,18 @@ Void Chains_main(UArg arg0, UArg arg1)
     ChainsCommon_DeInit();
 }
 
+
+void Start_AVM_E500() //ryuhs74@20151020 - Add HDMI On/Off Test
+{
+	Chains_showAVM_E500();
+
+	Chains_statCollectorReset();
+
+	gChains_usecaseCfg.captureSrc = CHAINS_CAPTURE_SRC_ISX016;
+	gChains_usecaseCfg.algProcId = System_getSelfProcId();
+	gChains_usecaseCfg.numLvdsCh = VIDEO_SENSOR_NUM_LVDS_CAMERAS;
+	Chains_lvdsVipMultiCam_Display_tda2xx(&gChains_usecaseCfg);
+}
 /**
  *******************************************************************************
  * \brief Run Time Menu string.
@@ -1791,6 +1803,35 @@ char gChains_runTimeMenu[] = {
  *
  *******************************************************************************
 */
+char gisTemp = 0x0A;
+char Chains_readChar2() //ryuhs74@20151020 - HDMA On/Off Test
+{
+    Int8 ch[80];
+
+    Vps_printf(" ### Chains_readChar2 ## \n");
+
+    while( 1 )
+    {
+    	if(( gisTemp == '0' ) || ( gisTemp == '8' ))
+    	{
+    		ch[0] = gisTemp;
+    		gisTemp = 0x0A;
+    		Vps_printf(" ### ch[0]: %c, gisTemp : %c ## \n", ch[0], gisTemp);
+    		break;
+    	}
+    	BspOsal_sleep(1000);
+    }
+
+    return ch[0];
+}
+
+char Chains_menuRunTime2() //ryuhs74@20151020 - HDMA On/Off Test
+{
+    Vps_printf(gChains_runTimeMenu);
+
+    return Chains_readChar2();
+}
+
 char Chains_readChar()
 {
     Int8 ch[80];

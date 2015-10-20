@@ -77,6 +77,12 @@ static int UART_SendCmd(uint8_t targetId, uint8_t srcId, uint8_t *data, uint16_t
 
 
 extern int gisCapture;
+extern UInt32 gdone;  //ryuhs74@20151020 - Add HDMI On/Off Test
+void Start_AVM_E500(); //ryuhs74@20151020 - Add HDMI On/Off Test
+void Stop_AVM_E500(); //ryuhs74@20151020 - Add HDMI On/Off Test
+void Chains_main(UArg arg0, UArg arg1);
+extern char gisTemp; //ryuhs74@20151020 - Add HDMI On/Off Test
+static UInt32 i = 0; //ryuhs74@20151020 - Add HDMI On/Off Test
 
 static int UART_ParseCmd(uint8_t *rxBuf)
 {
@@ -131,8 +137,70 @@ static int UART_ParseCmd(uint8_t *rxBuf)
 		case CMD_REQ_MICOM_VER:		// Recv version of AVM MICOM
 			break;
 		case CMD_SEND_IRDA_KEY:		// Recv IrDA command with Key value
-			gisCapture = 1;
-			Vps_printf("**********************************gisCapture : %d\n", gisCapture);
+			switch(GET_ARG2(rxBuf)) //ryuhs74@20151020 - Add HDMI On/Off Test Start
+			{
+			case 0x39:
+				buf[0] = 0x39;
+				Vps_printf("CMD_SEND_IRDA_KEY CMD : %x", 0x39);
+				if( i == 0x00){
+					//end AVM-E500 Display
+					Vps_printf(" / Off\n");
+					//Stop_AVM_E500();
+					gisTemp = '0';
+					buf[1] = ACK;
+					i = 1;
+				} else {
+					//start AVM-E500
+					Vps_printf(" / On 1");
+					//Start_AVM_E500();
+					gisTemp = '8';
+					buf[1] = ACK;
+					i = 0;
+					Vps_printf(" / 1\n");
+				}
+				UART_SendCmd(DEV_ID_AVM_MICOM, DEV_ID_AVM_DSP, buf, 2);
+				break;
+			case 0x40:
+				buf[0] = 0x40;
+				Vps_printf("CMD_SEND_IRDA_KEY CMD : %x", 0x40);
+				if( GET_ARG2(rxBuf) == 0x00){
+					buf[1] = ACK;
+					Vps_printf(" / Off");
+				} else {
+					buf[1] = ACK;
+					Vps_printf(" / On \n");
+				}
+				UART_SendCmd(DEV_ID_AVM_MICOM, DEV_ID_AVM_DSP, buf, 2);
+				break;
+			case 0x41:
+				buf[0] = 0x41;
+				Vps_printf("CMD_SEND_IRDA_KEY CMD : %x", 0x41);
+				if( GET_ARG2(rxBuf) == 0x00){
+					buf[1] = ACK;
+					Vps_printf(" / Off");
+				} else {
+					buf[1] = ACK;
+					Vps_printf(" / On \n");
+				}
+				UART_SendCmd(DEV_ID_AVM_MICOM, DEV_ID_AVM_DSP, buf, 2);
+				break;
+			case 0x42:
+				buf[0] = 0x42;
+				Vps_printf("CMD_SEND_IRDA_KEY CMD : %x", 0x42);
+				if( GET_ARG2(rxBuf) == 0x00){
+					buf[1] = ACK;
+					Vps_printf(" / Off");
+				} else {
+					buf[1] = ACK;
+					Vps_printf(" / On \n");
+				}
+				UART_SendCmd(DEV_ID_AVM_MICOM, DEV_ID_AVM_DSP, buf, 2);
+				break;
+			case 0x05  :
+				gisCapture = 1;
+				Vps_printf("**********************************gisCapture : %d\n", gisCapture);
+				break;
+			} //ryuhs74@20151020 - Add HDMI On/Off Test End
 			break;
 		case CMD_SEND_RGEAR:		// Recv Rear Gear On/Off
 			break;

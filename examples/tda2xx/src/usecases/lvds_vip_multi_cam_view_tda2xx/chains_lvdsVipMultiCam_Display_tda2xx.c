@@ -468,15 +468,20 @@ static Void chains_lvdsVipMultiCam_Display_SwitchDisplayChannel(
  *******************************************************************************
 */
 extern int gisCapture;
+//Chains_LvdsVipMultiCam_DisplayAppObj* gpChainsObj = NULL; //ryuhs74@20151014
+Chains_LvdsVipMultiCam_DisplayAppObj chainsObj;
+char Chains_menuRunTime2();
 Void Chains_lvdsVipMultiCam_Display_tda2xx(Chains_Ctrl *chainsCfg)
 {
     char ch;
     UInt32 done = FALSE;
-    Chains_LvdsVipMultiCam_DisplayAppObj chainsObj;
+    //Chains_LvdsVipMultiCam_DisplayAppObj chainsObj;
 
     chainsObj.numLvdsCh         = 0; /* KW error fix */
     chainsObj.displayActiveChId = 0; /* KW error fix */
     chainsObj.chainsCfg = chainsCfg;
+
+    //gpChainsObj = &chainsObj; //ryuhs74@20151014
 
     chains_lvdsVipMultiCam_Display_tda2xx_Create(&chainsObj.ucObj, &chainsObj);
 
@@ -484,8 +489,11 @@ Void Chains_lvdsVipMultiCam_Display_tda2xx(Chains_Ctrl *chainsCfg)
 
     while(!done)
     {
+#if 1
+    	ch = Chains_menuRunTime2();
+#else
         ch = Chains_menuRunTime();
-
+#endif
         switch(ch)
         {
             case '0':
@@ -510,5 +518,13 @@ Void Chains_lvdsVipMultiCam_Display_tda2xx(Chains_Ctrl *chainsCfg)
     }
 
     chains_lvdsVipMultiCam_Display_StopAndDeleteApp(&chainsObj);
+}
+
+void Stop_AVM_E500( ) //ryuhs74@20151014
+{
+	//if( gpChainsObj != NULL){
+		chains_lvdsVipMultiCam_Display_StopAndDeleteApp(&chainsObj);//gpChainsObj);
+		//gpChainsObj = NULL;
+	//}
 }
 
