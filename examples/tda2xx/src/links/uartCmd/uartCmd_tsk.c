@@ -172,7 +172,7 @@ static int UART_ParseCmd(uint8_t *rxBuf)
 
 	case CMD_REQ_HDMI_ONOFF:
 	{
-		extern void vpshal_HdmiWpVideoStart(UInt32 start);
+		extern void vpshal_HdmiWpVideoStart(UInt32 start)	;
 
 		buf[0] = CMD_REQ_HDMI_ONOFF;
 		buf[1] = ACK;
@@ -189,6 +189,11 @@ static int UART_ParseCmd(uint8_t *rxBuf)
 			vpshal_HdmiWpVideoStart(1);
 		}
 		UART_SendCmd(DEV_ID_AVM_MICOM, DEV_ID_AVM_DSP, buf, 2);
+        BspOsal_sleep(200);
+		buf[0] = CMD_SEND_HDMI_ON_OFF;
+		buf[1] = GET_ARG1(rxBuf);
+		UART_SendCmd(DEV_ID_AVM_MICOM, DEV_ID_AVM_DSP, buf, 2);
+
 		break;
 	}
 	case CMD_REQ_ETHERNET_ONOFF:
