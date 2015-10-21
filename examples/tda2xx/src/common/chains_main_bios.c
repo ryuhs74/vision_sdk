@@ -1706,7 +1706,7 @@ Void Chains_main(UArg arg0, UArg arg1)
             {
                 Chains_showMainMenu();
 
-                ch = Chains_readChar2();
+                ch = Chains_readChar();
 
                 Vps_printf(" \r\n");
 
@@ -1803,34 +1803,6 @@ char gChains_runTimeMenu[] = {
  *
  *******************************************************************************
 */
-char gisTemp = 0x0A;
-char Chains_readChar2() //ryuhs74@20151020 - HDMA On/Off Test
-{
-    Int8 ch[80];
-
-    Vps_printf(" ### Chains_readChar2 ## \n");
-
-    while( 1 )
-    {
-    	if(( gisTemp == '0' ) || ( gisTemp == '8' ))
-    	{
-    		ch[0] = gisTemp;
-    		gisTemp = 0x0A;
-    		Vps_printf(" ### ch[0]: %c, gisTemp : %c ## \n", ch[0], gisTemp);
-    		break;
-    	}
-    	BspOsal_sleep(1000);
-    }
-
-    return ch[0];
-}
-
-char Chains_menuRunTime2() //ryuhs74@20151020 - HDMA On/Off Test
-{
-    Vps_printf(gChains_runTimeMenu);
-
-    return Chains_readChar2();
-}
 
 char Chains_readChar()
 {

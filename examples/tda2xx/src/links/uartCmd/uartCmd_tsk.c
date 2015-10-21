@@ -77,11 +77,7 @@ static int UART_SendCmd(uint8_t targetId, uint8_t srcId, uint8_t *data, uint16_t
 
 
 extern int gisCapture;
-extern UInt32 gdone;  //ryuhs74@20151020 - Add HDMI On/Off Test
-void Start_AVM_E500(); //ryuhs74@20151020 - Add HDMI On/Off Test
-void Stop_AVM_E500(); //ryuhs74@20151020 - Add HDMI On/Off Test
-void Chains_main(UArg arg0, UArg arg1);
-extern char gisTemp; //ryuhs74@20151020 - Add HDMI On/Off Test
+extern UInt32 gdone;
 
 static int UART_ParseCmd(uint8_t *rxBuf)
 {
@@ -92,12 +88,12 @@ static int UART_ParseCmd(uint8_t *rxBuf)
 	//
 	/////////////////////////////////////////
 	///   Error Check
-	if ( GET_START_TAG(rxBuf) != START_TAG )
+	if ( GET_START_TAG(rxBuf) != START_TAG)
 	{
 		Vps_printf("START TAG Error");
 		return MSG_ERROR_BAD_PARAMETER;
 	}
-	if ( GET_END_TAG(rxBuf) != END_TAG )
+	if ( GET_END_TAG(rxBuf) != END_TAG)
 	{
 		Vps_printf("END TAG Error");
 		return MSG_ERROR_BAD_PARAMETER;
@@ -105,87 +101,123 @@ static int UART_ParseCmd(uint8_t *rxBuf)
 
 	dataLen = GET_LENGTH(rxBuf);
 	calcBcc = Make_BCC(&rxBuf[1], dataLen);
-	if ( calcBcc != GET_BCC(rxBuf) )
+	if (calcBcc != GET_BCC(rxBuf))
 	{
-		Vps_printf("BCC error, calcBcc(%d), bcc(%d)\n", calcBcc, GET_BCC(rxBuf));
+		Vps_printf(	"BCC error, calcBcc(%d), bcc(%d)\n",
+					calcBcc,
+					GET_BCC(rxBuf));
 		return MSG_ERROR_BCC;
 	}
 
 	////////////////////////////////////////
 	/// Parse message
-	Vps_printf("ParserCMD [0x%02X] len[%d] data[0x%02X 0x%02X 0x%02X 0x%02X]", GET_COMMAND(rxBuf),dataLen,GET_ARG1(rxBuf), GET_ARG2(rxBuf), GET_ARG3(rxBuf), GET_ARG4(rxBuf));
+	Vps_printf(	"ParserCMD [0x%02X] len[%d] data[0x%02X 0x%02X 0x%02X 0x%02X]",
+				GET_COMMAND(rxBuf),
+				dataLen,
+				GET_ARG1(rxBuf),
+				GET_ARG2(rxBuf),
+				GET_ARG3(rxBuf),
+				GET_ARG4(rxBuf));
 
-	switch(GET_COMMAND(rxBuf))
+	switch (GET_COMMAND(rxBuf))
 	{
-		case CMD_REQ_DSP_STANDBY:
-		{
+	case CMD_REQ_DSP_STANDBY:
+	{
 
-		}
+		break;
+	}
+
+	case CMD_REQ_DSP_STATUS:
+	{
+		Vps_printf("STATUS REQ");
+		buf[0] = CMD_REQ_DSP_STATUS;
+		buf[1] = ACK;
+		buf[2] = DSP_STATUS_AVM_MODE;
+		UART_SendCmd(DEV_ID_AVM_MICOM, DEV_ID_AVM_DSP, buf, 3);
+		break;
+	}
+
+	case CMD_REQ_MICOM_VER:		// Recv version of AVM MICOM
+		break;
+	case CMD_SEND_IRDA_KEY:		// Recv IrDA command with Key value
+		switch (GET_ARG2(rxBuf))
+		//ryuhs74@20151020 - Add HDMI On/Off Test Start
+		{
+		case 0x05:
+			gisCapture = 1;
+			Vps_printf(	"**********************************gisCapture : %d\n",
+						gisCapture);
+			break;
+		} //ryuhs74@20151020 - Add HDMI On/Off Test End
+		break;
+	case CMD_SEND_RGEAR:		// Recv Rear Gear On/Off
+		break;
+	case CMD_CONTROL_VIDEO_OUT:	// ???
+		break;
+	case CMD_SDCARD_HPD:		// ???
+		break;
+	case CMD_REQ_VBAT_ADC:		// ???
+		break;
+	case CMD_DSP_REQ_TEST:
 		break;
 
-		case CMD_REQ_DSP_STATUS:
-		{
-			Vps_printf("STATUS REQ");
-			buf[0] = CMD_REQ_DSP_STATUS;
-			buf[1] = ACK;
-			buf[2] = DSP_STATUS_AVM_MODE;
-			UART_SendCmd(DEV_ID_AVM_MICOM, DEV_ID_AVM_DSP, buf, 3);
-		}
+	case CMD_SEND_TURN_SIGNAL:
+		break;
+	case CMD_SEND_BUTTON_PRESSED:	///Recv Button Event
+		break;
+	case CMD_REQ_LVDS_STATUS:
+		break;
+	case CMD_REQ_AUDIO_OUT:
 		break;
 
-		case CMD_REQ_MICOM_VER:		// Recv version of AVM MICOM
-			break;
-		case CMD_SEND_IRDA_KEY:		// Recv IrDA command with Key value
-			switch(GET_ARG2(rxBuf)) //ryuhs74@20151020 - Add HDMI On/Off Test Start
-			{
-			case 0x05  :
-				gisCapture = 1;
-				Vps_printf("**********************************gisCapture : %d\n", gisCapture);
-				break;
-			} //ryuhs74@20151020 - Add HDMI On/Off Test End
-			break;
-		case CMD_SEND_RGEAR:		// Recv Rear Gear On/Off
-			break;
-		case CMD_CONTROL_VIDEO_OUT:	// ???
-			break;
-		case CMD_SDCARD_HPD:		// ???
-			break;
-		case CMD_REQ_VBAT_ADC:		// ???
-			break;
-		case CMD_DSP_REQ_TEST:
-			break;
+	case CMD_REQ_HDMI_ONOFF:
+	{
+		extern void vpshal_HdmiWpVideoStart(UInt32 start);
 
-		case CMD_SEND_TURN_SIGNAL:
-			break;
-		case CMD_SEND_BUTTON_PRESSED:	///Recv Button Event
-			break;
-		case CMD_REQ_LVDS_STATUS:
-			break;
-		case CMD_REQ_AUDIO_OUT:
-			break;
+		buf[0] = CMD_REQ_HDMI_ONOFF;
+		buf[1] = ACK;
+		Vps_printf(	"CMD_REQ_HDMI_ONOFF : %x %s",
+					GET_ARG1(rxBuf),
+					GET_ARG1(rxBuf) ? "ON" : "OFF");
 
-		case CMD_SEND_HDMI_ONOFF:
-			buf[0] = CMD_SEND_HDMI_ONOFF;
-			Vps_printf("CMD_SEND_HDMI_ONOFF : %x", GET_ARG1(rxBuf));
-			if( GET_ARG1(rxBuf) == 0x00){
-				Vps_printf(" / Off\n");
-				gisTemp = '0';
-				buf[1] = ACK;
-			} else {
-				Vps_printf(" / On 1");
-				gisTemp = '8';
-				buf[1] = ACK;
-				Vps_printf(" / 1\n");
-			}
-			UART_SendCmd(DEV_ID_AVM_MICOM, DEV_ID_AVM_DSP, buf, 2);
-			break;
-		case CMD_SEND_ETHERNET_ONOFF:
-			break;
-		default:
+		if ( GET_ARG1(rxBuf) == 0x00)
 		{
-			Vps_printf("UNKNOWN CMD\n");
-
+			vpshal_HdmiWpVideoStart(0);
 		}
+		else
+		{
+			vpshal_HdmiWpVideoStart(1);
+		}
+		UART_SendCmd(DEV_ID_AVM_MICOM, DEV_ID_AVM_DSP, buf, 2);
+		break;
+	}
+	case CMD_REQ_ETHERNET_ONOFF:
+	{
+		extern void PlatformRGMII1SetPinDeMux(void);
+		extern void PlatformRGMII1SetPinMux(void);
+
+		buf[0] = CMD_REQ_ETHERNET_ONOFF;
+		buf[1] = ACK;
+		Vps_printf("CMD_REQ_ETHERNET_ONOFF : %x %s",
+				   GET_ARG1(rxBuf),
+				   GET_ARG1(rxBuf) ? "ON" : "OFF");
+
+		if ( GET_ARG1(rxBuf) == 0x00)
+		{
+			PlatformRGMII1SetPinDeMux();
+		}
+		else
+		{
+			PlatformRGMII1SetPinMux();
+		}
+		UART_SendCmd(DEV_ID_AVM_MICOM, DEV_ID_AVM_DSP, buf, 2);
+		break;
+	}
+	default:
+	{
+		Vps_printf("UNKNOWN CMD\n");
+
+	}
 		break;
 	}
 	///

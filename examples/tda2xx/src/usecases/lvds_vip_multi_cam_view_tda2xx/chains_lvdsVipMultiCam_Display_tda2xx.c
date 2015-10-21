@@ -489,11 +489,7 @@ Void Chains_lvdsVipMultiCam_Display_tda2xx(Chains_Ctrl *chainsCfg)
 
     while(!done)
     {
-#if 1
-    	ch = Chains_menuRunTime2();
-#else
         ch = Chains_menuRunTime();
-#endif
         switch(ch)
         {
             case '0':
