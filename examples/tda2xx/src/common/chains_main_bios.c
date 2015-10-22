@@ -33,6 +33,7 @@
 #include <examples/tda2xx/include/chains_common.h>
 #include <src/utils_common/include/utils_prcm_stats.h>
 #include <examples/tda2xx/include/uartCmd.h>
+#include <examples/tda2xx/include/error_monitor.h>
 
 /*******************************************************************************
  *  Defines
@@ -1668,6 +1669,7 @@ Void Chains_main(UArg arg0, UArg arg1)
     ChainsCommon_Init();
     Chains_Ctrl_Init(&gChains_usecaseCfg);
     UartCmd_tsk_init();
+    Error_Monitor_init();
 
     #ifdef TDA3XX_FAMILY_BUILD
     if(System_isFastBootEnabled())

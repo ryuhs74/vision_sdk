@@ -196,7 +196,6 @@ Int32 Board_init()
              * be a I2C address conflict between the SII9127 present in the
              * Vayu VISION board and one of the deserializer chip.
              */
-            deviceInitPrms.isI2cProbingReq = TRUE;
             nStatus = Bsp_deviceInit(&deviceInitPrms);
 
             if (SYSTEM_LINK_STATUS_SOK != nStatus)
