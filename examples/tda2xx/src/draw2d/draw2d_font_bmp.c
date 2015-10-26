@@ -349,15 +349,21 @@ Int32 Draw2D_drawBmp_rot(Draw2D_Handle pCtx,
                         Draw2D_BmpPrm *pPrm,
                         UInt32 rotate)
 {
+
     Int32 status = SYSTEM_LINK_STATUS_SOK;
     Draw2D_Obj *pObj = (Draw2D_Obj *)pCtx;
     UInt32 width, height, bmpAddr, h, w;
     UInt16 color, *bmpAddr16;
     Draw2D_BmpProperty bmp;
 
+#if 1 ///@todo Surrund View problem craven@151026
+    if(pObj!=NULL)
+        return SYSTEM_LINK_STATUS_SOK;
+#else
     if(pObj==NULL)
-        return SYSTEM_LINK_STATUS_EINVALID_PARAMS;
+    	return SYSTEM_LINK_STATUS_EINVALID_PARAMS;
 
+#endif
     Draw2D_getBmpProperty(pPrm, &bmp);
 
     width = bmp.width;
