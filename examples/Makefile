@@ -6,7 +6,7 @@ vision_sdk_examples_CORE_DEPENDENCY = yes
 
 # List all the external components/interfaces, whose interface header files
 #  need to be included for this component
-INCLUDE_EXTERNAL_INTERFACES = bios xdc starterware bsp ipc vision_sdk fc xdais edma starterware_hal bsp_examples_utility
+INCLUDE_EXTERNAL_INTERFACES = bios xdc starterware bsp ipc vision_sdk fc xdais edma starterware_hal bsp_examples_utility norflash_lib
 
 MODULE_SRC_BASE_PATH := $(vision_sdk_PATH)/examples
 
@@ -57,7 +57,7 @@ include $(MODULE_SRC_BASE_PATH)/tda2xx/src/links/split/SRC_FILES.MK
 include $(MODULE_SRC_BASE_PATH)/tda2xx/src/links/uartCmd/SRC_FILES.MK
 include $(MODULE_SRC_BASE_PATH)/tda2xx/src/links/ultrasonic_capture/SRC_FILES.MK
 include $(MODULE_SRC_BASE_PATH)/tda2xx/src/links/link_stats_monitor/SRC_FILES.MK
-include $(MODULE_SRC_BASE_PATH)/tda2xx/src/links/error_monitor/SRC_FILES.MK
+include $(MODULE_SRC_BASE_PATH)/tda2xx/src/links/nor_flash_utils/SRC_FILES.MK
 include $(MODULE_SRC_BASE_PATH)/tda2xx/src/usecases/vip_stereo_calibration/SRC_FILES.MK
 include $(MODULE_SRC_BASE_PATH)/tda2xx/src/usecases/network_stereo_display/SRC_FILES.MK
 include $(MODULE_SRC_BASE_PATH)/tda2xx/src/usecases/iss_mult_capture_isp_simcop_sv_tda3xx/SRC_FILES.MK
