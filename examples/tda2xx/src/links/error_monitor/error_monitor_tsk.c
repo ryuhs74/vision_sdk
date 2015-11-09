@@ -39,11 +39,12 @@ Void Error_Monitor_main(UArg arg0, UArg arg1)
 	{	Uint32 i=0;
 		for(i=0; i< BSP_DEVICE_ISX016_INST_ID_4+1; i++)
 		{
-			des_status_lflt[i] = Bsp_boardGetDesStatusLFLT(i);
+			Uint8 state = 0;
+			des_status_lflt[i] = Bsp_boardGetDesStatusLFLT(i,&state);
 			if(des_status_lflt_bak[i]!=des_status_lflt[i])
 			{
 
-				Vps_printf("LFLT Pin Changed ID[%d] [%d]-> [%d]\n", i, des_status_lflt_bak[i], des_status_lflt[i]);
+				Vps_printf("LFLT Pin Changed ID[%d] [%d]-> [%d] State[%X]\n", i, des_status_lflt_bak[i], des_status_lflt[i],state);
 				des_status_lflt_bak[i]=des_status_lflt[i];
 			}
 		}
