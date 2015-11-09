@@ -78,6 +78,7 @@ Void ChainsCommon_Init()
         SplitLink_init();
         UltrasonicCaptureLink_init();
         System_qspiInit();
+        System_norInit();
         ChainsCommon_Stereo_Init();
     }
 

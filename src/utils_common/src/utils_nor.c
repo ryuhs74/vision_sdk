@@ -26,13 +26,13 @@
 #include "soc_defines.h"
 #include "platform.h"
 
-#include "../../../examples/tda2xx/src/links/nor_flash_utils/inc/device.h"
-#include "../../../examples/tda2xx/src/links/nor_flash_utils/inc/norwriter.h"
+#include "device.h"
+//#include "norwriter.h"
 #include "nor.h"
 #ifdef TDA2XX_FAMILY_BUILD
 #include "wd_timer.h"
 #endif
-#include "util.h"
+//#include "util.h"
 #include "debug.h"
 
 /************************************************************
@@ -82,7 +82,6 @@
  * Local Function Declarations                               *
  ************************************************************/
 
-static UInt32 norwriter(void);
 static int32_t local_DEBUGprintString(const char *s);
 
 /************************************************************
@@ -143,26 +142,16 @@ GPMC_Config_t GPMC_ConfigNorDefault = {
  * Global Function Definitions                               *
  ************************************************************/
 
-int norInit(void)
+int System_norInit(void)
 {
-    UInt32         status;
     Nor_InitPrms_t Nor_InitPrms;
     uint32_t       local_DEBUGprintStringFuncAddr =
         (uint32_t) (&local_DEBUGprintString);
 
-#ifdef TDA2XX_FAMILY_BUILD
-    /*Disable the WDTIMER*/
-    WDTIMERDisable(SOC_WD_TIMER2_BASE);
-#endif
 
     GPMC_Init(&GPMC_ConfigNorDefault, GPMC_CS0);
 
     PlatformGPMCSetPinMux();
-
-    /* Init memory alloc pointer to start of DDR heap */
-    UTIL_setCurrMemPtr(0);
-
-    memset(&Nor_InitPrms, 0, sizeof (Nor_InitPrms_t));
 
     /* Initialize function pointer Default */
     NOR_InitParmsDefault(&Nor_InitPrms);
@@ -172,257 +161,8 @@ int norInit(void)
     /* Initialize function pointer Default */
     NOR_Init(&Nor_InitPrms);
 
-    /* Execute the NOR flashing */
-    status = norwriter();
-
-    if (status != SUCCESS)
-    {
-        printf("\tNOR flashing failed!\r\n");
-    }
-    else
-    {
-        printf("\tNOR boot preparation was successful!\r\n");
-    }
-
     return 0;
 }
-
-/************************************************************
- * Local Function Definitions                                *
- ************************************************************/
-
-static UInt32 norwriter(void)
-{
-    NOR_InfoHandle hNorInfo;
-    FILE          *fPtr;
-    UInt8         *tmp;
-    Int32          fileSize = 0, input;
-    char           fileName[512];
-    UInt32         baseAddress = 0;
-    UInt32         blockSize, blockAddr;
-    UInt32         offset;
-    Int32          eraseWhole = 0;
-    UInt32         retVal     = SUCCESS;
-#ifdef USE_SRAM
-    Int32          addr_offset = 0;
-    Int32          writeSize   = 0;
-#else
-    UInt8         *filePtr;
-    Int32          numBytesRead, totalBytesRead;
-#endif
-
-    DEBUG_printString("Starting NOR Flash Writer.\n");
-
-    /* Initialize NOR Flash */
-    hNorInfo = NOR_open(NORStartAddr, 2U /* 16 Bit */);
-    if (hNorInfo == NULL)
-    {
-        DEBUG_printString("\tERROR: NOR Initialization failed.\r\n");
-        retVal = FAIL;
-    }
-
-    if (retVal == SUCCESS)
-    {
-        /* Get NOR block size */
-        NOR_getBlockInfo(hNorInfo, NORStartAddr, &blockSize, &blockAddr);
-
-        /* let user enter the offset */
-        offset = 0;
-
-        /* Read the file from host */
-        printf("\nEnter the file path to flash: ");
-        scanf("%511s", fileName);
-
-        /* Read the offset from user */
-        if (offset == 0)
-        {
-            printf("Enter the Offset in bytes (HEX): ");
-            scanf("%x", &offset);
-        }
-
-        printf("Erase Options:\n---------------\n");
-        printf("          0 -> Erase Only Required Region\n");
-        printf("          1 -> Erase Whole Flash\n");
-        printf("          2 -> Skip Erase \n");
-        printf("Enter Erase Option:\n");
-        scanf("%d", &eraseWhole);
-
-        /* Set base address to start putting data at */
-        baseAddress = hNorInfo->flashBase + (UInt32) offset;
-
-        /* Open a file from the PC */
-        fPtr = fopen(fileName, "rb");
-        if (fPtr == NULL)
-        {
-            DEBUG_printString("\tERROR: File ");
-            DEBUG_printString(fileName);
-            DEBUG_printString(" open failed.\r\n");
-            retVal = FAIL;
-        }
-    }
-    if (retVal == SUCCESS)
-    {
-        /* Read file size */
-        fseek(fPtr, 0, FILE_SEEK_END);
-        fileSize = ftell(fPtr);
-        if (fileSize == 0)
-        {
-            DEBUG_printString(
-
-                "\tERROR: File read failed.. Closing program.\r\n");
-            fclose(fPtr);
-            retVal = FAIL;
-        }
-    }
-    if (retVal == SUCCESS)
-    {
-        fseek(fPtr, 0, FILE_SEEK_SET);
-
-#ifdef USE_SRAM
-        tmp = (UInt8 *) UTIL_allocMem(BUF_SIZE);
-#else
-        /* Setup pointer in RAM */
-        tmp = filePtr = (UInt8 *) UTIL_allocMem((UInt32) fileSize);
-#endif
-        if (tmp != NULL)
-        {
-            switch (eraseWhole)
-            {
-                case 0: /* erase required region */
-                    /* Erasing the Flash */
-                    if (NOR_erase(hNorInfo, baseAddress,
-                                  (UInt32) fileSize) != SUCCESS)
-                    {
-                        DEBUG_printString(
-                            "\tERROR: Erasing NOR failed.\r\n");
-                        retVal = FAIL;
-                    }
-                    break;
-                case 1: /* erase whole FLASH */
-                    /* Erasing the Flash */
-                    if (NOR_erase(hNorInfo, baseAddress,
-                                  hNorInfo->flashSize) != SUCCESS)
-                    {
-                        DEBUG_printString(
-                            "\tERROR: Erasing NOR failed.\r\n");
-                        retVal = FAIL;
-                    }
-                    break;
-                default:
-                    /* Skip erase */
-                    DEBUG_printString("\tSkip Erase.\r\n");
-                    break;
-            }
-            if (retVal == SUCCESS)
-            {
-                printf("Load Options:\n-------------\n");
-                printf("    0 -> fread using code (RTS Library)\n");
-                printf("    1 -> load raw using CCS (Scripting console)\n");
-                printf("Enter Load Option: \n");
-                scanf("%d", &input);
-#ifdef USE_SRAM
-                addr_offset = 0;
-                writeSize   = BUF_SIZE;
-                DEBUG_printString("\tStarted Flashing....\n");
-                while (!feof(fPtr))
-                {
-                    printf("Reading %d bytes from file...", BUF_SIZE);
-                    fflush(stdout);
-                    if (!feof(fPtr))
-                    {
-                        writeSize = (Int32) fread((void *) tmp, (size_t) 1,
-                                                  (size_t) BUF_SIZE, fPtr);
-                    }
-                    printf("\n Flashing %d bytes...", BUF_SIZE);
-                    /*Write the actual application to the flash*/
-                    if (NOR_writeBytes(hNorInfo, (baseAddress + addr_offset),
-                                       writeSize, (UInt32) tmp) != SUCCESS)
-                    {
-                        DEBUG_printString(
-                            "\tERROR: Writing NOR failed.\r\n");
-                        retVal = FAIL;
-                        break;
-                    }
-
-                    addr_offset += writeSize;
-                    fflush(stdout);
-                }
-                if (retVal == SUCCESS)
-                {
-                    DEBUG_printString("\tCompleted\r\n");
-                    DEBUG_printString(
-                        "\t!!! Successfully Flashed !!!\r\n");
-                    fclose(fPtr);
-                }
-#else
-                if (0 == input)
-                {
-                    printf("Reading %u bytes from file...\r\n", fileSize);
-                    totalBytesRead = 0;
-                    while (1)
-                    {
-                        numBytesRead = (Int32) fread((void *) tmp,
-                                                     (size_t) 1,
-                                                     (size_t) READ_CHUNK,
-                                                     fPtr);
-                        tmp += numBytesRead;
-                        totalBytesRead += numBytesRead;
-                        if (numBytesRead < READ_CHUNK)
-                        {
-                            break;
-                        }
-                        printf("Read %d bytes [%d%%] from file...\r\n",
-                               totalBytesRead,
-                               ((totalBytesRead * 100) / fileSize));
-                    }
-                    if (fileSize != totalBytesRead)
-                    {
-                        printf("\tWARNING: File Size mismatch.\r\n");
-                    }
-                    printf("Read %d bytes [%d%%] from file. Done!!\r\n",
-                           totalBytesRead, ((totalBytesRead * 100) / fileSize));
-                }
-                else
-                {
-                    printf("Use below command in CCS scripting console...\r\n");
-                    printf("loadRaw(0x%.8x, 0, \"%s\", 32, false);\n",
-                           tmp, fileName);
-                    printf("Kindly use '/' (forward slash) in the file ");
-                    printf("path\r\n");
-                    printf("Enter any alpha-numeric key once ");
-                    printf("loadraw is complete...\n");
-                    scanf("%d", &input);
-                }
-                fclose(fPtr);
-
-                /* Write the actual application to the flash */
-                if (NOR_writeBytes(hNorInfo, baseAddress,
-                                   (UInt32) fileSize,
-                                   (UInt32) filePtr) != SUCCESS)
-                {
-                    DEBUG_printString(
-                        "\tERROR: Writing NOR failed.\n");
-                    retVal = FAIL;
-                }
-                else
-                {
-                    printf("Done.\n");
-                    DEBUG_printString(
-                        "\t!!! Successfully Flashed !!!\n");
-                }
-#endif
-            }
-        }
-        else
-        {
-            retVal = FAIL;
-        }
-        fclose(fPtr);
-    }
-
-    return retVal;
-}
-
 /***********************************************************
  * End file                                                 *
  ***********************************************************/

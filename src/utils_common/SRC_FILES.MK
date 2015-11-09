@@ -41,6 +41,8 @@ SRCS_ipu1_0 += utils_execp_trace_local_m4.c utils_uart.c \
                sci.c \
                cToolsHelper.c \
 			   utils_mem_ipu1_0.c \
+			   utils_lut.c	\
+			   utils_nor.c
 
 
 
