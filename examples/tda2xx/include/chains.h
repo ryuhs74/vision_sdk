@@ -104,6 +104,7 @@ extern "C" {
 
 #include <src/utils_common/include/utils_uart.h>
 #include <src/utils_common/include/utils_qspi.h>
+#include <src/utils_common/include/utils_nor.h>
 #include <src/utils_common/include/utils_dma.h>
 #include <src/utils_common/include/utils_mem.h>
 #include <src/utils_common/include/utils_l3_emif_bw.h>
@@ -886,7 +887,7 @@ static inline Void Chains_Ctrl_Init(Chains_Ctrl *pPrm)
 
     pPrm->algProcId = SYSTEM_PROC_DSP1;
     pPrm->numLvdsCh = VIDEO_SENSOR_NUM_LVDS_CAMERAS;
-    pPrm->displayType = CHAINS_DISPLAY_TYPE_HDMI_1080P;
+    pPrm->displayType = CHAINS_DISPLAY_TYPE_HDMI_720P;
     pPrm->captureSrc = CHAINS_CAPTURE_SRC_OV10635;
     pPrm->numPyramids = 0;
     pPrm->issLdcEnable = FALSE;

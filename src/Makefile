@@ -10,7 +10,7 @@ INCLUDE_EXTERNAL_INTERFACES = bios xdc ipc starterware bsp vision_sdk fc xdais j
 
 # List all the internal submodules whose interface header files
 # need to be included for this module
-INCLUDE_INTERNAL_INTERFACES = starterware_hal utils_platform qspi_flashlib starterware_vpslib sys_config starterware_pm_hal starterware_pm_lib sbl_lib
+INCLUDE_INTERNAL_INTERFACES = starterware_hal utils_platform qspi_flashlib starterware_vpslib sys_config starterware_pm_hal starterware_pm_lib sbl_lib norflash_lib
 
 MODULE_SRC_BASE_PATH := $(vision_sdk_PATH)/src
 

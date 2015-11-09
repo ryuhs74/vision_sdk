@@ -34,6 +34,7 @@
 #include <src/utils_common/include/utils_prcm_stats.h>
 #include <examples/tda2xx/include/uartCmd.h>
 #include <examples/tda2xx/include/error_monitor.h>
+#include <src/utils_common/include/utils_lut.h>
 
 /*******************************************************************************
  *  Defines
@@ -1646,6 +1647,23 @@ Void Chains_menuNetworkRxTxRun()
     Chains_networkRxTx(&gChains_usecaseCfg);
 }
 
+Void PrintLut(void)
+{
+	LUT_INDEX i = Basic_frontView;
+	for(i = Basic_frontView; i<MAX_LUT_INDEX; i++)
+	{
+		uint8_t* lut;
+		lut = LUTAlloc(i);
+		if(lut!=NULL)
+		{
+            Vps_printf("LUT[%d] %02X %02X %02X %02X %02X %02X %02X %02X\n",i, lut[0], lut[1], lut[2], lut[3], lut[4], lut[5], lut[6], lut[7]);
+		}else
+		{
+            Vps_printf("LUT ALLOC ERROR[%d]\n",i);
+		}
+	}
+}
+
 /**
  *******************************************************************************
  *
@@ -1670,7 +1688,7 @@ Void Chains_main(UArg arg0, UArg arg1)
     Chains_Ctrl_Init(&gChains_usecaseCfg);
     UartCmd_tsk_init();
     Error_Monitor_init();
-
+    PrintLut();
     #ifdef TDA3XX_FAMILY_BUILD
     if(System_isFastBootEnabled())
     {
