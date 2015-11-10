@@ -81,14 +81,7 @@ Void Chains_networkRxTx(Chains_Ctrl *chainsCfg)
             case '5':
                 if(BSP_PLATFORM_SOC_ID_TDA2EX != Bsp_platformGetSocId())
                 {
-                 if(Board_isMultiDesConnected())
-                 {
                      Chains_networkTxMultiCamCapture(chainsCfg);
-                 }
-                 else
-                 {
-                     Vps_printf(" ### Cannot run usecase on this platform\n");
-                 }
                 }
                 else
                 {

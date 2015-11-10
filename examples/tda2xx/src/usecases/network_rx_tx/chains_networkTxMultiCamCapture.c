@@ -82,7 +82,7 @@ Void chains_networkTxMultiCamCapture_SetAppPrms(chains_networkTxMultiCamCaptureO
             pUcObj->NullLinkID);
 
     ChainsCommon_MultiCam_StartCaptureDevice(
-        CHAINS_CAPTURE_SRC_OV10635,
+		CHAINS_CAPTURE_SRC_ISX016,
         portId,
         numLvdsCh
         );
