@@ -18,6 +18,10 @@
 #define CAPTURE_SENSOR_WIDTH      (1280)
 #define CAPTURE_SENSOR_HEIGHT     (720)
 
+
+extern Void chains_networkTxEncCapture_SetEncPrms(
+        EncLink_CreateParams *pPrm,
+        System_IVideoFormat codecType);
 /**
  *******************************************************************************
  *
@@ -68,8 +72,8 @@ Void chains_networkTxMultiCamCapture_SetAppPrms(chains_networkTxMultiCamCaptureO
         = (Chains_NetworkTxCaptureAppObj*)appObj;
 
     UInt32 portId[VIDEO_SENSOR_MAX_LVDS_CAMERAS];
-    UInt32 i, numLvdsCh = 4;
-    UInt32 frameSkipMask = 0x2AAAAAAA;
+    UInt32 numLvdsCh = 4;
+//    UInt32 frameSkipMask = 0x2AAAAAAA;
 
     pUcObj->IPCIn_A15_0_IPU1_0_0LinkID
         = SYSTEM_MAKE_LINK_ID(
@@ -94,12 +98,19 @@ Void chains_networkTxMultiCamCapture_SetAppPrms(chains_networkTxMultiCamCaptureO
             numLvdsCh
             );
 
+    chains_networkTxEncCapture_SetEncPrms(
+        &pUcObj->EncodePrm,
+        SYSTEM_IVIDEO_MJPEG
+        );
+/*
+
     for(i=0; i<numLvdsCh; i++)
     {
         pUcObj->CapturePrm.vipInst[i].outParams[0].frameSkipMask
             = frameSkipMask;
     }
 
+*/
 
     chains_networkTxMultiCamCapture_SetNullPrms(
         pObj,

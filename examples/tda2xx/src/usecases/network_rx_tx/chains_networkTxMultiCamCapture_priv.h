@@ -21,16 +21,19 @@
 
 #include <include/link_api/system.h>
 #include <include/link_api/captureLink.h>
+#include <include/link_api/encLink.h>
 #include <include/link_api/ipcLink.h>
 #include <include/link_api/nullLink.h>
 
 typedef struct {
        UInt32    CaptureLinkID;
+       UInt32    EncodeLinkID;
        UInt32    IPCOut_IPU1_0_A15_0_0LinkID;
        UInt32    IPCIn_A15_0_IPU1_0_0LinkID;
        UInt32    NullLinkID;
 
        CaptureLink_CreateParams                CapturePrm;
+       EncLink_CreateParams                    EncodePrm;
        IpcLink_CreateParams                    IPCOut_IPU1_0_A15_0_0Prm;
        IpcLink_CreateParams                    IPCIn_A15_0_IPU1_0_0Prm;
        NullLink_CreateParams                   NullPrm;

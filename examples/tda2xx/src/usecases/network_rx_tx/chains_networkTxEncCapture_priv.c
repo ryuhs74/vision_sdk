@@ -95,14 +95,21 @@ Int32 chains_networkTxEncCapture_Create(chains_networkTxEncCaptureObj *pObj, Voi
        chains_networkTxEncCapture_SetAppPrms(pObj, appObj);
 
        chains_networkTxEncCapture_ConnectLinks(pObj);
+
+
        status = System_linkCreate(pObj->CaptureLinkID, &pObj->CapturePrm, sizeof(pObj->CapturePrm));
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
        status = System_linkCreate(pObj->DupLinkID, &pObj->DupPrm, sizeof(pObj->DupPrm));
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
+
+
        status = System_linkCreate(pObj->EncodeLinkID, &pObj->EncodePrm, sizeof(pObj->EncodePrm));
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
+
+
 
        status = System_linkCreate(pObj->IPCOut_IPU1_0_A15_0_0LinkID, &pObj->IPCOut_IPU1_0_A15_0_0Prm, sizeof(pObj->IPCOut_IPU1_0_A15_0_0Prm));
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
@@ -112,6 +119,10 @@ Int32 chains_networkTxEncCapture_Create(chains_networkTxEncCaptureObj *pObj, Voi
 
        status = System_linkCreate(pObj->NullLinkID, &pObj->NullPrm, sizeof(pObj->NullPrm));
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
+
+
+
 
        status = System_linkCreate(pObj->Display_VideoLinkID, &pObj->Display_VideoPrm, sizeof(pObj->Display_VideoPrm));
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
