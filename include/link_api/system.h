@@ -70,7 +70,8 @@ extern "C" {
  *  Defines
  *******************************************************************************
  */
-
+#define CAMMSYS_LUT_AVME500	//ryuhs74@20151109 - Add Change From chains_lvdsVipSurroundViewStandalone Usecases To CAMMSYS LUT AVME500
+#define AVM_E500_SV		//ryuhs74@20151110 - Add Change Multi Cam or SV
 /* @{ */
 /**
  *******************************************************************************

@@ -86,6 +86,19 @@ extern "C" {
 #define DRAW2D_BMP_IDX_STEREO_COLORBAR_35x450 (13)
 #define DRAW2D_BMP_IDX_JEEP_IMAGE_TRUESCALE (14) /*jeep image with same scale (width/length) as toy jeep*/
 
+#define DRAW2D_BMP_IDX_FRONT_VIEW_NOR		(15)
+#define DRAW2D_BMP_IDX_FRONT_VIEW_SEL		(16)
+#define DRAW2D_BMP_IDX_REAR_VIEW_NOR		(17)
+#define DRAW2D_BMP_IDX_REAR_VIEW_SEL		(18)
+#define DRAW2D_BMP_IDX_RIGHT_VIEW_NOR		(19)
+#define DRAW2D_BMP_IDX_RIGHT_VIEW_SEL		(20)
+#define DRAW2D_BMP_IDX_LEFT_VIEW_NOR		(21)
+#define DRAW2D_BMP_IDX_LEFT_VIEW_SEL		(22)
+#define DRAW2D_BMP_IDX_SETTING_VIEW_NOR		(23)
+#define DRAW2D_BMP_IDX_SETTING_VIEW_SEL		(24)
+#define DRAW2D_BMP_IDX_FULL_VIEW_NONE		(25)
+#define DRAW2D_BMP_IDX_FULL_VIEW_FRONT		(26)
+#define DRAW2D_BMP_IDX_FULL_VIEW_REAR		(27)
 /*
  *******************************************************************************
  *

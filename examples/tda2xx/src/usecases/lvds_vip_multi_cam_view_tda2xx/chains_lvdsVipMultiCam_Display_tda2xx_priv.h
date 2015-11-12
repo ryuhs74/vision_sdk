@@ -29,6 +29,8 @@
 #include <include/link_api/grpxSrcLink.h>
 #include <include/link_api/displayLink.h>
 
+#include <include/link_api/saveLink.h> //ryuhs74@20151027 - Add Save Link
+
 typedef struct {
        UInt32    CaptureLinkID;
        UInt32    DupLinkID;
@@ -49,6 +51,9 @@ typedef struct {
        DisplayLink_CreateParams                Display_videoPrm;
        GrpxSrcLink_CreateParams                GrpxSrcPrm;
        DisplayLink_CreateParams                Display_GrpxPrm;
+
+       //Uint32 Save_SaveLinkID;				//ryuhs74220151027 - Add Save Link
+       SaveLink_CreateParams				Save_Prm;//ryuhs74220151027 - Add Save Link
 } chains_lvdsVipMultiCam_Display_tda2xxObj;
 
 Void chains_lvdsVipMultiCam_Display_tda2xx_SetLinkId(chains_lvdsVipMultiCam_Display_tda2xxObj *pObj);

@@ -26,6 +26,9 @@ static uint8_t RxBuf[DATA_MAX_LEN];
 static uint8_t TxBuf[DATA_MAX_LEN];
 static uint32_t RxBufPos = 0;
 
+//ryuhs74@20151104 - Add Put CMD To GrpxSrcLink
+void GrpxSrcLink_putCmd( uint8_t _cmd );
+
 
 static int LOCAL_UART_isReceivedAll(uint8_t *buf, uint16_t len)
 {
@@ -143,10 +146,17 @@ static int UART_ParseCmd(uint8_t *rxBuf)
 		switch (GET_ARG2(rxBuf))
 		//ryuhs74@20151020 - Add HDMI On/Off Test Start
 		{
-		case 0x05:
+		case 0x09: //File Save - IRDA_KEY_PWR = (0x09)
 			gisCapture = 1;
 			Vps_printf(	"**********************************gisCapture : %d\n",
 						gisCapture);
+			break;
+		case 0x0F : //Front - IRDA_KEY_UP = (0x0F)
+		case 0x0E : //Rear - IRDA_KEY_DOWN = (0x0E)
+		case 0x0B : //LFET - IRDA_KEY_LEFT = (0x0B)
+		case 0x0A : //RIGHT - IRDA_KEY_RIGHT = (0x0A)
+		case 0x05 : //Full - IRDA_KEY_FULL = (0x05),
+			GrpxSrcLink_putCmd( GET_ARG2(rxBuf) );
 			break;
 		} //ryuhs74@20151020 - Add HDMI On/Off Test End
 		break;
@@ -162,6 +172,7 @@ static int UART_ParseCmd(uint8_t *rxBuf)
 		break;
 
 	case CMD_SEND_TURN_SIGNAL:
+
 		break;
 	case CMD_SEND_BUTTON_PRESSED:	///Recv Button Event
 		break;

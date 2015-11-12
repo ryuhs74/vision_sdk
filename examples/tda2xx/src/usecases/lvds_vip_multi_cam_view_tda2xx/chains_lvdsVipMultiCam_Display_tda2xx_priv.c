@@ -26,6 +26,9 @@ Void chains_lvdsVipMultiCam_Display_tda2xx_SetLinkId(chains_lvdsVipMultiCam_Disp
        pObj->Display_videoLinkID            = SYSTEM_LINK_ID_DISPLAY_0;
        pObj->GrpxSrcLinkID                  = IPU1_0_LINK (SYSTEM_LINK_ID_GRPX_SRC_0);
        pObj->Display_GrpxLinkID             = SYSTEM_LINK_ID_DISPLAY_1;
+
+
+       //pObj->Save_SaveLinkID                = IPU1_0_LINK (SYSTEM_LINT_SAVE_0); //ryuhs74@20151027 - Add Save Link
 }
 
 Void chains_lvdsVipMultiCam_Display_tda2xx_ResetLinkPrms(chains_lvdsVipMultiCam_Display_tda2xxObj *pObj){
@@ -38,6 +41,10 @@ Void chains_lvdsVipMultiCam_Display_tda2xx_ResetLinkPrms(chains_lvdsVipMultiCam_
        DisplayLink_CreateParams_Init(&pObj->Display_videoPrm);
        GrpxSrcLink_CreateParams_Init(&pObj->GrpxSrcPrm);
        DisplayLink_CreateParams_Init(&pObj->Display_GrpxPrm);
+
+       //ryuhs74@20151027 - Add Save Link
+       SaveLink_CreateParams_Init(&pObj->Save_Prm);
+
 }
 
 Void chains_lvdsVipMultiCam_Display_tda2xx_SetPrms(chains_lvdsVipMultiCam_Display_tda2xxObj *pObj){
@@ -64,6 +71,11 @@ Void chains_lvdsVipMultiCam_Display_tda2xx_ConnectLinks(chains_lvdsVipMultiCam_D
        pObj->MergePrm.inQueParams[1].prevLinkId = pObj->DupLinkID;
        pObj->MergePrm.inQueParams[1].prevLinkQueId = 1;
 
+       //Dup -> Save //ryuhs74@20151028 - Add Save Link
+       pObj->DupPrm.outQueParams[2].nextLink = pObj->SyncLinkID;
+       pObj->Save_Prm.inQueParams.prevLinkId = pObj->DupLinkID;
+       pObj->Save_Prm.inQueParams.prevLinkQueId = 2;
+
        //VPE -> Sync
        pObj->VPEPrm.outQueParams[0].nextLink = pObj->SyncLinkID;
        pObj->SyncPrm.inQueParams.prevLinkId = pObj->VPELinkID;
@@ -88,6 +100,8 @@ Void chains_lvdsVipMultiCam_Display_tda2xx_ConnectLinks(chains_lvdsVipMultiCam_D
        pObj->GrpxSrcPrm.outQueParams.nextLink = pObj->Display_GrpxLinkID;
        pObj->Display_GrpxPrm.inQueParams.prevLinkId = pObj->GrpxSrcLinkID;
        pObj->Display_GrpxPrm.inQueParams.prevLinkQueId = 0;
+
+
 
 }
 
@@ -129,6 +143,8 @@ Int32 chains_lvdsVipMultiCam_Display_tda2xx_Create(chains_lvdsVipMultiCam_Displa
        status = System_linkCreate(pObj->Display_GrpxLinkID, &pObj->Display_GrpxPrm, sizeof(pObj->Display_GrpxPrm));
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
+       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
        return status;
 }
 
@@ -162,6 +178,10 @@ Int32 chains_lvdsVipMultiCam_Display_tda2xx_Start(chains_lvdsVipMultiCam_Display
 
        status = System_linkStart(pObj->CaptureLinkID);
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
+       //ryyuhs74@20151028 - Add Save Link
+       //status = System_linkStart(pObj->Save_SaveLinkID);
+       //UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
        return status;
 }
