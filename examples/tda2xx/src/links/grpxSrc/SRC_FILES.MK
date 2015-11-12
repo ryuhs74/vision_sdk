@@ -13,5 +13,6 @@ SRCS_ipu1_0 += \
 		grpxSrcLink_pd_tsr_ld_sof_layout.c \
 		grpxSrcLink_ultrasonic_draw.c \
 		grpxSrcLink_pd_tsr_ld_sof_stereo_layout.c \
-		grpxSrcLink_svStandalone_layout.c
+		grpxSrcLink_svStandalone_layout.c \
+		grpxSrcLink_AVM_E500_layout.c
 

@@ -308,6 +308,12 @@ Int32 GrpxSrcLink_drawUltrasonicResultsCreate(GrpxSrcLink_Obj *pObj);
 Int32 GrpxSrcLink_drawUltrasonicResultsRun(GrpxSrcLink_Obj *pObj);
 Int32 GrpxSrcLink_drawUltrasonicResultsDelete(GrpxSrcLink_Obj *pObj);
 
+Int32 GrpxSrcLink_drawAVM_E500Layout(GrpxSrcLink_Obj *pObj); 	//ryuhs74@20151103 - Add AVM-E500 Layout
+Int32 GrpxSrcLink_drawAVM_E500Button(GrpxSrcLink_Obj *pObj); 	//ryuhs74@20151103 - Add AVM-E500 Layout
+Int32 Draw2D_FillBacgroundColor( GrpxSrcLink_Obj *pObj );	 	//ryuhs74@20151103 - Add AVM-E500 Layout
+Int32 Draw2D_AVME500_TopView( GrpxSrcLink_Obj *pObj );			//ryuhs74@20151103 - Add AVM-E500 Layout
+Int32 Draw2D_AVME500_FullView( GrpxSrcLink_Obj *pObj );			//ryuhs74@20151103 - Add AVM-E500 Layout
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

@@ -42,6 +42,7 @@ extern "C" {
 #endif
 
 #include <include/link_api/system.h>
+#include <src/utils_common/include/utils_lut.h> //ryuhs74@20151112 - Add
 
 /* @{ */
 
@@ -231,7 +232,6 @@ typedef struct
  *
 *******************************************************************************
 */
-
 typedef struct
 {
     UInt32 enable;
@@ -276,47 +276,51 @@ typedef struct
     GrpxSrcLink_UltrasonicParams ultrasonicParams;
     /**< Ultraosnic drawing params */
 
-    UInt32                     logoDisplayEnable;
+    UInt32                     logoDisplayEnable;						//ryuhs74@220151103 - Not Used AVM-E500
     /**< Flag to enable/disable logo */
 
     UInt32                     statsDisplayEnable;
     /**< Flag to enable/disable stats */
 
-    UInt32                     surroundViewEdgeDetectLayoutEnable;
+    UInt32                     surroundViewEdgeDetectLayoutEnable;	//ryuhs74@220151103 - Not Used AVM-E500
     /**< Flag to enable/disable surround view layout */
 
-    UInt32                     surroundViewPdTsrLayoutEnable;
+    UInt32                     surroundViewPdTsrLayoutEnable;			//ryuhs74@220151103 - Not Used AVM-E500
     /**< Flag to enable/disable surround view + PD/TSR layout */
 
-    UInt32                     surroundViewLdLayoutEnable;
+    UInt32                     surroundViewLdLayoutEnable;			//ryuhs74@220151103 - Not Used AVM-E500
     /**< Flag to enable/disable surround view + LD layout */
 
     UInt32                     enableJeepOverlay;
     /**< Enable for 2D SRV, Disable for 3D SRV  */
 
-    UInt32                     surroundViewDOFLayoutEnable;
+    UInt32                     surroundViewDOFLayoutEnable;			//ryuhs74@220151103 - Not Used AVM-E500
     /**< Flag to enable/disable surround view + dof layout */
 
-    UInt32                     opticalFlowLayoutEnable;
+    UInt32                     opticalFlowLayoutEnable;				//ryuhs74@220151103 - Not Used AVM-E500
     /**< Flag to enable/disable of Legend */
 
-    UInt32                     pdTsrLdLayoutEnable;
+    UInt32                     pdTsrLdLayoutEnable;					//ryuhs74@220151103 - Not Used AVM-E500
     /**< Flag to enable/disable of specific layout */
 
-    UInt32                     pdTsrLdSofLayoutEnable;
+    UInt32                     pdTsrLdSofLayoutEnable;				//ryuhs74@220151103 - Not Used AVM-E500
     /**< Flag to enable/disable of specific layout */
 
-    UInt32                     pdTsrLdSofStereoLayoutEnable;
+    UInt32                     pdTsrLdSofStereoLayoutEnable;			//ryuhs74@220151103 - Not Used AVM-E500
     /**< Flag to enable/disable of specific layout */
 
-    UInt32                     stereoDisparityLayoutEnable;
+    UInt32                     stereoDisparityLayoutEnable;			//ryuhs74@220151103 - Not Used AVM-E500
     /**< Flag to enable/disable stereo view layout */
 
-    UInt32                     tda3xxSvFsRotLayoutEnable;
+    UInt32                     tda3xxSvFsRotLayoutEnable;				//ryuhs74@220151103 - Not Used AVM-E500
     /**< Flag to enable/disable surround view + SOF layout */
 
-    UInt32                     surroundViewStandaloneLayoutEnable;
+    UInt32                     surroundViewStandaloneLayoutEnable;	//ryuhs74@220151103 - Not Used AVM-E500
     /**< Flag to enable/disable 2D/3D surround view standaone layout */
+
+    UInt32                     avm_e500LayoutEnable; //ryuhs74@20141103
+    ViewMode					sViewmode;
+    /**< Flag to enable/disable AVM-E500 Layout */
 
 } GrpxSrcLink_CreateParams;
 
