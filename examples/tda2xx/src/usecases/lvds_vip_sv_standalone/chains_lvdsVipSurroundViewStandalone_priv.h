@@ -35,6 +35,8 @@
 
 #include <include/link_api/saveLink.h>
 
+#define CAMMSYS_LUT_AVME500	//ryuhs74@20151109 - Add Change From chains_lvdsVipSurroundViewStandalone Usecases To CAMMSYS LUT AVME500
+
 typedef struct {
 #ifdef CAMMSYS_LUT_AVME500
        UInt32    CaptureLinkID;
