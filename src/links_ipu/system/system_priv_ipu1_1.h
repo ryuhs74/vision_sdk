@@ -52,6 +52,8 @@ extern "C"
 #include <include/link_api/nullLink.h>
 #include <include/link_api/nullSrcLink.h>
 #include <include/link_api/avbRxLink.h>
+#include <include/link_api/saveLink.h> //ryuhs74@20151027 - Add Save Link Header File Include
+
 
 /*******************************************************************************
  *  Data structure's

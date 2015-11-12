@@ -10,7 +10,8 @@ SRCDIR += links_ipu/vip_capture \
         links_ipu/iva/iva_enc \
         links_ipu/iss_capture \
         links_ipu/iss_m2misp \
-        links_ipu/iss_m2msimcop
+        links_ipu/iss_m2msimcop \
+        links_ipu/save \
 
 ifeq ($(ISS_INCLUDE),yes)
 SRCS_ipu1_0 += \
@@ -27,7 +28,8 @@ SRCS_ipu1_0 += \
         captureLink_displaywb_drv.c \
         system_bsp_init.c \
         system_ipu1_0.c \
-        systemLink_tsk_ipu1.c \
+        systemLink_tsk_ipu1.c
+#        saveLink_tsk.c
 
 ifeq ($(DSS_INCLUDE),yes)
 SRCS_ipu1_0 += displayLink_tsk.c displayLink_drv.c \
@@ -65,4 +67,5 @@ endif
 
 SRCS_ipu1_1 += \
         system_ipu1_1.c \
-        systemLink_tsk_ipu1.c
+        systemLink_tsk_ipu1.c \
+        saveLink_tsk.c
