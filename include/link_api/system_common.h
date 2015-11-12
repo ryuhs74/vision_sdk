@@ -164,6 +164,28 @@
 
 /**
  *******************************************************************************
+ * ryuhs74@20151028 - Add System Command
+ * \brief AVM-E500 System command Define
+ *
+ * \param None
+ *
+ *******************************************************************************
+ */
+#define SYSTEM_CMD_FRONT_SIDE_VIEW (0x00000008)
+
+#define SYSTEM_CMD_REAR_SIDE_VIEW (0x00000009)
+
+#define SYSTEM_CMD_RIGH_SIDE_VIEW (0x00000010)
+
+#define SYSTEM_CMD_LEFT_SIDE_VIEW (0x00000011)
+
+#define SYSTEM_CMD_FULL_FRONT_VIEW (0x00000012)
+
+#define SYSTEM_CMD_FULL_REAR_VIEW (0x00000013)
+
+#define SYSTEM_CMD_FILE_SAVE (0x00000014)
+/**
+ *******************************************************************************
  *
  * \brief The line and event ID of IPC Notify
  *
