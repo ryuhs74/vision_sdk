@@ -1264,9 +1264,9 @@ Void ChainsCommon_SurroundView_SetParams(
     frontCamAlgOutWidth  = LVDS_CAPTURE_WIDTH;
     frontCamAlgOutHeight = LVDS_CAPTURE_HEIGHT;
 
-    UTILS_assert(pSynthPrm!=NULL);
-    UTILS_assert(pGAlignPrm!=NULL);
-    UTILS_assert(pPAlignPrm!=NULL);
+    //UTILS_assert(pSynthPrm!=NULL);
+    //UTILS_assert(pGAlignPrm!=NULL);
+    //UTILS_assert(pPAlignPrm!=NULL);
     UTILS_assert(pSvSync!=NULL);
 
     ChainsCommon_GetDisplayWidthHeight(
@@ -1314,36 +1314,39 @@ Void ChainsCommon_SurroundView_SetParams(
             );
     }
 
-    ChainsCommon_SurroundView_SetSynthParams(pSynthPrm,
-                                            SV_INPUT_WIDTH,
-                                            SV_INPUT_HEIGHT,
-                                            svOutWidth,
-                                            svOutHeight,
-                                            SV_NUM_VIEWS,
-                                            SV_CARBOX_WIDTH,
-                                            SV_CARBOX_HEIGHT,
-                                            svOutputMode,
-                                            enableCarOverlayInAlg);
+    if( pSynthPrm != NULL)
+    	ChainsCommon_SurroundView_SetSynthParams(pSynthPrm,
+                                            	SV_INPUT_WIDTH,
+												SV_INPUT_HEIGHT,
+												svOutWidth,
+												svOutHeight,
+												SV_NUM_VIEWS,
+												SV_CARBOX_WIDTH,
+												SV_CARBOX_HEIGHT,
+												svOutputMode,
+												enableCarOverlayInAlg);
 
-    ChainsCommon_SurroundView_SetGAlignParams(pGAlignPrm,
-                                            SV_INPUT_WIDTH,
-                                            SV_INPUT_HEIGHT,
-                                            svOutWidth,
-                                            svOutHeight,
-                                            SV_NUM_VIEWS,
-                                            SV_CARBOX_WIDTH,
-                                            SV_CARBOX_HEIGHT,
-                                            svOutputMode);
+    if( pGAlignPrm != NULL)
+    	ChainsCommon_SurroundView_SetGAlignParams(pGAlignPrm,
+    											SV_INPUT_WIDTH,
+												SV_INPUT_HEIGHT,
+												svOutWidth,
+												svOutHeight,
+												SV_NUM_VIEWS,
+												SV_CARBOX_WIDTH,
+												SV_CARBOX_HEIGHT,
+												svOutputMode);
 
-    ChainsCommon_SurroundView_SetPAlignParams(pPAlignPrm,
-                                            SV_INPUT_WIDTH,
-                                            SV_INPUT_HEIGHT,
-                                            svOutWidth,
-                                            svOutHeight,
-                                            SV_NUM_VIEWS,
-                                            SV_CARBOX_WIDTH,
-                                            SV_CARBOX_HEIGHT,
-                                            svOutputMode);
+    if( pPAlignPrm != NULL )
+    	ChainsCommon_SurroundView_SetPAlignParams(pPAlignPrm,
+                                            	SV_INPUT_WIDTH,
+												SV_INPUT_HEIGHT,
+												svOutWidth,
+												svOutHeight,
+												SV_NUM_VIEWS,
+												SV_CARBOX_WIDTH,
+												SV_CARBOX_HEIGHT,
+												svOutputMode);
 
     if(pEdgeDetect)
     {
