@@ -619,16 +619,26 @@ Void ChainsCommon_MultiCam_SetCapturePrms(
 
         pInprms->width      =   captureInWidth;
         pInprms->height     =   captureInHeight;
-        pInprms->dataFormat =   SYSTEM_DF_YUV422P;
+        pInprms->dataFormat =   SYSTEM_DF_YUV422P; //ryuhs74@20151022
+
         pInprms->scanFormat =   SYSTEM_SF_PROGRESSIVE;
 
         for (streamId = 0; streamId < CAPTURE_LINK_MAX_OUTPUT_PER_INST;
                 streamId++)
         {
-            pOutprms = &pInstPrm->outParams[streamId];
+            pOutprms = &pInstPrm->outParams[streamId]; //ryuhs74@20151022 - YUV Test
             pOutprms->width         =   pInprms->width;
             pOutprms->height        =   pInprms->height;
-            pOutprms->dataFormat    =   SYSTEM_DF_YUV420SP_UV;
+            pOutprms->dataFormat    =   SYSTEM_DF_YUV420SP_UV;//SYSTEM_DF_YUV420SP_UV; //ryuhs74@20151022 - Change YUV Output Format -> SYSTEM_DF_YUV422SP_UV 테스트 진행해야 함
+            /*
+                     //SYSTEM_DF_YUV422I_UYVY = 0x0000, YUV 422 Interleaved format - UYVY.
+                	 //SYSTEM_DF_YUV422I_YUYV, YUV 422 Interleaved format - YUYV.
+                	//SYSTEM_DF_YUV422I_YVYU, YUV 422 Interleaved format - YVYU.
+                	//SYSTEM_DF_YUV422I_VYUY, YUV 422 Interleaved format - VYUY.
+                	SYSTEM_DF_YUV422SP_UV, YUV 422 Semi-Planar - Y separate, UV interleaved.
+
+                	SYSTEM_DF_YUV422P,
+                     */
             pOutprms->maxWidth      =   pOutprms->width;
             pOutprms->maxHeight     =   pOutprms->height;
             pOutprms->scEnable      =   FALSE;
@@ -1520,7 +1530,7 @@ static Void ChainsCommon_SetVidSensorPrms(
 			pPrm->vipInstId[3]     = SYSTEM_CAPTURE_INST_VIP1_SLICE1_PORTA; //Front
         }
         pPrm->standard      = SYSTEM_STD_AUTO_DETECT;
-        pPrm->dataformat    = SYSTEM_DF_YUV422P;
+        pPrm->dataformat    = SYSTEM_DF_YUV422P; //ryuhs74@20151022 - YUV422 Test
         pPrm->videoIfWidth  = SYSTEM_VIFW_8BIT;
         pPrm->fps           = SYSTEM_FPS_30;
         pPrm->isLVDSCaptMode = FALSE;
@@ -1849,7 +1859,7 @@ Void ChainsCommon_SetGrpxSrcPrms(
     pPrm->grpxBufInfo.height   = displayHeight;
     pPrm->grpxBufInfo.width    = displayWidth;
 
-    pPrm->logoDisplayEnable = TRUE;
+    //pPrm->logoDisplayEnable = TRUE; //ryuhs74@220151103 - Not Used AVM-E500
     pPrm->logoParams.startX = 40;
     pPrm->logoParams.startY = 40;
 
