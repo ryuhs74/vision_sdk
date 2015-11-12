@@ -58,6 +58,7 @@ Chains_Ctrl gChains_usecaseCfg;
  */
 #define MAX_INPUT_STR_SIZE  (80)
 
+
 /**
  *******************************************************************************
  * \brief Menu setting display string.
@@ -543,7 +544,11 @@ Void Chains_showAVM_E500()
     Vps_printf(" Usecase Menu\r\n");
     Vps_printf(" ============\r\n");
 
+#ifdef AVM_E500_SV
+    Vps_printf("LVDS-Vip_SurroundView Standalone Use-cases\n");
+#else
     Vps_printf("Multi-Camera LVDS Use-cases\n4CH VIP Capture + Mosaic Display\n");
+#endif
 }
 
 /**
@@ -1779,7 +1784,6 @@ Void Chains_main(UArg arg0, UArg arg1)
     ChainsCommon_DeInit();
 }
 
-
 void Start_AVM_E500() //ryuhs74@20151020 - Add HDMI On/Off Test
 {
 	Chains_showAVM_E500();
@@ -1789,7 +1793,29 @@ void Start_AVM_E500() //ryuhs74@20151020 - Add HDMI On/Off Test
 	gChains_usecaseCfg.captureSrc = CHAINS_CAPTURE_SRC_ISX016;
 	gChains_usecaseCfg.algProcId = System_getSelfProcId();
 	gChains_usecaseCfg.numLvdsCh = VIDEO_SENSOR_NUM_LVDS_CAMERAS;
+
+#ifdef AVM_E500_SV
+	{
+		Chains_Ctrl usecaseCfg;
+
+		gChains_usecaseCfg.svOutputMode = ALGORITHM_LINK_SRV_OUTPUT_2D;
+		gChains_usecaseCfg.enableCarOverlayInAlg = 0;
+		usecaseCfg = gChains_usecaseCfg;
+
+		usecaseCfg.displayType = CHAINS_DISPLAY_TYPE_HDMI_1080P;
+
+		if( usecaseCfg.captureSrc!= CHAINS_CAPTURE_SRC_ISX016 )
+		{
+			Vps_printf(" ### ONLY OV10635 Sensor supported for this usecase ");
+			Vps_printf(" ### Please choose OV10635 as Capture Source using option 's'\n");
+			return;
+		}
+	}
+
+	Chains_lvdsVipSurroundViewStandalone(&gChains_usecaseCfg);
+#else
 	Chains_lvdsVipMultiCam_Display_tda2xx(&gChains_usecaseCfg);
+#endif
 }
 /**
  *******************************************************************************
@@ -1808,6 +1834,20 @@ char gChains_runTimeMenu[] = {
 	"\r\n "
 	"\r\n 2: Capture 4ch YUV"
     "\r\n "
+#ifdef AVM_E500_SV
+	"\r\n 3: CMD_REQ_FRONT_VIEW "
+	"\r\n "
+	"\r\n 4: CMD_REQ_REAR_VIEW"
+	"\r\n "
+	"\r\n 5: CMD_REQ_RIGHT_VIEW"
+	"\r\n "
+	"\r\n 6: CMD_REQ_LEFT_VIEW"
+	"\r\n "
+	"\r\n 7: CMD_REQ_FULL_FRONT_VIEW"
+	"\r\n "
+	"\r\n 8: CMD_REQ_FULL_REAR_VIEW"
+	"\r\n "
+#endif
     "\r\n p: Print Performance Statistics "
     "\r\n "
     "\r\n Enter Choice: "

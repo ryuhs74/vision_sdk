@@ -504,8 +504,20 @@ Void Chains_lvdsVipMultiCam_Display_tda2xx(Chains_Ctrl *chainsCfg)
                 chains_lvdsVipMultiCam_Display_SwitchDisplayChannel(&chainsObj);
                 break;
             case '2':
+            {
+            	//int i = 0; //컴파일을 위해 일단 선언한 변수, 나중에 Save Prm 구조체로 바꾼다.
             	gisCapture = 1;
             	Vps_printf("**********************************gisCapture : %d\n", gisCapture);
+            	//ryuhs74@20151029 - Add File Save Command
+
+            	/*
+            	 System_linkControl(chainsObj.ucObj.Save_SaveLinkID,
+            			           SYSTEM_CMD_FILE_SAVE,
+            			           NULL, //Save Prm 구조체로 수정 예정
+								   0,//Save Prm 구조체로 수정 예정
+								   TRUE);
+				*/
+            }
             	break;
             default:
                 Vps_printf("\nUnsupported option '%c'. Please try again\n", ch);

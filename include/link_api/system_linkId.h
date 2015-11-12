@@ -691,6 +691,10 @@ typedef enum
      *   Supported CPUs: ipu1_0, ipu1_1        in TDA3xx
      */
 
+	SYSTEM_LINT_SAVE_0, //ryuhs74@20151027 - Add Save Link
+
+	SYSTEM_LINK_CAMMSYS_LUT, //ryuhs74@20151027 - Add CAMMSYS LUT Link
+
     SYSTEM_LINK_COMMON_LINKS_MAX_ID
     /**< Common Links - Max Id */
 } SYSTEM_LINK_IDS_COMMON;

@@ -51,8 +51,8 @@ Int32 GrpxSrcLink_initAndDrawStaticBmp(GrpxSrcLink_Obj * pObj,
     Int32 status, frameId;
     Draw2D_BufInfo bufInfo;
     GrpxSrcLink_CreateParams *createPrms = &pObj->createArgs;
-    GrpxSrcLink_LogoParameters   *logoPrms;
-    Draw2D_BmpPrm bmpPrm;
+    GrpxSrcLink_LogoParameters   *logoPrms; 	//ryuhs74@220151103 - Not Used AVM-E500
+    Draw2D_BmpPrm bmpPrm;						//ryuhs74@220151103 - Not Used AVM-E500
 
     System_VideoFrameBuffer *pSysVidBuf;
 
@@ -85,7 +85,7 @@ Int32 GrpxSrcLink_initAndDrawStaticBmp(GrpxSrcLink_Obj * pObj,
         }
 
         Draw2D_clearBuf(pObj->draw2DHndl);
-
+#if 1 //ryuhs74@220151103 - Not Used AVM-E500
         if (createPrms->logoDisplayEnable)
         {
             logoPrms = &createPrms->logoParams;
@@ -96,6 +96,7 @@ Int32 GrpxSrcLink_initAndDrawStaticBmp(GrpxSrcLink_Obj * pObj,
                            &bmpPrm
                            );
         }
+
 
         if (createPrms->surroundViewEdgeDetectLayoutEnable ||
             createPrms->surroundViewDOFLayoutEnable ||
@@ -139,6 +140,11 @@ Int32 GrpxSrcLink_initAndDrawStaticBmp(GrpxSrcLink_Obj * pObj,
         if (createPrms->surroundViewStandaloneLayoutEnable)
         {
             GrpxSrcLink_drawSurroundViewStandaloneLayout(pObj);
+        }
+#endif
+        if(createPrms->avm_e500LayoutEnable) //ryuhs74@20151103 - Add AVM-E500 Layout
+        {
+        	GrpxSrcLink_drawAVM_E500Layout(pObj);
         }
     }
 
@@ -403,6 +409,9 @@ Void GrpxSrcLink_displayStats(GrpxSrcLink_Obj * pObj)
  *
  *******************************************************************************
  */
+Int32 nNext = 0;
+Int32 GrpxSrcLink_drawAVM_E500NorButton(GrpxSrcLink_Obj *pObj); //ryuhs74@20151106 - Test
+
 Int32 GrpxSrcLink_runDisplayStats(GrpxSrcLink_Obj *pObj)
 {
     UInt32 cmd;
@@ -436,6 +445,7 @@ Int32 GrpxSrcLink_runDisplayStats(GrpxSrcLink_Obj *pObj)
             status = GrpxSrcLink_getSystemLoad(pObj);
             UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
+#if 0 //ryuhs74@220151103 - Not Used AVM-E500
             if (pObj->createArgs.surroundViewEdgeDetectLayoutEnable ||
                 pObj->createArgs.surroundViewDOFLayoutEnable ||
                 (pObj->createArgs.surroundViewPdTsrLayoutEnable &&
@@ -473,8 +483,34 @@ Int32 GrpxSrcLink_runDisplayStats(GrpxSrcLink_Obj *pObj)
                 GrpxSrcLink_displaySurroundViewStandaloneStats(pObj);
             }
             else
+#endif
             {
-                GrpxSrcLink_displayStats(pObj);
+            	//ryuhs74@20151104 - TEST
+                //GrpxSrcLink_displayStats(pObj);
+            	if( nNext == 0){ //rear
+            		nNext = 1;
+            		pObj->createArgs.sViewmode.viewmode = TOP_VIEW;
+            		pObj->createArgs.sViewmode.viewnt = REAR_VIEW;
+            	} else if( nNext == 1 ) {//Right
+            		nNext = 2;
+            		pObj->createArgs.sViewmode.viewmode = TOP_VIEW;
+            		pObj->createArgs.sViewmode.viewnt = RIGHT_VIEW;
+            	} else if( nNext == 2 ) { //Left
+            		nNext = 0;
+            		pObj->createArgs.sViewmode.viewmode = TOP_VIEW;
+            		pObj->createArgs.sViewmode.viewnt = LEFT_VIEW;
+            	} else if( nNext == 3 ) { //Full Fornt
+            		nNext = 4;
+            		pObj->createArgs.sViewmode.viewmode = FULL_VIEW;
+            		pObj->createArgs.sViewmode.viewnt = FRONT_VIEW;
+            	} else if( nNext == 4 ) { // Full Rear
+            		nNext = 0;
+            		pObj->createArgs.sViewmode.viewmode = FULL_VIEW;
+            		pObj->createArgs.sViewmode.viewnt = REAR_VIEW;
+            	}
+            	GrpxSrcLink_drawAVM_E500Button(pObj);
+
+            	pObj->createArgs.sViewmode.prvVient = pObj->createArgs.sViewmode.viewnt;
             }
 
             pObj->statsDisplayObj.startTime = Utils_getCurTimeInMsec();
@@ -678,6 +714,7 @@ Void GrpxSrcLink_tskMain(struct Utils_TskHndl * pTsk, Utils_MsgHndl * pMsg)
     Bool done, ackMsg;
     Int32 status;
     GrpxSrcLink_Obj *pObj = (GrpxSrcLink_Obj *) pTsk->appData;
+    //GrpxSrcLink_CreateParams *pPrm; //ryuhs74@20151104
 
     /*
      * At this stage only create command is the expected command.
@@ -724,6 +761,111 @@ Void GrpxSrcLink_tskMain(struct Utils_TskHndl * pTsk, Utils_MsgHndl * pMsg)
                      status = GrpxSrcLink_drvPrintHandler(pObj,Utils_msgGetPrm(pMsg));
                      Utils_tskAckOrFreeMsg(pMsg, status);
                      break;
+                 //ryuhs74@20151103 - Add AVM-E500 Draw Layout START
+                 case SYSTEM_CMD_FRONT_SIDE_VIEW:
+					 memcpy(&pObj->createArgs, Utils_msgGetPrm(pMsg), sizeof(GrpxSrcLink_CreateParams));
+
+					 Vps_printf("CMD Call SYSTEM_CMD_REAR_SIDE_VIEW viewmode : %d, viewnt: %d\n", pObj->createArgs.sViewmode.viewmode, pObj->createArgs.sViewmode.viewnt);
+					 if( pObj->createArgs.sViewmode.viewmode != TOP_VIEW )
+					 {
+						 Draw2D_FillBacgroundColor(pObj);
+						 Draw2D_AVME500_FullView(pObj);
+					 }
+
+					 pObj->createArgs.sViewmode.viewmode =  TOP_VIEW;
+					 pObj->createArgs.sViewmode.viewnt = FRONT_VIEW;
+					 GrpxSrcLink_drawAVM_E500Button(pObj);
+					 pObj->createArgs.sViewmode.prvVient =  pObj->createArgs.sViewmode.viewnt = FRONT_VIEW;
+
+					 Utils_tskAckOrFreeMsg(pMsg, SYSTEM_LINK_STATUS_SOK);
+					 break;
+                 case SYSTEM_CMD_REAR_SIDE_VIEW:
+                	 memcpy(&pObj->createArgs, Utils_msgGetPrm(pMsg), sizeof(GrpxSrcLink_CreateParams));
+
+                	 Vps_printf("CMD Call SYSTEM_CMD_REAR_SIDE_VIEW viewmode : %d, viewnt: %d\n", pObj->createArgs.sViewmode.viewmode, pObj->createArgs.sViewmode.viewnt);
+                	 if( pObj->createArgs.sViewmode.viewmode != TOP_VIEW )
+                	 {
+                		 Draw2D_FillBacgroundColor(pObj);
+                		 Draw2D_AVME500_FullView(pObj);
+                	 }
+
+                	 pObj->createArgs.sViewmode.viewmode =  TOP_VIEW;
+					 pObj->createArgs.sViewmode.viewnt = REAR_VIEW;
+					 GrpxSrcLink_drawAVM_E500Button(pObj);
+					 pObj->createArgs.sViewmode.prvVient =  pObj->createArgs.sViewmode.viewnt = FRONT_VIEW;
+
+
+					 Utils_tskAckOrFreeMsg(pMsg, SYSTEM_LINK_STATUS_SOK);
+                	 break;
+                 case SYSTEM_CMD_RIGH_SIDE_VIEW:
+                	 memcpy(&pObj->createArgs, Utils_msgGetPrm(pMsg), sizeof(GrpxSrcLink_CreateParams));
+
+                	 Vps_printf("CMD Call SYSTEM_CMD_REAR_SIDE_VIEW viewmode : %d, viewnt: %d\n", pObj->createArgs.sViewmode.viewmode, pObj->createArgs.sViewmode.viewnt);
+                	 if( pObj->createArgs.sViewmode.viewmode != TOP_VIEW )
+					 {
+						 Draw2D_FillBacgroundColor(pObj);
+						 Draw2D_AVME500_FullView(pObj);
+					 }
+
+                	 pObj->createArgs.sViewmode.viewmode =  TOP_VIEW;
+					 pObj->createArgs.sViewmode.viewnt = RIGHT_VIEW;
+					 GrpxSrcLink_drawAVM_E500Button(pObj);
+					 pObj->createArgs.sViewmode.prvVient =  pObj->createArgs.sViewmode.viewnt = FRONT_VIEW;
+
+
+                	 Utils_tskAckOrFreeMsg(pMsg, SYSTEM_LINK_STATUS_SOK);
+                	 break;
+                 case SYSTEM_CMD_LEFT_SIDE_VIEW:
+                	 memcpy(&pObj->createArgs, Utils_msgGetPrm(pMsg), sizeof(GrpxSrcLink_CreateParams));
+
+                	 Vps_printf("CMD Call SYSTEM_CMD_REAR_SIDE_VIEW viewmode : %d, viewnt: %d\n", pObj->createArgs.sViewmode.viewmode, pObj->createArgs.sViewmode.viewnt);
+                	 if( pObj->createArgs.sViewmode.viewmode != TOP_VIEW )
+					 {
+						 Draw2D_FillBacgroundColor(pObj);
+						 Draw2D_AVME500_FullView(pObj);
+					 }
+
+                	 pObj->createArgs.sViewmode.viewmode =  TOP_VIEW;
+					 pObj->createArgs.sViewmode.viewnt = LEFT_VIEW;
+					 GrpxSrcLink_drawAVM_E500Button(pObj);
+					 pObj->createArgs.sViewmode.prvVient =  pObj->createArgs.sViewmode.viewnt = FRONT_VIEW;
+
+                	 Utils_tskAckOrFreeMsg(pMsg, SYSTEM_LINK_STATUS_SOK);
+                	 break;
+                 case SYSTEM_CMD_FULL_FRONT_VIEW:
+                	 memcpy(&pObj->createArgs, Utils_msgGetPrm(pMsg), sizeof(GrpxSrcLink_CreateParams));
+
+                	 Vps_printf("CMD Call SYSTEM_CMD_REAR_SIDE_VIEW viewmode : %d, viewnt: %d\n", pObj->createArgs.sViewmode.viewmode, pObj->createArgs.sViewmode.viewnt);
+                	 if( pObj->createArgs.sViewmode.viewmode != FULL_VIEW )
+					 {
+						 Draw2D_FillBacgroundColor(pObj);
+						 Draw2D_AVME500_TopView(pObj);
+					 }
+
+                	 pObj->createArgs.sViewmode.viewmode =  FULL_VIEW;
+                	 pObj->createArgs.sViewmode.viewnt = FRONT_VIEW;
+                	 GrpxSrcLink_drawAVM_E500Button(pObj);
+                	 pObj->createArgs.sViewmode.prvVient =  pObj->createArgs.sViewmode.viewnt = FRONT_VIEW;
+                	 Utils_tskAckOrFreeMsg(pMsg, SYSTEM_LINK_STATUS_SOK);
+                	 break;
+                 case SYSTEM_CMD_FULL_REAR_VIEW:
+                	 memcpy(&pObj->createArgs, Utils_msgGetPrm(pMsg), sizeof(GrpxSrcLink_CreateParams));
+
+                	 Vps_printf("CMD Call SYSTEM_CMD_REAR_SIDE_VIEW viewmode : %d, viewnt: %d\n", pObj->createArgs.sViewmode.viewmode, pObj->createArgs.sViewmode.viewnt);
+                	 if( pObj->createArgs.sViewmode.viewmode != FULL_VIEW )
+					 {
+						 Draw2D_FillBacgroundColor(pObj);
+						 Draw2D_AVME500_TopView(pObj);
+					 }
+
+                	 pObj->createArgs.sViewmode.viewmode =  FULL_VIEW;
+                	 pObj->createArgs.sViewmode.viewnt = REAR_VIEW;
+                	 GrpxSrcLink_drawAVM_E500Button(pObj);
+                	 pObj->createArgs.sViewmode.prvVient =  pObj->createArgs.sViewmode.viewnt = FRONT_VIEW;
+
+                	 Utils_tskAckOrFreeMsg(pMsg, SYSTEM_LINK_STATUS_SOK);
+                	 break;
+                	 //ryuhs74@20151103 - Add AVM-E500 Draw Layout END
                  default:
                      Utils_tskAckOrFreeMsg(pMsg, status);
                  break;

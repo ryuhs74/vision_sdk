@@ -14,6 +14,8 @@
 #include "chains_lvdsVipSurroundViewStandalone_priv.h"
 #include <examples/tda2xx/include/chains_common.h>
 
+#include <examples/tda2xx/src/links/uartCmd/uartCmd_priv.h> //ryuhs74@20151105 - Test UI CMD
+
 
 /**
  *******************************************************************************
@@ -61,6 +63,7 @@ typedef struct {
  *
  *******************************************************************************
 */
+#ifndef CAMMSYS_LUT_AVME500
 static Void chains_lvdsVipSurroundViewStandalone_SetSyncPrm(
                     SyncLink_CreateParams *pPrm,
                     UInt32 numLvdsCh,
@@ -88,7 +91,6 @@ static Void chains_lvdsVipSurroundViewStandalone_SetSyncPrm(
     }
 
 }
-
 /**
  *******************************************************************************
  *
@@ -206,7 +208,120 @@ static Void chains_lvdsVipSurroundViewStandalone_SetAlgDmaSwMsPrm(
     pPrm->initLayoutParams.outBufHeight = pPrm->maxOutBufHeight;
 
 }
+#else
+/**
+ *******************************************************************************
+ *
+ * \brief   Set DMA SW Mosaic Create Parameters
+ *
+ *          It is called in Create function.
+ *          In this function SwMs alg link params are set
+ *          The algorithm which is to run on core is set to
+ *          baseClassCreate.algId. The input whdth and height to alg are set.
+ *          Number of input buffers required by alg are also set here.
 
+ * \param   pPrm    [OUT]    VpeLink_CreateParams
+ *
+ *******************************************************************************
+*/
+static Void chains_lvdsVipSurroundViewStandalone_SetAlgDmaSwMsPrm(
+                    AlgorithmLink_DmaSwMsCreateParams *pPrm,
+                    UInt32 numLvdsCh,
+                    UInt32 displayWidth,
+                    UInt32 displayHeight
+                   )
+{
+    UInt32 winId;
+    AlgorithmLink_DmaSwMsLayoutWinInfo *pWinInfo;
+    UInt32 widthFactor, heightFactor;
+
+    pPrm->maxOutBufWidth     = displayWidth;
+    pPrm->maxOutBufHeight    = displayHeight;
+    pPrm->numOutBuf          = 4;
+    pPrm->useLocalEdma       = FALSE;
+
+    pPrm->initLayoutParams.numWin = numLvdsCh;
+    pPrm->initLayoutParams.outBufWidth  = pPrm->maxOutBufWidth;
+    pPrm->initLayoutParams.outBufHeight = pPrm->maxOutBufHeight;
+
+    switch (numLvdsCh)
+    {
+        case 1:
+            widthFactor  = 1;
+            heightFactor = 1;
+            pPrm->initLayoutParams.numWin = 1;
+            break;
+        case 2:
+            widthFactor  = 2;
+            heightFactor = 1;
+            pPrm->initLayoutParams.numWin = 2;
+            break;
+        case 3:
+        case 4:
+            widthFactor  = 2;
+            heightFactor = 2;
+            pPrm->initLayoutParams.numWin = 4;
+            break;
+        case 5:
+        case 6:
+            widthFactor  = 2;
+            heightFactor = 3;
+            pPrm->initLayoutParams.numWin = 6;
+            break;
+        default:
+            widthFactor  = 2;
+            heightFactor = 2;
+            pPrm->initLayoutParams.numWin = 4;
+            break;
+    }
+
+    /* assuming 4Ch LVDS and 2x2 layout */
+    for(winId=0; winId<pPrm->initLayoutParams.numWin; winId++)
+    {
+        pWinInfo = &pPrm->initLayoutParams.winInfo[winId];
+
+        pWinInfo->chId = winId;
+
+        pWinInfo->inStartX = 0;
+        pWinInfo->inStartY = 0;
+
+        pWinInfo->width     =
+            SystemUtils_floor(pPrm->initLayoutParams.outBufWidth/widthFactor, 16);
+        pWinInfo->height    =
+            pPrm->initLayoutParams.outBufHeight/heightFactor;
+
+        /* winId == 0 */
+        pWinInfo->outStartX = 0;
+        pWinInfo->outStartY = 0;
+
+        if(winId==1)
+        {
+            pWinInfo->outStartX = pWinInfo->width;
+            pWinInfo->outStartY = 0;
+        } else
+        if(winId==2)
+        {
+            pWinInfo->outStartX = 0;
+            pWinInfo->outStartY = pWinInfo->height;
+        } else
+        if(winId==3)
+        {
+            pWinInfo->outStartX = pWinInfo->width;
+            pWinInfo->outStartY = pWinInfo->height;
+        } else
+        if(winId==4)
+        {
+            pWinInfo->outStartX = 0;
+            pWinInfo->outStartY = 2 * pWinInfo->height;
+        } else
+        if(winId==5)
+        {
+            pWinInfo->outStartX = pWinInfo->width;
+            pWinInfo->outStartY = 2 * pWinInfo->height;
+        }
+    }
+}
+#endif
 /**
  *******************************************************************************
  *
@@ -223,7 +338,7 @@ Void chains_lvdsVipSurroundViewStandalone_SetAppPrms(chains_lvdsVipSurroundViewS
 {
     Chains_LvdsVipSurroundViewStandaloneAppObj *pObj
         = (Chains_LvdsVipSurroundViewStandaloneAppObj*)appObj;
-
+#ifdef CAMMSYS_LUT_AVME500
     ChainsCommon_SurroundView_SetParams(
         &pUcObj->CapturePrm,
         NULL,
@@ -234,16 +349,16 @@ Void chains_lvdsVipSurroundViewStandalone_SetAppPrms(chains_lvdsVipSurroundViewS
         &pUcObj->Sync_svPrm,
         NULL, //&pUcObj->Sync_sv_orgPrm1,
         NULL, //&pUcObj->Sync_sv_orgPrm2,
-        &pUcObj->Alg_SynthesisPrm,
-        &pUcObj->Alg_GeoAlignPrm,
-        &pUcObj->Alg_PhotoAlignPrm,
+        NULL, //&pUcObj->Alg_SynthesisPrm,
+        NULL, //&pUcObj->Alg_GeoAlignPrm,
+        NULL, //&pUcObj->Alg_PhotoAlignPrm,
         NULL,
         NULL,
         NULL,
         NULL, //&pUcObj->Alg_DmaSwMs_sv_orgPrm1,
         NULL, //&pUcObj->Alg_DmaSwMs_sv_orgPrm2,
-        &pUcObj->GrpxSrcPrm,
-        &pUcObj->Display_svPrm,
+        NULL, //&pUcObj->GrpxSrcPrm,
+        NULL, //&pUcObj->Display_svPrm,
         NULL, //&pUcObj->Display_sv_orgPrm1,
         NULL, //&pUcObj->Display_sv_orgPrm12,
         &pUcObj->Display_GrpxPrm,
@@ -261,67 +376,117 @@ Void chains_lvdsVipSurroundViewStandalone_SetAppPrms(chains_lvdsVipSurroundViewS
         pObj->chainsCfg->enableCarOverlayInAlg
         );
 
-    chains_lvdsVipSurroundViewStandalone_SetSelectPrm(
-                    &pUcObj->SelectPrm);
-
-    chains_lvdsVipSurroundViewStandalone_SetVpePrm(
-                    &pUcObj->VPE_sv_org1Prm,
-                    pObj->chainsCfg->numLvdsCh/2,
-                    520,
-                    440
-                    );
-    chains_lvdsVipSurroundViewStandalone_SetVpePrm(
-                    &pUcObj->VPE_sv_org2Prm,
-                    pObj->chainsCfg->numLvdsCh/2,
-                    520,
-                    440
-                    );
-
-    chains_lvdsVipSurroundViewStandalone_SetSyncPrm(
-                    &pUcObj->Sync_sv_org1Prm,
-                    pObj->chainsCfg->numLvdsCh/2,
-                    FALSE
-                    );
-
-    chains_lvdsVipSurroundViewStandalone_SetSyncPrm(
-                    &pUcObj->Sync_sv_org2Prm,
-                    pObj->chainsCfg->numLvdsCh/2,
-                    FALSE
-                    );
-    chains_lvdsVipSurroundViewStandalone_SetAlgDmaSwMsPrm(
-                    &pUcObj->Alg_DmaSwMs_sv_org1Prm,
-                    pObj->chainsCfg->numLvdsCh/2,
-                    520,
-                    440,
-                    0,
-                    0
-                    );
-    chains_lvdsVipSurroundViewStandalone_SetAlgDmaSwMsPrm(
-                    &pUcObj->Alg_DmaSwMs_sv_org2Prm,
-                    pObj->chainsCfg->numLvdsCh/2,
-                    520,
-                    440,
-                    0,
-                    0
-                    );
-
     pUcObj->GrpxSrcPrm.surroundViewEdgeDetectLayoutEnable = FALSE;
-    pUcObj->GrpxSrcPrm.surroundViewStandaloneLayoutEnable = TRUE;
+    //pUcObj->GrpxSrcPrm.surroundViewStandaloneLayoutEnable = TRUE;
+    pUcObj->GrpxSrcPrm.avm_e500LayoutEnable = TRUE;
 
     pUcObj->Display_svPrm.rtParams.posX            = (float)520;
     pUcObj->Display_svPrm.rtParams.posY            = (float)0;
 
-    pUcObj->Display_sv_org1Prm.rtParams.tarWidth   = (float)520;
-    pUcObj->Display_sv_org1Prm.rtParams.tarHeight  = (float)880;
-    pUcObj->Display_sv_org1Prm.rtParams.posX       = (float)0;
-    pUcObj->Display_sv_org1Prm.rtParams.posY       = (float)200;
-    pUcObj->Display_sv_org1Prm.displayId           = DISPLAY_LINK_INST_DSS_VID2;
+    chains_lvdsVipSurroundViewStandalone_SetAlgDmaSwMsPrm(
+                            &pUcObj->Alg_DmaSwMsPrm,
+                            pObj->chainsCfg->numLvdsCh,
+                            1280, 720);
+#else
+    ChainsCommon_SurroundView_SetParams(
+            &pUcObj->CapturePrm,
+            NULL,
+            NULL,
+            NULL, //&pUcObj->SelectPrm,
+            NULL, //&pUcObj->VPE_sv_orgPrm1,
+            NULL, //&pUcObj->VPE_sv_orgPrm2,
+            &pUcObj->Sync_svPrm,
+            NULL, //&pUcObj->Sync_sv_orgPrm1,
+            NULL, //&pUcObj->Sync_sv_orgPrm2,
+            &pUcObj->Alg_SynthesisPrm,
+            &pUcObj->Alg_GeoAlignPrm,
+            &pUcObj->Alg_PhotoAlignPrm,
+            NULL,
+            NULL,
+            NULL,
+            NULL, //&pUcObj->Alg_DmaSwMs_sv_orgPrm1,
+            NULL, //&pUcObj->Alg_DmaSwMs_sv_orgPrm2,
+            &pUcObj->GrpxSrcPrm,
+            &pUcObj->Display_svPrm,
+            NULL, //&pUcObj->Display_sv_orgPrm1,
+            NULL, //&pUcObj->Display_sv_orgPrm12,
+            &pUcObj->Display_GrpxPrm,
+            pObj->chainsCfg->displayType,
+            pObj->chainsCfg->numLvdsCh,
+            pObj->chainsCfg->svOutputMode,
+            NULL,
+            NULL,
+            NULL,
+            NULL,
+            NULL,
+            NULL,
+            NULL,
+            NULL,
+            pObj->chainsCfg->enableCarOverlayInAlg
+            );
 
-    pUcObj->Display_sv_org2Prm.rtParams.tarWidth   = (float)520;
-    pUcObj->Display_sv_org2Prm.rtParams.tarHeight  = (float)880;
-    pUcObj->Display_sv_org2Prm.rtParams.posX       = (float)520+880;
-    pUcObj->Display_sv_org2Prm.rtParams.posY       = (float)200;
-    pUcObj->Display_sv_org2Prm.displayId           = DISPLAY_LINK_INST_DSS_VID3;
+        chains_lvdsVipSurroundViewStandalone_SetSelectPrm(
+                        &pUcObj->SelectPrm);
+
+        chains_lvdsVipSurroundViewStandalone_SetVpePrm(
+                        &pUcObj->VPE_sv_org1Prm,
+                        pObj->chainsCfg->numLvdsCh/2,
+                        520,
+                        440
+                        );
+        chains_lvdsVipSurroundViewStandalone_SetVpePrm(
+                        &pUcObj->VPE_sv_org2Prm,
+                        pObj->chainsCfg->numLvdsCh/2,
+                        520,
+                        440
+                        );
+
+        chains_lvdsVipSurroundViewStandalone_SetSyncPrm(
+                        &pUcObj->Sync_sv_org1Prm,
+                        pObj->chainsCfg->numLvdsCh/2,
+                        FALSE
+                        );
+
+        chains_lvdsVipSurroundViewStandalone_SetSyncPrm(
+                        &pUcObj->Sync_sv_org2Prm,
+                        pObj->chainsCfg->numLvdsCh/2,
+                        FALSE
+                        );
+        chains_lvdsVipSurroundViewStandalone_SetAlgDmaSwMsPrm(
+                        &pUcObj->Alg_DmaSwMs_sv_org1Prm,
+                        pObj->chainsCfg->numLvdsCh/2,
+                        520,
+                        440,
+                        0,
+                        0
+                        );
+        chains_lvdsVipSurroundViewStandalone_SetAlgDmaSwMsPrm(
+                        &pUcObj->Alg_DmaSwMs_sv_org2Prm,
+                        pObj->chainsCfg->numLvdsCh/2,
+                        520,
+                        440,
+                        0,
+                        0
+                        );
+
+        pUcObj->GrpxSrcPrm.surroundViewEdgeDetectLayoutEnable = FALSE;
+        pUcObj->GrpxSrcPrm.surroundViewStandaloneLayoutEnable = TRUE;
+
+        pUcObj->Display_svPrm.rtParams.posX            = (float)520;
+        pUcObj->Display_svPrm.rtParams.posY            = (float)0;
+
+        pUcObj->Display_sv_org1Prm.rtParams.tarWidth   = (float)520;
+        pUcObj->Display_sv_org1Prm.rtParams.tarHeight  = (float)880;
+        pUcObj->Display_sv_org1Prm.rtParams.posX       = (float)0;
+        pUcObj->Display_sv_org1Prm.rtParams.posY       = (float)200;
+        pUcObj->Display_sv_org1Prm.displayId           = DISPLAY_LINK_INST_DSS_VID2;
+
+        pUcObj->Display_sv_org2Prm.rtParams.tarWidth   = (float)520;
+        pUcObj->Display_sv_org2Prm.rtParams.tarHeight  = (float)880;
+        pUcObj->Display_sv_org2Prm.rtParams.posX       = (float)520+880;
+        pUcObj->Display_sv_org2Prm.rtParams.posY       = (float)200;
+        pUcObj->Display_sv_org2Prm.displayId           = DISPLAY_LINK_INST_DSS_VID3;
+#endif
 }
 
 /**
@@ -395,6 +560,8 @@ Void chains_lvdsVipSurroundViewStandalone_StopAndDeleteApp(Chains_LvdsVipSurroun
  *
  *******************************************************************************
 */
+
+void GrpxSrcLink_putCmd( uint8_t _cmd );
 Void Chains_lvdsVipSurroundViewStandalone(Chains_Ctrl *chainsCfg)
 {
     char ch, chPrev;
@@ -410,7 +577,7 @@ Void Chains_lvdsVipSurroundViewStandalone(Chains_Ctrl *chainsCfg)
         /* Set startWithCalibration = TRUE to start the demo with calibration.
            Else it will use the previously calibrated LUTs */
         startWithCalibration = TRUE;
-        ChainsCommon_SurroundView_CalibInit(startWithCalibration);
+        ChainsCommon_SurroundView_CalibInit(startWithCalibration); //ryuhs74@20151109 - Maybe Not Used Cammsys
 
         chains_lvdsVipSurroundViewStandalone_Create(&chainsObj.ucObj, &chainsObj);
         chains_lvdsVipSurroundViewStandalone_StartApp(&chainsObj);
@@ -430,6 +597,27 @@ Void Chains_lvdsVipSurroundViewStandalone(Chains_Ctrl *chainsCfg)
                     ChainsCommon_PrintStatistics();
                     chains_lvdsVipSurroundViewStandalone_printStatistics(&chainsObj.ucObj);
                     break;
+                //ryuhs74@20151105 - Test UI CMD START
+                case '3' :
+                	GrpxSrcLink_putCmd( CMD_REQ_FRONT_VIEW );
+                	break;
+                case '4':
+                	GrpxSrcLink_putCmd( CMD_REQ_REAR_VIEW );
+                	break;
+                case '5':
+                	GrpxSrcLink_putCmd( CMD_REQ_RIGHT_VIEW );
+                	break;
+                case '6':
+                	GrpxSrcLink_putCmd( CMD_REQ_LEFT_VIEW );
+                	break;
+                case '7':
+                    GrpxSrcLink_putCmd( CMD_REQ_FULL_FRONT_VIEW );
+                    break;
+                case '8':
+                    GrpxSrcLink_putCmd( CMD_REQ_FULL_REAR_VIEW );
+                    break;
+                //ryuhs74@20151105 - Test UI CMD END
+
                 default:
                     Vps_printf("\nUnsupported option '%c'. Please try again\n", ch);
                     break;

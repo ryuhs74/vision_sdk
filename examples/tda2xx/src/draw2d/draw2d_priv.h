@@ -59,7 +59,21 @@ typedef struct {
 
 } Draw2D_Obj;
 
-
+#if 1
+Int32 Draw2D_getBmpProperty_Front_view_nor(Draw2D_BmpProperty *pProp);
+Int32 Draw2D_getBmpProperty_Front_view_sel(Draw2D_BmpProperty *pProp);
+Int32 Draw2D_getBmpProperty_Full_view_front(Draw2D_BmpProperty *pProp);
+Int32 Draw2D_getBmpProperty_Full_view_none(Draw2D_BmpProperty *pProp);
+Int32 Draw2D_getBmpProperty_Full_view_rear(Draw2D_BmpProperty *pProp);
+Int32 Draw2D_getBmpProperty_Left_view_nor(Draw2D_BmpProperty *pProp);
+Int32 Draw2D_getBmpProperty_Left_view_sel(Draw2D_BmpProperty *pProp);
+Int32 Draw2D_getBmpProperty_Rear_view_nor(Draw2D_BmpProperty *pProp);
+Int32 Draw2D_getBmpProperty_Rear_view_sel(Draw2D_BmpProperty *pProp);
+Int32 Draw2D_getBmpProperty_Right_view_nor(Draw2D_BmpProperty *pProp);
+Int32 Draw2D_getBmpProperty_Right_view_sel(Draw2D_BmpProperty *pProp);
+Int32 Draw2D_getBmpProperty_Setting_nor(Draw2D_BmpProperty *pProp);
+Int32 Draw2D_getBmpProperty_Setting_sel(Draw2D_BmpProperty *pProp);
+//#else
 Int32 Draw2D_getFontProperty00(Draw2D_FontProperty *pProp);
 Int32 Draw2D_getFontProperty01(Draw2D_FontProperty *pProp);
 Int32 Draw2D_getFontProperty02(Draw2D_FontProperty *pProp);
@@ -82,6 +96,7 @@ Int32 Draw2D_getBmpProperty11(Draw2D_BmpProperty *pProp);
 Int32 Draw2D_getBmpProperty12(Draw2D_BmpProperty *pProp);
 Int32 Draw2D_getBmpProperty13(Draw2D_BmpProperty *pProp);
 Int32 Draw2D_getBmpProperty14(Draw2D_BmpProperty *pProp);
+#endif
 
 #ifdef __cplusplus
 }

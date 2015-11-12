@@ -69,7 +69,36 @@ Int32 Draw2D_getBmpProperty(Draw2D_BmpPrm *pPrm, Draw2D_BmpProperty *pProp)
             Draw2D_getBmpProperty10(pProp);
         else
          */
-        if(pPrm->bmpIdx==DRAW2D_BMP_IDX_SURROUND_VIEW)
+#if 1 //ryuhs74@20151104 - Add AVM-E500 UI
+    	if(pPrm->bmpIdx == DRAW2D_BMP_IDX_FRONT_VIEW_NOR)
+    		Draw2D_getBmpProperty_Front_view_nor(pProp);
+		else if(pPrm->bmpIdx == DRAW2D_BMP_IDX_FRONT_VIEW_SEL)
+			Draw2D_getBmpProperty_Front_view_sel(pProp);
+		else if(pPrm->bmpIdx == DRAW2D_BMP_IDX_REAR_VIEW_NOR)
+			Draw2D_getBmpProperty_Rear_view_nor(pProp);
+		else if(pPrm->bmpIdx == DRAW2D_BMP_IDX_REAR_VIEW_SEL)
+			Draw2D_getBmpProperty_Rear_view_sel(pProp);
+		else if( pPrm->bmpIdx == DRAW2D_BMP_IDX_RIGHT_VIEW_NOR)
+			Draw2D_getBmpProperty_Right_view_nor(pProp);
+		else if(pPrm->bmpIdx == DRAW2D_BMP_IDX_RIGHT_VIEW_SEL)
+			Draw2D_getBmpProperty_Right_view_sel(pProp);
+		else if( pPrm->bmpIdx == DRAW2D_BMP_IDX_LEFT_VIEW_NOR)
+			Draw2D_getBmpProperty_Left_view_nor(pProp);
+		else if( pPrm->bmpIdx == DRAW2D_BMP_IDX_LEFT_VIEW_SEL)
+			Draw2D_getBmpProperty_Left_view_sel(pProp);
+		else if( pPrm->bmpIdx == DRAW2D_BMP_IDX_SETTING_VIEW_NOR)
+			Draw2D_getBmpProperty_Setting_nor(pProp);
+		else if( pPrm->bmpIdx== DRAW2D_BMP_IDX_SETTING_VIEW_SEL)
+			Draw2D_getBmpProperty_Setting_sel(pProp);
+		else if( pPrm->bmpIdx == DRAW2D_BMP_IDX_FULL_VIEW_NONE )
+			Draw2D_getBmpProperty_Full_view_none(pProp);
+		else if( pPrm->bmpIdx ==  DRAW2D_BMP_IDX_FULL_VIEW_FRONT )
+			Draw2D_getBmpProperty_Full_view_front(pProp);
+		else if( pPrm->bmpIdx == DRAW2D_BMP_IDX_FULL_VIEW_REAR)
+			Draw2D_getBmpProperty_Full_view_rear(pProp);
+//#else
+		else
+			if(pPrm->bmpIdx==DRAW2D_BMP_IDX_SURROUND_VIEW)
             Draw2D_getBmpProperty01(pProp);
         else
         if(pPrm->bmpIdx==DRAW2D_BMP_IDX_FRONT_CAM_ANALYTICS)
@@ -101,6 +130,7 @@ Int32 Draw2D_getBmpProperty(Draw2D_BmpPrm *pPrm, Draw2D_BmpProperty *pProp)
         else
         if(pPrm->bmpIdx==DRAW2D_BMP_IDX_JEEP_IMAGE_TRUESCALE)
             Draw2D_getBmpProperty14(pProp);
+#endif
 
     }
 
@@ -356,7 +386,7 @@ Int32 Draw2D_drawBmp_rot(Draw2D_Handle pCtx,
     UInt16 color, *bmpAddr16;
     Draw2D_BmpProperty bmp;
 
-#if 1 ///@todo Surrund View problem craven@151026
+#if 0 ///@todo Surrund View problem craven@151026
     if(pObj!=NULL)
         return SYSTEM_LINK_STATUS_SOK;
 #else
