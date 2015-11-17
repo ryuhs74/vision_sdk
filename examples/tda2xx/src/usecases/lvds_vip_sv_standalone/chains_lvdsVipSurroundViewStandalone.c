@@ -357,8 +357,8 @@ Void chains_lvdsVipSurroundViewStandalone_SetAppPrms(chains_lvdsVipSurroundViewS
         NULL,
         NULL, //&pUcObj->Alg_DmaSwMs_sv_orgPrm1,
         NULL, //&pUcObj->Alg_DmaSwMs_sv_orgPrm2,
-        NULL, //&pUcObj->GrpxSrcPrm,
-        NULL, //&pUcObj->Display_svPrm,
+        &pUcObj->GrpxSrcPrm,
+        &pUcObj->Display_svPrm,
         NULL, //&pUcObj->Display_sv_orgPrm1,
         NULL, //&pUcObj->Display_sv_orgPrm12,
         &pUcObj->Display_GrpxPrm,
@@ -379,9 +379,6 @@ Void chains_lvdsVipSurroundViewStandalone_SetAppPrms(chains_lvdsVipSurroundViewS
     pUcObj->GrpxSrcPrm.surroundViewEdgeDetectLayoutEnable = FALSE;
     //pUcObj->GrpxSrcPrm.surroundViewStandaloneLayoutEnable = TRUE;
     pUcObj->GrpxSrcPrm.avm_e500LayoutEnable = TRUE;
-
-    pUcObj->Display_svPrm.rtParams.posX            = (float)520;
-    pUcObj->Display_svPrm.rtParams.posY            = (float)0;
 
     chains_lvdsVipSurroundViewStandalone_SetAlgDmaSwMsPrm(
                             &pUcObj->Alg_DmaSwMsPrm,
@@ -566,7 +563,9 @@ Void Chains_lvdsVipSurroundViewStandalone(Chains_Ctrl *chainsCfg)
 {
     char ch, chPrev;
     UInt32 done = FALSE;
+#ifndef CAMMSYS_LUT_AVME500
     Bool startWithCalibration;
+#endif
     Chains_LvdsVipSurroundViewStandaloneAppObj chainsObj;
 
     chainsObj.chainsCfg = chainsCfg;
@@ -574,11 +573,12 @@ Void Chains_lvdsVipSurroundViewStandalone(Chains_Ctrl *chainsCfg)
     do
     {
         done = FALSE;
+#ifndef CAMMSYS_LUT_AVME500
         /* Set startWithCalibration = TRUE to start the demo with calibration.
            Else it will use the previously calibrated LUTs */
         startWithCalibration = TRUE;
         ChainsCommon_SurroundView_CalibInit(startWithCalibration); //ryuhs74@20151109 - Maybe Not Used Cammsys
-
+#endif
         chains_lvdsVipSurroundViewStandalone_Create(&chainsObj.ucObj, &chainsObj);
         chains_lvdsVipSurroundViewStandalone_StartApp(&chainsObj);
 

@@ -286,7 +286,7 @@ Int32 DisplayLink_drvDisplayCreate(DisplayLink_Obj *pObj)
     }
 
     dssPrms->inFmt.chNum           = 0;
-    dssPrms->inFmt.width           = pInChInfo->width;
+    dssPrms->inFmt.width           = pInChInfo->width; //¿©±â¼­ ¹Ù²ñ
     dssPrms->inFmt.height          = pInChInfo->height;
     dssPrms->inFmt.pitch[0u]       = pInChInfo->pitch[0];
     dssPrms->inFmt.pitch[1u]       = pInChInfo->pitch[1];

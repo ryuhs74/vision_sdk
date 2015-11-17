@@ -22,12 +22,12 @@
 #include <include/link_api/system.h>
 #include <include/link_api/captureLink.h>
 #include <include/link_api/dupLink.h>
-//#include <include/link_api/algorithmLink_geometricAlignment.h>
-//#include <include/link_api/algorithmLink_synthesis.h>
+#include <include/link_api/algorithmLink_geometricAlignment.h>
+#include <include/link_api/algorithmLink_synthesis.h>
 #include <include/link_api/ipcLink.h>
-//#include <include/link_api/algorithmLink_photoAlignment.h>
-//#include <include/link_api/selectLink.h>
-///#include <include/link_api/vpeLink.h>
+#include <include/link_api/algorithmLink_photoAlignment.h>
+#include <include/link_api/selectLink.h>
+#include <include/link_api/vpeLink.h>
 #include <include/link_api/syncLink.h>
 #include <include/link_api/algorithmLink_dmaSwMs.h>
 #include <include/link_api/grpxSrcLink.h>
@@ -42,8 +42,8 @@ typedef struct {
        UInt32    CaptureLinkID;
        UInt32    Sync_svLinkID;
        UInt32    Dup_svLinkID;
-       UInt32    IPCOut_IPU1_0_IPU1_1LinkID;	//IPU1_0 -> IPU1_1, For Save Link in IPU1_0 Core
-       UInt32    IPCIn_IPU1_IPU1_0_1LinkID; 	//IPU1_0 -> IPU1_1, For Save Link in IPU1_1 Core
+       //UInt32    IPCOut_IPU1_0_IPU1_1LinkID;	//IPU1_0 -> IPU1_1, For Save Link in IPU1_0 Core
+       //UInt32    IPCIn_IPU1_IPU1_0_1LinkID; 	//IPU1_0 -> IPU1_1, For Save Link in IPU1_1 Core
        UInt32    IPCOut_IPU1_0_DSP1_0LinkID;	//IPU1_0 -> DSP1_0, For Cammsys LUT Link in IPU1_0 Core
        UInt32    IPCIn_DSP1_IPU1_0_0LinkID;		//IPU1_0 -> DSP1_0, For Cammsys LUT Link in DSP1_0 Core
        UInt32    IPCOut_DSP1_IPU1_0_0LinkID;	//DSP1_0 -> IPU1_0, For Cammsys LUT Link in DSP1_0 Core
@@ -51,14 +51,14 @@ typedef struct {
        UInt32    Display_svLinkID;
        UInt32    GrpxSrcLinkID;
        UInt32    Display_GrpxLinkID;
-       Uint32	 SaveLinkID;
+       //Uint32	 SaveLinkID;
        UInt32    Alg_DmaSwMsLinkID;				//Uint32	 CammsysLutLinkID;
 
        CaptureLink_CreateParams                CapturePrm;
        SyncLink_CreateParams                   Sync_svPrm;
        DupLink_CreateParams                    Dup_svPrm;
-       IpcLink_CreateParams                    IPCOut_IPU1_0_IPU1_1Prm;	//IPU1_0 -> IPU1_1, For Save Link in IPU1_0 Core
-       IpcLink_CreateParams                    IPCIn_IPU1_IPU1_0_1Prm;	//IPU1_0 -> IPU1_1, For Save Link in IPU1_1 Core
+      // IpcLink_CreateParams                    IPCOut_IPU1_0_IPU1_1Prm;	//IPU1_0 -> IPU1_1, For Save Link in IPU1_0 Core
+      // IpcLink_CreateParams                    IPCIn_IPU1_IPU1_0_1Prm;	//IPU1_0 -> IPU1_1, For Save Link in IPU1_1 Core
        IpcLink_CreateParams                    IPCOut_IPU1_0_DSP1_0Prm;	//IPU1_0 -> DSP1_0, For Cammsys LUT Link in IPU1_0 Core
        IpcLink_CreateParams                    IPCIn_DSP1_IPU1_0_0Prm;	//IPU1_0 -> DSP1_0, For Cammsys LUT Link in DSP1_0 Core
        IpcLink_CreateParams                    IPCOut_DSP1_IPU1_0_0Prm;	//DSP1_0 -> IPU1_0, For Cammsys LUT Link in DSP1_0 Core
@@ -68,7 +68,7 @@ typedef struct {
        DisplayLink_CreateParams                Display_GrpxPrm;
 
        AlgorithmLink_DmaSwMsCreateParams       Alg_DmaSwMsPrm;
-       SaveLink_CreateParams				   SavePrm;	//ryuhs74@20151027 - Add Save Link
+       //SaveLink_CreateParams				   SavePrm;	//ryuhs74@20151027 - Add Save Link
 #else
       UInt32    CaptureLinkID;
 	  UInt32    Dup_sv_orgLinkID;

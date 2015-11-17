@@ -14,6 +14,9 @@
 #include <examples/tda2xx/include/chains_common.h>
 
 
+#include "examples/tda2xx/src/usecases/lvds_vip_sv_standalone/chains_lvdsVipSurroundViewStandalone_priv.h"
+
+
 /*
  *******************************************************************************
  *
@@ -620,11 +623,25 @@ static Void ChainsCommon_SurroundView_SetDisplayPrm(
 
     if(pSvDisplay)
     {
+#ifdef CAMMSYS_LUT_AVME500
+
+    	pSvDisplay->rtParams.tarWidth         = (float)svOutWidth / displayWidthScale;
+		pSvDisplay->rtParams.tarHeight        = (float)svOutHeight / displayHeightScale;
+		pSvDisplay->rtParams.posX             = (float)svPosX / displayWidthScale;
+		pSvDisplay->rtParams.posY             = (float)svPosY / displayHeightScale;
+
+        pSvDisplay->rtParams.tarWidth         = displayWidth;
+        pSvDisplay->rtParams.tarHeight        = displayHeight;
+        pSvDisplay->rtParams.posX             = 0;
+        pSvDisplay->rtParams.posY             = 0;
+        pSvDisplay->displayId                 = DISPLAY_LINK_INST_DSS_VID1;
+#else
         pSvDisplay->rtParams.tarWidth         = (float)svOutWidth / displayWidthScale;
         pSvDisplay->rtParams.tarHeight        = (float)svOutHeight / displayHeightScale;
         pSvDisplay->rtParams.posX             = (float)svPosX / displayWidthScale;
         pSvDisplay->rtParams.posY             = (float)svPosY / displayHeightScale;
         pSvDisplay->displayId                 = DISPLAY_LINK_INST_DSS_VID1;
+#endif
     }
     if(pSvOrgDisplay)
     {

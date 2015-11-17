@@ -33,13 +33,13 @@ Void chains_lvdsVipSurroundViewStandalone_SetLinkId(chains_lvdsVipSurroundViewSt
 	pObj->IPCOut_DSP1_IPU1_0_0LinkID     = DSP1_LINK (SYSTEM_LINK_ID_IPC_OUT_0);	//DSP1_0 -> IPU1_0, in DSP1_0 Core
 	pObj->IPCIn_IPU1_0_DSP1_0LinkID      = IPU1_0_LINK (SYSTEM_LINK_ID_IPC_IN_0);	//DSP1_0 -> IPU1_0, in IPU1_0 Core
 
-	pObj->IPCOut_IPU1_0_IPU1_1LinkID	 = IPU1_0_LINK (SYSTEM_LINK_ID_IPC_OUT_1); //IPU1_0 -> IPU1_1, For Save Link in IPU1_0 Core
-	pObj->IPCIn_IPU1_IPU1_0_1LinkID	 	 = IPU1_1_LINK (SYSTEM_LINK_ID_IPC_IN_0); //IPU1_0 -> IPU1_1, For Save Link in IPU1_1 Core
+	//pObj->IPCOut_IPU1_0_IPU1_1LinkID	 = IPU1_0_LINK (SYSTEM_LINK_ID_IPC_OUT_1); //IPU1_0 -> IPU1_1, For Save Link in IPU1_0 Core
+	//pObj->IPCIn_IPU1_IPU1_0_1LinkID	 	 = IPU1_1_LINK (SYSTEM_LINK_ID_IPC_IN_0); //IPU1_0 -> IPU1_1, For Save Link in IPU1_1 Core
 
 	pObj->Display_svLinkID               = SYSTEM_LINK_ID_DISPLAY_0;
 	pObj->GrpxSrcLinkID                  = IPU1_0_LINK (SYSTEM_LINK_ID_GRPX_SRC_0);
 	pObj->Display_GrpxLinkID             = SYSTEM_LINK_ID_DISPLAY_3;
-	pObj->SaveLinkID					 = IPU1_1_LINK ( SYSTEM_LINT_SAVE_0 ); //ryuhs74@
+	//pObj->SaveLinkID					 = IPU1_1_LINK ( SYSTEM_LINT_SAVE_0 ); //ryuhs74@
 	pObj->Alg_DmaSwMsLinkID      		 = DSP1_LINK (SYSTEM_LINK_ID_ALG_0);//pObj->CammsysLutLinkID				 = DSP1_LINK ( );
 #else
        pObj->CaptureLinkID                  = SYSTEM_LINK_ID_CAPTURE;
@@ -79,8 +79,8 @@ Void chains_lvdsVipSurroundViewStandalone_ResetLinkPrms(chains_lvdsVipSurroundVi
        CaptureLink_CreateParams_Init(&pObj->CapturePrm);
        SyncLink_CreateParams_Init(&pObj->Sync_svPrm);
        DupLink_CreateParams_Init(&pObj->Dup_svPrm);
-       IpcLink_CreateParams_Init(&pObj->IPCOut_IPU1_0_IPU1_1Prm);	//IPU1_0 -> IPU1_1, For Save Link in IPU1_0 Core
-       IpcLink_CreateParams_Init(&pObj->IPCIn_IPU1_IPU1_0_1Prm);	//IPU1_0 -> IPU1_1, For Save Link in IPU1_1 Core
+       //IpcLink_CreateParams_Init(&pObj->IPCOut_IPU1_0_IPU1_1Prm);	//IPU1_0 -> IPU1_1, For Save Link in IPU1_0 Core
+       //IpcLink_CreateParams_Init(&pObj->IPCIn_IPU1_IPU1_0_1Prm);	//IPU1_0 -> IPU1_1, For Save Link in IPU1_1 Core
        IpcLink_CreateParams_Init(&pObj->IPCOut_IPU1_0_DSP1_0Prm);	//IPU1_0 -> DSP1_0, For Cammsys LUT Link in IPU1_0 Core
        IpcLink_CreateParams_Init(&pObj->IPCIn_DSP1_IPU1_0_0Prm);	//IPU1_0 -> DSP1_0, For Cammsys LUT Link in DSP1_0 Core
        IpcLink_CreateParams_Init(&pObj->IPCOut_DSP1_IPU1_0_0Prm);	//DSP1_0 -> IPU1_0, For Cammsys LUT Link in DSP1_0 Core
@@ -89,7 +89,7 @@ Void chains_lvdsVipSurroundViewStandalone_ResetLinkPrms(chains_lvdsVipSurroundVi
        GrpxSrcLink_CreateParams_Init(&pObj->GrpxSrcPrm);
        DisplayLink_CreateParams_Init(&pObj->Display_GrpxPrm);
 
-       SaveLink_CreateParams_Init(&pObj->SavePrm); //ryuhs74@20151027 - Add Save Link
+       //SaveLink_CreateParams_Init(&pObj->SavePrm); //ryuhs74@20151027 - Add Save Link
        AlgorithmLink_DmaSwMsCreateParams_Init(&pObj->Alg_DmaSwMsPrm);
 #else
        CaptureLink_CreateParams_Init(&pObj->CapturePrm);
@@ -121,6 +121,7 @@ Void chains_lvdsVipSurroundViewStandalone_SetPrms(chains_lvdsVipSurroundViewStan
 #ifdef CAMMSYS_LUT_AVME500
        (pObj->Dup_svPrm).numOutQue = 2;
        (pObj->Alg_DmaSwMsPrm).baseClassCreate.size  = sizeof(AlgorithmLink_DmaSwMsCreateParams);
+       (pObj->Alg_DmaSwMsPrm).baseClassCreate.algId = ALGORITHM_LINK_IPU_ALG_DMA_SWMS;
 #else
        (pObj->Dup_sv_orgPrm).numOutQue = 2;
        (pObj->Dup_svPrm).numOutQue = 2;
@@ -157,9 +158,9 @@ Void chains_lvdsVipSurroundViewStandalone_ConnectLinks(chains_lvdsVipSurroundVie
        pObj->IPCOut_IPU1_0_DSP1_0Prm.inQueParams.prevLinkQueId = 0;
 
        //Dup_sv -> IPCOut_IPU1_0_IPU1_1
-       pObj->Dup_svPrm.outQueParams[1].nextLink = pObj->IPCOut_IPU1_0_IPU1_1LinkID;
-       pObj->IPCOut_IPU1_0_IPU1_1Prm.inQueParams.prevLinkId = pObj->Dup_svLinkID;
-       pObj->IPCOut_IPU1_0_IPU1_1Prm.inQueParams.prevLinkQueId = 1;
+       //pObj->Dup_svPrm.outQueParams[1].nextLink = pObj->IPCOut_IPU1_0_IPU1_1LinkID;
+      // pObj->IPCOut_IPU1_0_IPU1_1Prm.inQueParams.prevLinkId = pObj->Dup_svLinkID;
+       //pObj->IPCOut_IPU1_0_IPU1_1Prm.inQueParams.prevLinkQueId = 1;
 
        //IPCOut_IPU1_0_DSP1_0 -> IPCIn_DSP1_IPU1_0_0, To Cammsys LUT Link
        pObj->IPCOut_IPU1_0_DSP1_0Prm.outQueParams.nextLink = pObj->IPCIn_DSP1_IPU1_0_0LinkID;
@@ -167,9 +168,9 @@ Void chains_lvdsVipSurroundViewStandalone_ConnectLinks(chains_lvdsVipSurroundVie
        pObj->IPCIn_DSP1_IPU1_0_0Prm.inQueParams.prevLinkQueId = 0;
 
        //IPCOut_IPU1_0_IPU1_1 -> IPCIn_IPU1_IPU1_0_1, To Save Link
-       pObj->IPCOut_IPU1_0_IPU1_1Prm.outQueParams.nextLink = pObj->IPCIn_IPU1_IPU1_0_1LinkID;
-       pObj->IPCIn_IPU1_IPU1_0_1Prm.inQueParams.prevLinkId = pObj->IPCOut_IPU1_0_IPU1_1LinkID;
-       pObj->IPCIn_IPU1_IPU1_0_1Prm.inQueParams.prevLinkQueId = 0;
+       //pObj->IPCOut_IPU1_0_IPU1_1Prm.outQueParams.nextLink = pObj->IPCIn_IPU1_IPU1_0_1LinkID;
+       //pObj->IPCIn_IPU1_IPU1_0_1Prm.inQueParams.prevLinkId = pObj->IPCOut_IPU1_0_IPU1_1LinkID;
+      // pObj->IPCIn_IPU1_IPU1_0_1Prm.inQueParams.prevLinkQueId = 0;
 
        //Connect IPCIn_DSP1_IPU1_0_0 and Cammsys LUT Link
        pObj->IPCIn_DSP1_IPU1_0_0Prm.outQueParams.nextLink = pObj->Alg_DmaSwMsLinkID;//CammsysLUTLinkID;
@@ -182,9 +183,9 @@ Void chains_lvdsVipSurroundViewStandalone_ConnectLinks(chains_lvdsVipSurroundVie
        pObj->IPCOut_DSP1_IPU1_0_0Prm.inQueParams.prevLinkQueId = 0;
 
        //Connect IPCIn_IPU1_IPU1_0_1 and Save Link, Save Link End Link
-       pObj->IPCIn_IPU1_IPU1_0_1Prm.outQueParams.nextLink = pObj->SaveLinkID;
-       pObj->SavePrm.inQueParams.prevLinkId = pObj->IPCIn_IPU1_IPU1_0_1LinkID;
-       pObj->SavePrm.inQueParams.prevLinkQueId = 0;
+      // pObj->IPCIn_IPU1_IPU1_0_1Prm.outQueParams.nextLink = pObj->SaveLinkID;
+       //pObj->SavePrm.inQueParams.prevLinkId = pObj->IPCIn_IPU1_IPU1_0_1LinkID;
+       //pObj->SavePrm.inQueParams.prevLinkQueId = 0;
 
        //IPCOut_DSP1_IPU1_0_0 -> IPCIn_IPU1_0_DSP1_0
        pObj->IPCOut_DSP1_IPU1_0_0Prm.outQueParams.nextLink = pObj->IPCIn_IPU1_0_DSP1_0LinkID;
@@ -354,12 +355,12 @@ Int32 chains_lvdsVipSurroundViewStandalone_Create(chains_lvdsVipSurroundViewStan
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
        //IPU1_0 -> IPU1_1, For Save Link in IPU1_0 Core
-       status = System_linkCreate(pObj->IPCOut_IPU1_0_IPU1_1LinkID, &pObj->IPCOut_IPU1_0_DSP1_0Prm, sizeof(pObj->IPCOut_IPU1_0_DSP1_0Prm));
-       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+      // status = System_linkCreate(pObj->IPCOut_IPU1_0_IPU1_1LinkID, &pObj->IPCOut_IPU1_0_DSP1_0Prm, sizeof(pObj->IPCOut_IPU1_0_DSP1_0Prm));
+      // UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
        //IPU1_0 -> IPU1_1, For Save Link in IPU1_1 Core
-       status = System_linkCreate(pObj->IPCIn_IPU1_IPU1_0_1LinkID, &pObj->IPCIn_DSP1_IPU1_0_0Prm, sizeof(pObj->IPCIn_DSP1_IPU1_0_0Prm));
-       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+      // status = System_linkCreate(pObj->IPCIn_IPU1_IPU1_0_1LinkID, &pObj->IPCIn_DSP1_IPU1_0_0Prm, sizeof(pObj->IPCIn_DSP1_IPU1_0_0Prm));
+     //  UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
        //IPU1_0 -> DSP1_0, For Cammsys LUT Link in IPU1_0 Core
        status = System_linkCreate(pObj->IPCOut_IPU1_0_DSP1_0LinkID, &pObj->IPCOut_IPU1_0_DSP1_0Prm, sizeof(pObj->IPCOut_IPU1_0_DSP1_0Prm));
@@ -390,8 +391,8 @@ Int32 chains_lvdsVipSurroundViewStandalone_Create(chains_lvdsVipSurroundViewStan
        status = System_linkCreate(pObj->Display_GrpxLinkID, &pObj->Display_GrpxPrm, sizeof(pObj->Display_GrpxPrm));
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
-       status = System_linkCreate(pObj->SaveLinkID, &pObj->SavePrm, sizeof(pObj->SavePrm));
-       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+       //status = System_linkCreate(pObj->SaveLinkID, &pObj->SavePrm, sizeof(pObj->SavePrm));
+       //UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 #else
        status = System_linkCreate(pObj->CaptureLinkID, &pObj->CapturePrm, sizeof(pObj->CapturePrm));
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
@@ -503,16 +504,16 @@ Int32 chains_lvdsVipSurroundViewStandalone_Start(chains_lvdsVipSurroundViewStand
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
        //Save Link Start
-       status = System_linkStart(pObj->SaveLinkID);
-       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+       //status = System_linkStart(pObj->SaveLinkID);
+       //UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
        //Save Link Start
-       status = System_linkStart(pObj->IPCIn_IPU1_IPU1_0_1LinkID);
-       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+       //status = System_linkStart(pObj->IPCIn_IPU1_IPU1_0_1LinkID);
+      // UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
        //Save Link Start
-       status = System_linkStart(pObj->IPCOut_IPU1_0_IPU1_1LinkID);
-       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+      // status = System_linkStart(pObj->IPCOut_IPU1_0_IPU1_1LinkID);
+      // UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
        status = System_linkStart(pObj->Dup_svLinkID);
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
@@ -632,14 +633,14 @@ Int32 chains_lvdsVipSurroundViewStandalone_Stop(chains_lvdsVipSurroundViewStanda
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
        //ryuhs74220151028 - Add Save Link
-       status = System_linkStop(pObj->SaveLinkID);
-       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+       //status = System_linkStop(pObj->SaveLinkID);
+       //UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
-       status = System_linkStop(pObj->IPCIn_IPU1_IPU1_0_1LinkID);
-       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+       //status = System_linkStop(pObj->IPCIn_IPU1_IPU1_0_1LinkID);
+       //UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
-       status = System_linkStop(pObj->IPCOut_IPU1_0_IPU1_1LinkID);
-       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+       //status = System_linkStop(pObj->IPCOut_IPU1_0_IPU1_1LinkID);
+       //UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
        //END
 
        status = System_linkStop(pObj->Dup_svLinkID);
@@ -761,14 +762,14 @@ Int32 chains_lvdsVipSurroundViewStandalone_Delete(chains_lvdsVipSurroundViewStan
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
        //ryuhs74220151028 - Add Save Link
-       status = System_linkDelete(pObj->SaveLinkID);
-       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+       //status = System_linkDelete(pObj->SaveLinkID);
+       //UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
-       status = System_linkDelete(pObj->IPCIn_IPU1_IPU1_0_1LinkID);
-       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+       //status = System_linkDelete(pObj->IPCIn_IPU1_IPU1_0_1LinkID);
+       //UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
-       status = System_linkDelete(pObj->IPCOut_IPU1_0_IPU1_1LinkID);
-       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+       //status = System_linkDelete(pObj->IPCOut_IPU1_0_IPU1_1LinkID);
+       //UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
        //END
 
        status = System_linkDelete(pObj->Dup_svLinkID);
