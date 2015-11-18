@@ -1794,9 +1794,9 @@ void Start_AVM_E500() //ryuhs74@20151020 - Add HDMI On/Off Test
 
 	gChains_usecaseCfg.captureSrc = CHAINS_CAPTURE_SRC_ISX016;
 	gChains_usecaseCfg.algProcId = System_getSelfProcId();
-	gChains_usecaseCfg.numLvdsCh = VIDEO_SENSOR_NUM_LVDS_CAMERAS;
+	gChains_usecaseCfg.numLvdsCh = 1;
 
-#ifdef AVM_E500_SV
+#if 0
 	{
 		Chains_Ctrl usecaseCfg;
 
@@ -1816,7 +1816,7 @@ void Start_AVM_E500() //ryuhs74@20151020 - Add HDMI On/Off Test
 
 	Chains_lvdsVipSurroundViewStandalone(&gChains_usecaseCfg);
 #else
-	Chains_lvdsVipMultiCam_Display_tda2xx(&gChains_usecaseCfg);
+	Chains_vipSingleCameraFullView(&gChains_usecaseCfg);
 #endif
 }
 /**

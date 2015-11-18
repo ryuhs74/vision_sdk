@@ -251,6 +251,7 @@ Void Chains_vipSingleCameraFullView(Chains_Ctrl *chainsCfg)
     UInt32 done = FALSE;
     Chains_VipSingleCameraFullViewAppObj chainsObj;
 
+    chainsCfg->algProcId = SYSTEM_PROC_DSP1;
     chainsObj.chainsCfg = chainsCfg;
 
     chains_vipSingleCameraFullView_Create(&chainsObj.ucObj, &chainsObj);

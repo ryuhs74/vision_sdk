@@ -609,12 +609,12 @@ Int32 AlgorithmLink_fullViewProcess(void * pObj)
           Alg_FullViewProcess(algHandle,
                                (UInt32 **)pSysVideoFrameBufferInput->bufAddr,
                                (UInt32 **)pSysVideoFrameBufferOutput->bufAddr,
-                               pInputChInfo->width,
-                               pInputChInfo->height,
+                               1248,
+                               558,
                                pInputChInfo->pitch,
                                outPitch,
-                               dataFormat,
-                               viewMode,
+                               0,
+                               0,
 							   pFullViewObj->pLUT
                               );
 

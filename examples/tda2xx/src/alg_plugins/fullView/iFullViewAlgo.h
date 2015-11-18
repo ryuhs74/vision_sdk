@@ -156,8 +156,8 @@ Int32 Alg_FullViewProcess(Alg_FullView_Obj *algHandle,
                            UInt32             height,
                            UInt32             inPitch[],
                            UInt32             outPitch[],
-                           UInt32             dataFormat, 
-                           Uint32             copyMode,
+                           UInt32             startX,
+						   UInt32             startY,
 						   UInt32			  *viewLUT
                           );
 

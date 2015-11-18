@@ -158,45 +158,18 @@ Int32 Alg_FullViewProcess(Alg_FullView_Obj *algHandle,
                            UInt32             height,
                            UInt32             inPitch[],
                            UInt32             outPitch[],
-                           UInt32             dataFormat,
-                           Uint32             copyMode,
+                           UInt32             startX,
+						   UInt32             startY,
 						   UInt32			  *viewLUT
                           )
 {
     Int16 rowIdx;
     Int16 colIdx;
 
-    UInt16 wordWidth;
-    UInt16 wordHeight;
-
-    UInt16 lutWidth = 1248 ;
-    UInt16 lutHeight = 558;
-
     yuvHD720P* iPtr;
     yuvHD720P* oPtr;
 
     ViewLUT_Packed *lut = (ViewLUT_Packed*)viewLUT;
-
-    if((width > algHandle->maxWidth) ||
-       (height > algHandle->maxHeight) ||
-       (copyMode != 0))
-    {
-        return SYSTEM_LINK_STATUS_EFAIL;
-    }
-
-    if(dataFormat == SYSTEM_DF_YUV422I_YUYV)
-    {
-        wordWidth = lutWidth;/// /4
-        wordHeight = lutHeight;
-    }
-    else
-    {
-        return SYSTEM_LINK_STATUS_EFAIL;
-    }
-
-    /*
-     * For Luma plane of 420SP OR RGB OR 422IL
-     */
 
     iPtr  = (yuvHD720P*)inPtr[0];
     oPtr = (yuvHD720P*)outPtr[0];
@@ -205,15 +178,15 @@ Int32 Alg_FullViewProcess(Alg_FullView_Obj *algHandle,
 #pragma UNROLL(2);
 #pragma MUST_ITERATE(500,720, 2);
 #endif
-    for(rowIdx = 0; rowIdx < wordHeight ; rowIdx++)
+    for(rowIdx = 0; rowIdx < height ; rowIdx++)
     {
-    	lut = (ViewLUT_Packed*)(viewLUT) + rowIdx*lutWidth;
+    	lut = (ViewLUT_Packed*)(viewLUT) + rowIdx*width;
     	ViewLUT_Packed *lutbak;
 #ifdef BUILD_DSP
 #pragma UNROLL(4);
 #pragma MUST_ITERATE(500,1280, 4);
 #endif
-        for(colIdx = 0, lutbak = lut; colIdx < wordWidth ; colIdx++, lutbak++)
+        for(colIdx = 0, lutbak = lut; colIdx < width ; colIdx++, lutbak++)
         {
         	yuyv *q = &iPtr[lutbak->yInteger][lutbak->xInteger];
 
@@ -224,7 +197,7 @@ Int32 Alg_FullViewProcess(Alg_FullView_Obj *algHandle,
 #pragma UNROLL(2);
 #pragma MUST_ITERATE(350,640, 2);
 #endif
-        for(colIdx = 0, lutbak = lut; colIdx < wordWidth ; colIdx+=2, lutbak+=2)
+        for(colIdx = 0, lutbak = lut; colIdx < width ; colIdx+=2, lutbak+=2)
         {
         	yuyv *q = &iPtr[lutbak->yInteger][lutbak->xInteger & 0xfffe];
         	///U
