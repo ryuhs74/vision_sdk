@@ -18,15 +18,22 @@
 #include "chains_lvdsVipSurroundViewStandalone_priv.h"
 Void chains_lvdsVipSurroundViewStandalone_SetLinkId(chains_lvdsVipSurroundViewStandaloneObj *pObj){
 #ifdef CAMMSYS_LUT_AVME500
+	/*
+	 * 한 CORE 에서  SYSTEM_LINK_IDS_COMMON( ex. SYSTEM_LINK_ID_IPC_OUT_0, SYSTEM_LINK_ID_IPC_OUT_1 )을
+	 * 가져야 한다.
+	 * 서로 다른 CORE일 경우 SYSTEM_LINK_IDS_COMMON이 겹쳐되 된다.
+	 */
 	pObj->CaptureLinkID                  = SYSTEM_LINK_ID_CAPTURE;
 	pObj->Sync_svLinkID                  = IPU1_0_LINK (SYSTEM_LINK_ID_SYNC_2);
 	pObj->Dup_svLinkID                   = IPU1_0_LINK (SYSTEM_LINK_ID_DUP_1);
 
 	pObj->IPCOut_IPU1_0_DSP1_0LinkID     = IPU1_0_LINK (SYSTEM_LINK_ID_IPC_OUT_0);	//IPU1_0 -> DSP1_0, in IPU1_0 Core
 	pObj->IPCIn_DSP1_IPU1_0_0LinkID      = DSP1_LINK (SYSTEM_LINK_ID_IPC_IN_0);		//IPU1_0 -> DSP1_0, in DSP1_0 Core
+
 	pObj->IPCOut_DSP1_IPU1_0_0LinkID     = DSP1_LINK (SYSTEM_LINK_ID_IPC_OUT_0);	//DSP1_0 -> IPU1_0, in DSP1_0 Core
 	pObj->IPCIn_IPU1_0_DSP1_0LinkID      = IPU1_0_LINK (SYSTEM_LINK_ID_IPC_IN_0);	//DSP1_0 -> IPU1_0, in IPU1_0 Core
-	pObj->IPCOut_IPU1_0_IPU1_1LinkID	 = IPU1_0_LINK (SYSTEM_LINK_ID_IPC_OUT_0); //IPU1_0 -> IPU1_1, For Save Link in IPU1_0 Core
+
+	pObj->IPCOut_IPU1_0_IPU1_1LinkID	 = IPU1_0_LINK (SYSTEM_LINK_ID_IPC_OUT_1); //IPU1_0 -> IPU1_1, For Save Link in IPU1_0 Core
 	pObj->IPCIn_IPU1_IPU1_0_1LinkID	 	 = IPU1_1_LINK (SYSTEM_LINK_ID_IPC_IN_0); //IPU1_0 -> IPU1_1, For Save Link in IPU1_1 Core
 
 	pObj->Display_svLinkID               = SYSTEM_LINK_ID_DISPLAY_0;
@@ -485,6 +492,7 @@ Int32 chains_lvdsVipSurroundViewStandalone_Start(chains_lvdsVipSurroundViewStand
        status = System_linkStart(pObj->IPCIn_IPU1_0_DSP1_0LinkID);
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
+       //IPCOut_DSP1_IPU1_0_0Prm
        status = System_linkStart(pObj->IPCOut_DSP1_IPU1_0_0LinkID);
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 

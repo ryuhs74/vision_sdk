@@ -48,7 +48,7 @@
  */
 //#define CHAINS_DISABLE_GET_CHAR
 
-
+#define AVM_E500_SV		//ryuhs74@20151110 - Add Change Multi Cam or SV
 Chains_Ctrl gChains_usecaseCfg;
 
 /**
@@ -1695,7 +1695,7 @@ Void Chains_main(UArg arg0, UArg arg1)
     Chains_Ctrl_Init(&gChains_usecaseCfg);
     UartCmd_tsk_init();
     Error_Monitor_init();
-    PrintLut();
+    //PrintLut();
     #ifdef TDA3XX_FAMILY_BUILD
     if(System_isFastBootEnabled())
     {
