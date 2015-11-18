@@ -1657,15 +1657,17 @@ Void PrintLut(void)
 	LUT_INDEX i = Basic_frontView;
 	for(i = Basic_frontView; i<MAX_LUT_INDEX; i++)
 	{
-		uint8_t* lut;
-		lut = LUTAlloc(i);
+		UInt8* lut;
+		lut = (UInt8*)LUTAlloc(i);
 		if(lut!=NULL)
 		{
             Vps_printf("LUT[%d] %02X %02X %02X %02X %02X %02X %02X %02X\n",i, lut[0], lut[1], lut[2], lut[3], lut[4], lut[5], lut[6], lut[7]);
+            LUTFree(i);
 		}else
 		{
             Vps_printf("LUT ALLOC ERROR[%d]\n",i);
 		}
+
 	}
 }
 

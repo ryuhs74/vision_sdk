@@ -43,10 +43,12 @@ typedef enum lut_index
 	Basic_leftNT,
 	Basic_rightNT,
 	cmaskNT,
+	Basic_frontFullView,
+	Basit_rearFullView,
 	MAX_LUT_INDEX,
 }LUT_INDEX;
 
-uint8_t* LUTAlloc(LUT_INDEX index );
-void LUTFree(uint8_t* lutAddress);
+void* LUTAlloc(LUT_INDEX index );
+void LUTFree(LUT_INDEX index);
 
 #endif /* EXAMPLES_TDA2XX_SRC_DEVICES_UTILS_LUT_H_ */
