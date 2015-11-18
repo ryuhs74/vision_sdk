@@ -41,6 +41,7 @@ include $(MODULE_SRC_BASE_PATH)/colortogray/SRC_FILES.MK
 include $(MODULE_SRC_BASE_PATH)/denseopticalflow/SRC_FILES.MK
 include $(MODULE_SRC_BASE_PATH)/edgedetection/SRC_FILES.MK
 include $(MODULE_SRC_BASE_PATH)/framecopy/SRC_FILES.MK
+include $(MODULE_SRC_BASE_PATH)/fullView/SRC_FILES.MK
 include $(MODULE_SRC_BASE_PATH)/surroundview/SRC_FILES.MK
 include $(MODULE_SRC_BASE_PATH)/objectdetection/SRC_FILES.MK
 include $(MODULE_SRC_BASE_PATH)/sparseopticalflow/SRC_FILES.MK

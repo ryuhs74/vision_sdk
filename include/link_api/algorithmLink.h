@@ -102,6 +102,9 @@ typedef enum
     ALGORITHM_LINK_DSP_ALG_FRAMECOPY = 0,
     /**< Alg to copy i/p frame to o/p frame */
 
+    ALGORITHM_LINK_DSP_ALG_FULLVIEW = 0,
+    /**< Alg to full view */
+
     ALGORITHM_LINK_DSP_ALG_COLORTOGRAY,
     /**< Alg to convert color image to gray image */
 
@@ -164,6 +167,9 @@ typedef enum
     ALGORITHM_LINK_EVE_ALG_FRAMECOPY = 0,
     /**< Alg to copy i/p frame to o/p frame */
 
+    ALGORITHM_LINK_EVE_ALG_FULLVIEW = 0,
+    /**< Alg to full view */
+
     ALGORITHM_LINK_EVE_ALG_DENSE_OPTICAL_FLOW,
     /**< Alg to generate LUT to show optical Flow */
 
@@ -217,6 +223,9 @@ typedef enum
 {
     ALGORITHM_LINK_A15_ALG_FRAMECOPY = 0,
     /**< Alg to copy i/p frame to o/p frame */
+
+    ALGORITHM_LINK_A15_ALG_FULLVIEW = 0,
+    /**< Alg to full view */
 
     ALGORITHM_LINK_A15_ALG_COLORTOGRAY,
     /**< Alg to convert color image to gray image */

@@ -27,6 +27,7 @@ include $(MODULE_SRC_BASE_PATH)/tda2xx/src/usecases/vip_single_cam_view/SRC_FILE
 include $(MODULE_SRC_BASE_PATH)/tda2xx/src/usecases/vip_single_cam_dual_display/SRC_FILES.MK
 include $(MODULE_SRC_BASE_PATH)/tda2xx/src/usecases/vip_single_cam_dual_display_edge_detection/SRC_FILES.MK
 include $(MODULE_SRC_BASE_PATH)/tda2xx/src/usecases/vip_single_cam_frame_copy/SRC_FILES.MK
+include $(MODULE_SRC_BASE_PATH)/tda2xx/src/usecases/vip_single_cam_full_view/SRC_FILES.MK
 include $(MODULE_SRC_BASE_PATH)/tda2xx/src/usecases/vip_single_cam_edge_detection/SRC_FILES.MK
 include $(MODULE_SRC_BASE_PATH)/tda2xx/src/usecases/vip_single_cam_dense_optical_flow/SRC_FILES.MK
 include $(MODULE_SRC_BASE_PATH)/tda2xx/src/usecases/vip_single_cam_object_detection/SRC_FILES.MK
