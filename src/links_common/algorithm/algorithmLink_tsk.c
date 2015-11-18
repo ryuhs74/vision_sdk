@@ -54,6 +54,9 @@ Int32 AlgorithmLink_pluginCreate(AlgorithmLink_Obj *pObj, Utils_MsgHndl *pMsg)
     UInt32 algId;
     Int32 status = SYSTEM_LINK_STATUS_SOK;
 
+//#ifdef SYSTEM_DEBUG_CAPTURE
+ //   Vps_printf(" Algorithm: Create in progress !!!\n");
+//#endif
     pCreateParams = (AlgorithmLink_CreateParams *)(Utils_msgGetPrm(pMsg));
     pObj->algId   = (pCreateParams->algId);
     pObj->callbackPutEmptyBuffers = NULL;
@@ -103,7 +106,9 @@ Int32 AlgorithmLink_pluginCreate(AlgorithmLink_Obj *pObj, Utils_MsgHndl *pMsg)
                    " (algId = %d) !!!\n", pObj->algId);
         #endif
     }
-
+//#ifdef SYSTEM_DEBUG_CAPTURE
+//    Vps_printf(" Algorithm: Create in Done !!!\n");
+//#endif
     return status;
 }
 
@@ -194,7 +199,7 @@ Void AlgorithmLink_tskMain(struct Utils_TskHndl *pTsk, Utils_MsgHndl *pMsg)
             Utils_tskAckOrFreeMsg(pMsg, status);
             break;
         case SYSTEM_CMD_NEW_DATA:
-
+//Vps_printf("Alg: tskMain SYSTEM_CMD_NEW_DATA LinkId: %d start !!!\n",pObj->linkId);
           Utils_tskAckOrFreeMsg(pMsg, 0);
 
           flushCmds[0] = SYSTEM_CMD_NEW_DATA;
@@ -217,7 +222,7 @@ Void AlgorithmLink_tskMain(struct Utils_TskHndl *pTsk, Utils_MsgHndl *pMsg)
 #endif
               }
           }
-
+//Vps_printf("Alg: tskMain SYSTEM_CMD_NEW_DATA LinkId: %d end !!!\n");
           break;
 
         case ALGORITHM_LINK_CMD_CONFIG:

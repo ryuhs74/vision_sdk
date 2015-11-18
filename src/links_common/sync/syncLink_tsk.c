@@ -1172,6 +1172,9 @@ Void SyncLink_tskMain(struct Utils_TskHndl * pTsk, Utils_MsgHndl * pMsg)
     switch (cmd)
     {
         case SYSTEM_CMD_CREATE:
+//#ifdef SYSTEM_RT_STATS_LOG_CMD
+//    Vps_printf(" SYNC: tskMain SYSTEM_CMD_CREATE start !!!\n");
+//#endif
             if(pObj->state==SYSTEM_LINK_STATE_IDLE)
             {
                 status = SyncLink_drvCreate(pObj, Utils_msgGetPrm(pMsg));
@@ -1181,9 +1184,15 @@ Void SyncLink_tskMain(struct Utils_TskHndl * pTsk, Utils_MsgHndl * pMsg)
                 }
             }
             Utils_tskAckOrFreeMsg(pMsg, status);
+//#ifdef SYSTEM_RT_STATS_LOG_CMD
+//    Vps_printf(" SYNC: tskMain SYSTEM_CMD_CREATE end !!!\n");
+//#endif
             break;
 
         case SYSTEM_CMD_NEW_DATA:
+//#ifdef SYSTEM_RT_STATS_LOG_CMD
+//    Vps_printf(" SYNC: tskMain SYSTEM_CMD_NEW_DATA start !!!\n");
+//#endif
             Utils_tskAckOrFreeMsg(pMsg, status);
 
             flushCmds[0] = SYSTEM_CMD_NEW_DATA;
@@ -1193,27 +1202,45 @@ Void SyncLink_tskMain(struct Utils_TskHndl * pTsk, Utils_MsgHndl * pMsg)
             {
                 status = SyncLink_drvProcessData(pObj);
             }
+//#ifdef SYSTEM_RT_STATS_LOG_CMD
+//    Vps_printf(" SYNC: tskMain SYSTEM_CMD_NEW_DATA end !!!\n");
+//#endif
             break;
 
         case SYSTEM_CMD_START:
+//#ifdef SYSTEM_RT_STATS_LOG_CMD
+//    Vps_printf(" SYNC: tskMain SYSTEM_CMD_START start !!!\n");
+//#endif
             if(pObj->state==SYSTEM_LINK_STATE_CREATED)
             {
                 status = SyncLink_start(pObj);
                 pObj->state = SYSTEM_LINK_STATE_RUNNING;
             }
             Utils_tskAckOrFreeMsg(pMsg, status);
+//#ifdef SYSTEM_RT_STATS_LOG_CMD
+//    Vps_printf(" SYNC: tskMain SYSTEM_CMD_START end !!!\n");
+//#endif
             break;
 
         case SYSTEM_CMD_STOP:
+//#ifdef SYSTEM_RT_STATS_LOG_CMD
+//    Vps_printf(" SYNC: tskMain SYSTEM_CMD_STOP start !!!\n");
+//#endif
             if(pObj->state==SYSTEM_LINK_STATE_RUNNING)
             {
                 status = SyncLink_stop(pObj);
                 pObj->state = SYSTEM_LINK_STATE_CREATED;
             }
             Utils_tskAckOrFreeMsg(pMsg, status);
+//#ifdef SYSTEM_RT_STATS_LOG_CMD
+//    Vps_printf(" SYNC: tskMain SYSTEM_CMD_STOP end !!!\n");
+//#endif
             break;
 
         case SYSTEM_CMD_DELETE:
+//#ifdef SYSTEM_RT_STATS_LOG_CMD
+//    Vps_printf(" SYNC: tskMain SYSTEM_CMD_DELETE start !!!\n");
+//#endif
             if(pObj->state==SYSTEM_LINK_STATE_RUNNING)
             {
                 status = SyncLink_stop(pObj);
@@ -1225,9 +1252,15 @@ Void SyncLink_tskMain(struct Utils_TskHndl * pTsk, Utils_MsgHndl * pMsg)
                 pObj->state = SYSTEM_LINK_STATE_IDLE;
             }
             Utils_tskAckOrFreeMsg(pMsg, status);
+//#ifdef SYSTEM_RT_STATS_LOG_INTERVAL
+//    Vps_printf(" SYNC: tskMain SYSTEM_CMD_DELETE end !!!\n");
+//#endif
             break;
 
         case SYNC_LINK_CMD_GET_LATEST_SYNC_DELTA:
+//#ifdef SYSTEM_RT_STATS_LOG_INTERVAL
+//    Vps_printf(" SYNC: tskMain SYNC_LINK_CMD_GET_LATEST_SYNC_DELTA start !!!\n");
+//#endif
             if(pObj->state==SYSTEM_LINK_STATE_RUNNING)
             {
                 latestSyncDelta =
@@ -1239,17 +1272,29 @@ Void SyncLink_tskMain(struct Utils_TskHndl * pTsk, Utils_MsgHndl * pMsg)
                    );
             }
             Utils_tskAckOrFreeMsg(pMsg, status);
+//#ifdef SYSTEM_RT_STATS_LOG_CMD
+//    Vps_printf(" SYNC: tskMain SYNC_LINK_CMD_GET_LATEST_SYNC_DELTA end !!!\n");
+//#endif
             break;
 
         case SYSTEM_CMD_PRINT_STATISTICS:
+//#ifdef SYSTEM_RT_STATS_LOG_CMD
+//    Vps_printf(" SYNC: tskRun SYSTEM_CMD_PRINT_STATISTICS start !!!\n");
+//#endif
             if(pObj->state==SYSTEM_LINK_STATE_RUNNING)
             {
                 status = SyncLink_drvPrintStatistics(pObj);
             }
             Utils_tskAckOrFreeMsg(pMsg, status);
+//#ifdef SYSTEM_RT_STATS_LOG_CMD
+//    Vps_printf(" SYNC: tskMain SYSTEM_CMD_PRINT_STATISTICS end !!!\n");
+//#endif
             break;
 
         default:
+//#ifdef SYSTEM_RT_STATS_LOG_CMD
+//    Vps_printf(" SYNC: tskMain default !!!\n");
+//#endif
             Utils_tskAckOrFreeMsg(pMsg, status);
             break;
 

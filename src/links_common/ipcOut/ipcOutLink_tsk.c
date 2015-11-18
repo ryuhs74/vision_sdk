@@ -122,7 +122,7 @@ Void IpcOutLink_tskMain(struct Utils_TskHndl * pTsk, Utils_MsgHndl * pMsg)
             break;
 
         case SYSTEM_CMD_NEW_DATA:
-
+//Vps_printf("IPCOut: tskMain SYSTEM_CMD_NEW_DATA LinkId : %dstart !!!\n",pObj->linkId);
             Utils_tskAckOrFreeMsg(pMsg, status);
 
             flushCmds[0] = SYSTEM_CMD_NEW_DATA;
@@ -133,6 +133,7 @@ Void IpcOutLink_tskMain(struct Utils_TskHndl * pTsk, Utils_MsgHndl * pMsg)
                 /* if STOP state then dont handle buffers */
                 status  = IpcOutLink_drvProcessBuffers(pObj);
             }
+//Vps_printf("IPCOut: tskMain SYSTEM_CMD_NEW_DATA end !!!\n");
             break;
 
         case IPC_OUT_LINK_CMD_RELEASE_FRAMES:

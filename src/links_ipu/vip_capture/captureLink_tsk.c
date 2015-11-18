@@ -106,6 +106,9 @@ Int32 CaptureLink_tskRun(CaptureLink_Obj * pObj, Utils_TskHndl * pTsk,
         switch (cmd)
         {
             case SYSTEM_CMD_NEW_DATA:
+//#ifdef SYSTEM_RT_STATS_LOG_CMD
+//    Vps_printf(" CAPTURE: tskRun SYSTEM_CMD_NEW_DATA start !!!\n");
+//#endif
                 /* new data frames have been captured, process them */
                 instId = (UInt32)Utils_msgGetPrm(pRunMsg);
                 /* ACK or free message before proceding */
@@ -121,33 +124,56 @@ Int32 CaptureLink_tskRun(CaptureLink_Obj * pObj, Utils_TskHndl * pTsk,
                      * or free it again */
                     runAckMsg = FALSE;
                 }
+//#ifdef SYSTEM_RT_STATS_LOG_CMD
+//    Vps_printf(" CAPTURE: tskRun SYSTEM_CMD_NEW_DATA end !!!\n");
+//#endif
                 break;
 
             case SYSTEM_CMD_PRINT_STATISTICS:
+//#ifdef SYSTEM_RT_STATS_LOG_CMD
+//    Vps_printf(" CAPTURE: tskRun SYSTEM_CMD_PRINT_STATISTICS start !!!\n");
+//#endif
                 /* new data frames have been captured, process them */
 
                 CaptureLink_drvPrintStatus(pObj);
 
                 /* ACK or free message before proceding */
                 Utils_tskAckOrFreeMsg(pRunMsg, status);
+//#ifdef SYSTEM_RT_STATS_LOG_CMD
+//    Vps_printf(" CAPTURE: tskRun SYSTEM_CMD_PRINT_STATISTICS end !!!\n");
+//#endif
                 break;
 
             case SYSTEM_CMD_PRINT_BUFFER_STATISTICS:
+//#ifdef SYSTEM_RT_STATS_LOG_CMD
+//    Vps_printf(" CAPTURE: tskRun SYSTEM_CMD_PRINT_BUFFER_STATISTICS start !!!\n");
+//#endif
                 CaptureLink_printBufferStatus(pObj);
                 Utils_tskAckOrFreeMsg(pRunMsg, status);
+//#ifdef SYSTEM_RT_STATS_LOG_CMD
+//    Vps_printf(" CAPTURE: tskRun SYSTEM_CMD_PRINT_BUFFER_STATISTICS end !!!\n");
+//#endif
                 break;
 
             case SYSTEM_CMD_STOP:
+//#ifdef SYSTEM_RT_STATS_LOG_CMD
+//    Vps_printf(" CAPTURE: tskRun SYSTEM_CMD_STOP start !!!\n");
+//#endif
                 /* stop RUN loop and goto READY state */
                 runDone = TRUE;
 
                 /* ACK message after actually stopping the driver outside the
                  * RUN loop */
                 runAckMsg = TRUE;
+//#ifdef SYSTEM_RT_STATS_LOG_CMD
+//    Vps_printf(" CAPTURE: tskRun SYSTEM_CMD_STOP end !!!\n");
+//#endif
                 break;
 
             case SYSTEM_CMD_DELETE:
-
+//#ifdef SYSTEM_RT_STATS_LOG_CMD
+//    Vps_printf(" CAPTURE: tskRun SYSTEM_CMD_DELETE start !!!\n");
+//#endif
                 /* stop RUN loop and goto IDLE state */
 
                 /* exit RUN loop */
@@ -161,9 +187,14 @@ Int32 CaptureLink_tskRun(CaptureLink_Obj * pObj, Utils_TskHndl * pTsk,
 
                 /* Pass the received message to the READY loop */
                 *pMsg = pRunMsg;
-
+//#ifdef SYSTEM_RT_STATS_LOG_CMD
+//   Vps_printf(" CAPTURE: tskRun SYSTEM_CMD_DELETE end !!!\n");
+//#endif
                 break;
             case CAPTURE_LINK_CMD_SET_FRAME_SKIP_MASK:
+//#ifdef SYSTEM_RT_STATS_LOG_CMD
+//    Vps_printf(" CAPTURE: tskRun CAPTURE_LINK_CMD_SET_FRAME_SKIP_MASK start !!!\n");
+//#endif
                 /* Command to change the frame skip mask parameter */
                 frmSkipMask = *(UInt32 *)Utils_msgGetPrm(pRunMsg);
                 /* This command would be called in limp home mode where
@@ -172,9 +203,14 @@ Int32 CaptureLink_tskRun(CaptureLink_Obj * pObj, Utils_TskHndl * pTsk,
                 status = CaptureLink_drvUpdateFrmSkip(pObj, frmSkipMask);
                 /* ACK or free message before proceding */
                 Utils_tskAckOrFreeMsg(pRunMsg, status);
+//#ifdef SYSTEM_RT_STATS_LOG_CMD
+//    Vps_printf(" CAPTURE: tskRun CAPTURE_LINK_CMD_SET_FRAME_SKIP_MASK end !!!\n");
+//#endif
                 break;
             default:
-
+//#ifdef SYSTEM_RT_STATS_LOG_CMD
+//    Vps_printf(" CAPTURE: tskRun default !!!\n");
+//#endif
                 /* invalid command for this state ACK it and continue RUN
                  * loop */
                 Utils_tskAckOrFreeMsg(pRunMsg, status);
