@@ -57,7 +57,7 @@ typedef struct {
 	unsigned short y;
 } ViewLUT_Pos;
 
-
+#if 0
 #define LinearInterpolation(x,q1,q2)\
 	((64-x)*q1 + x*q2)>>AVM_LUT_FRACTION_BITS
 
@@ -86,7 +86,40 @@ inline UInt8 BilinearInterpolationUV(yuyv* q, ViewLUT_Packed *lut)
 
 	return (UInt8)(Q);
 }
+#else
+///https://en.wikipedia.org/wiki/Bilinear_interpolation
+inline UInt8 BilinearInterpolation(yuyv* q, ViewLUT_Packed *lut)
+{
+	UInt16 X =	lut->xFraction;
+	UInt16 Y =	lut->yFraction;
 
+	UInt16 A,B,Q;
+
+	A = 64 - X;
+	B = 64 - Y;
+
+	Q = (q[0].y*A*B + q[1].y*X*B + q[HD720P_WIDTH].y*A*Y + q[HD720P_WIDTH+1].y*X*Y)>>12;
+
+	return (UInt8)(Q);
+}
+///https://en.wikipedia.org/wiki/Bilinear_interpolation
+inline UInt8 BilinearInterpolationUV(yuyv* q, ViewLUT_Packed *lut)
+{
+	UInt16 X =	lut->xFraction;
+	UInt16 Y =	lut->yFraction;
+
+
+	UInt16 A,B,Q;
+
+	A = 64 - X;
+	B = 64 - Y;
+
+	Q = (q[0].uv*A*B + q[2].uv*X*B + q[HD720P_WIDTH].uv*A*Y + q[HD720P_WIDTH+2].uv*X*Y)>>12;
+
+	return (UInt8)(Q);
+}
+
+#endif
 
 /**
  *******************************************************************************
