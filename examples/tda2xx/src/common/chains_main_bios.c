@@ -1725,7 +1725,7 @@ Void Chains_main(UArg arg0, UArg arg1)
             char ch;
             Bool done;
 
-            Start_AVM_E500();
+            //Start_AVM_E500();
 
             done = FALSE;
 
