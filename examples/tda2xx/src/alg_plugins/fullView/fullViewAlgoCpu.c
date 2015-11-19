@@ -32,58 +32,6 @@
 #include "iFullViewAlgo.h"
 #include "singleView.h"
 
-#if 0
-#define LinearInterpolation(x,q1,q2)\
-	((64-x)*q1 + x*q2)>>AVM_LUT_FRACTION_BITS
-
-inline UInt8 BilinearInterpolation(yuyv* q, ViewLUT_Packed *lut)
-{
-	UInt16 X =	lut->xFraction;
-	UInt16 Y =	lut->yFraction;
-
-	UInt16 R1,R2,Q;
-	R1 = LinearInterpolation(X,q[0].y,q[1].y);
-	R2 = LinearInterpolation(X,q[HD720P_WIDTH].y,q[HD720P_WIDTH+1].y);
-	Q = LinearInterpolation(Y,R1,R2);
-
-	return (UInt8)(Q);
-}
-
-inline UInt8 BilinearInterpolationUV(yuyv* q, ViewLUT_Packed *lut)
-{
-	UInt16 X =	lut->xFraction;
-	UInt16 Y =	lut->yFraction;
-
-	UInt16 R1,R2,Q;
-	R1 = LinearInterpolation(X,q[0].uv,q[2].uv);
-	R2 = LinearInterpolation(X,q[HD720P_WIDTH].uv,q[HD720P_WIDTH+2].uv);
-	Q = LinearInterpolation(Y,R1,R2);
-
-	return (UInt8)(Q);
-}
-#else
-///https://en.wikipedia.org/wiki/Bilinear_interpolation
-#define BilinearInterpolation(q, lut, Q)\
-{\
-	UInt16 X =	lut->xFraction;\
-	UInt16 Y =	lut->yFraction;\
-	UInt16 A,B;\
-	A = 64 - X;\
-	B = 64 - Y;\
-	Q = (UInt8)((q[0].y*A*B + q[1].y*X*B + q[HD720P_WIDTH].y*A*Y + q[HD720P_WIDTH+1].y*X*Y)>>12);\
-}
-///https://en.wikipedia.org/wiki/Bilinear_interpolation
-#define BilinearInterpolationUV(q, lut, Q)\
-{\
-	UInt16 X =	lut->xFraction;\
-	UInt16 Y =	lut->yFraction;\
-	UInt16 A,B;\
-	A = 64 - X;\
-	B = 64 - Y;\
-	Q = (UInt8)((q[0].uv*A*B + q[2].uv*X*B + q[HD720P_WIDTH].uv*A*Y + q[HD720P_WIDTH+2].uv*X*Y)>>12);\
-}
-
-#endif
 
 /**
  *******************************************************************************
