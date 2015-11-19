@@ -158,7 +158,7 @@ Int32 Alg_FullViewProcess(Alg_FullView_Obj *algHandle,
                            UInt32             outPitch[],
                            UInt32             startX,
 						   UInt32             startY,
-						   UInt32			  *viewLUT
+						   UInt32			  *RESTRICT viewLUT
                           );
 
 /**
