@@ -88,35 +88,24 @@ inline UInt8 BilinearInterpolationUV(yuyv* q, ViewLUT_Packed *lut)
 }
 #else
 ///https://en.wikipedia.org/wiki/Bilinear_interpolation
-inline UInt8 BilinearInterpolation(yuyv* q, ViewLUT_Packed *lut)
-{
-	UInt16 X =	lut->xFraction;
-	UInt16 Y =	lut->yFraction;
-
-	UInt16 A,B,Q;
-
-	A = 64 - X;
-	B = 64 - Y;
-
-	Q = (q[0].y*A*B + q[1].y*X*B + q[HD720P_WIDTH].y*A*Y + q[HD720P_WIDTH+1].y*X*Y)>>12;
-
-	return (UInt8)(Q);
+#define BilinearInterpolation(q, lut, Q)\
+{\
+	UInt16 X =	lut->xFraction;\
+	UInt16 Y =	lut->yFraction;\
+	UInt16 A,B;\
+	A = 64 - X;\
+	B = 64 - Y;\
+	Q = (UInt8)((q[0].y*A*B + q[1].y*X*B + q[HD720P_WIDTH].y*A*Y + q[HD720P_WIDTH+1].y*X*Y)>>12);\
 }
 ///https://en.wikipedia.org/wiki/Bilinear_interpolation
-inline UInt8 BilinearInterpolationUV(yuyv* q, ViewLUT_Packed *lut)
-{
-	UInt16 X =	lut->xFraction;
-	UInt16 Y =	lut->yFraction;
-
-
-	UInt16 A,B,Q;
-
-	A = 64 - X;
-	B = 64 - Y;
-
-	Q = (q[0].uv*A*B + q[2].uv*X*B + q[HD720P_WIDTH].uv*A*Y + q[HD720P_WIDTH+2].uv*X*Y)>>12;
-
-	return (UInt8)(Q);
+#define BilinearInterpolationUV(q, lut, Q)\
+{\
+	UInt16 X =	lut->xFraction;\
+	UInt16 Y =	lut->yFraction;\
+	UInt16 A,B;\
+	A = 64 - X;\
+	B = 64 - Y;\
+	Q = (UInt8)((q[0].uv*A*B + q[2].uv*X*B + q[HD720P_WIDTH].uv*A*Y + q[HD720P_WIDTH+2].uv*X*Y)>>12);\
 }
 
 #endif
@@ -193,7 +182,7 @@ Int32 Alg_FullViewProcess(Alg_FullView_Obj *algHandle,
                            UInt32             outPitch[],
                            UInt32             startX,
 						   UInt32             startY,
-						   UInt32			  *viewLUT
+						   UInt32			  *RESTRICT viewLUT
                           )
 {
     Int16 rowIdx;
@@ -211,7 +200,7 @@ Int32 Alg_FullViewProcess(Alg_FullView_Obj *algHandle,
 #pragma UNROLL(2);
 #pragma MUST_ITERATE(500,720, 2);
 #endif
-    for(rowIdx = 0; rowIdx < height ; rowIdx++)
+    for(rowIdx = startY; rowIdx < height ; rowIdx++)
     {
     	lut = (ViewLUT_Packed*)(viewLUT) + rowIdx*width;
     	ViewLUT_Packed *lutbak;
@@ -219,24 +208,25 @@ Int32 Alg_FullViewProcess(Alg_FullView_Obj *algHandle,
 #pragma UNROLL(4);
 #pragma MUST_ITERATE(500,1280, 4);
 #endif
-        for(colIdx = 0, lutbak = lut; colIdx < width ; colIdx++, lutbak++)
+        for(colIdx = startX, lutbak = lut; colIdx < width ; colIdx++, lutbak++)
         {
         	yuyv *q = &iPtr[lutbak->yInteger][lutbak->xInteger];
 
-        	oPtr[rowIdx][colIdx].y = (Uint8)BilinearInterpolation(q, lutbak);
+        	BilinearInterpolation(q, lutbak, oPtr[rowIdx][colIdx].y);
         }
 #if 1
 #ifdef BUILD_DSP
 #pragma UNROLL(2);
 #pragma MUST_ITERATE(350,640, 2);
 #endif
-        for(colIdx = 0, lutbak = lut; colIdx < width ; colIdx+=2, lutbak+=2)
+        for(colIdx = startX, lutbak = lut; colIdx < width ; colIdx+=2, lutbak+=2)
         {
         	yuyv *q = &iPtr[lutbak->yInteger][lutbak->xInteger & 0xfffe];
         	///U
-        	oPtr[rowIdx][colIdx].uv = (Uint8)BilinearInterpolationUV(q, lutbak);
+        	BilinearInterpolationUV(q, lutbak, oPtr[rowIdx][colIdx].uv);
         	///V
-        	oPtr[rowIdx][colIdx+1].uv = (Uint8)BilinearInterpolationUV(q+1, lutbak);
+        	q ++;
+        	BilinearInterpolationUV(q, lutbak, oPtr[rowIdx][colIdx+1].uv);
         }
 #endif
     }
