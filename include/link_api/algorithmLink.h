@@ -333,7 +333,7 @@ typedef struct
     UInt32                   algId;
     /**< Used to select the algorithm to be used in this link instance.
      *   See AlgorithmLink_algorithmID for the supported values */
-    ViewMode					sViewmode;
+    //ViewMode					sViewmode;
 } AlgorithmLink_CreateParams;
 
 /**

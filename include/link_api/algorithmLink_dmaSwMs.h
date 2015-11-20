@@ -283,6 +283,20 @@ static inline Void AlgorithmLink_DmaSwMsCreateParams_Init(
     AlgorithmLink_DmaSwMsLayoutParams_Init(&pPrm->initLayoutParams);
 }
 
+static inline Void AlgorithmLink_DmaSwMsCreateParams_Init_DSP(
+                    AlgorithmLink_DmaSwMsCreateParams *pPrm)
+{
+    memset(pPrm, 0, sizeof(*pPrm));
+
+    pPrm->baseClassCreate.size = sizeof(*pPrm);
+    pPrm->baseClassCreate.algId = ALGORITHM_LINK_DSP_ALG_DMA_SWMS;
+    pPrm->maxOutBufWidth = 1920;
+    pPrm->maxOutBufHeight = 1080;
+    pPrm->numOutBuf = 4;
+    pPrm->useLocalEdma = FALSE;
+
+    AlgorithmLink_DmaSwMsLayoutParams_Init(&pPrm->initLayoutParams);
+}
 /**
  *******************************************************************************
  *

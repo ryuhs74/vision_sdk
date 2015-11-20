@@ -348,7 +348,7 @@ Void AlgorithmLink_tskMain(struct Utils_TskHndl *pTsk, Utils_MsgHndl *pMsg)
             }
             Utils_tskAckOrFreeMsg(pMsg, status);
             break;
-            //ryuhs74@20151103 - Add AVM-E500 Draw Layout START
+            /*/ryuhs74@20151103 - Add AVM-E500 Draw Layout START
 			 case SYSTEM_CMD_FRONT_SIDE_VIEW:
 				 memcpy(&pObj->createArgs, Utils_msgGetPrm(pMsg), sizeof(AlgorithmLink_CreateParams));
 
@@ -446,7 +446,7 @@ Void AlgorithmLink_tskMain(struct Utils_TskHndl *pTsk, Utils_MsgHndl *pMsg)
 
 				 Utils_tskAckOrFreeMsg(pMsg, SYSTEM_LINK_STATUS_SOK);
 				 break;
-				 //ryuhs74@20151103 - Add AVM-E500 Draw Layout END
+				 //ryuhs74@20151103 - Add AVM-E500 Draw Layout END*/
     }
     return;
 
@@ -637,6 +637,7 @@ Int32 AlgorithmLink_putEmptyBuffers(Void              *ptr,
     return status;
 }
 
+/*
 void E500_ViewMode_putCmd( uint8_t _cmd )
 {
 #if 1
@@ -689,5 +690,5 @@ void E500_ViewMode_putCmd( uint8_t _cmd )
 
 #endif
 }
-
+*/
 /* Nothing beyond this point */
