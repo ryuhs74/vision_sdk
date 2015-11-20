@@ -61,7 +61,7 @@ Void chains_lvdsVipMultiCam_Display_tda2xx_ResetLinkPrms(chains_lvdsVipMultiCam_
     //IpcLink_CreateParams_Init(&pObj->IPCIn_IPU1_IPU1_0_1Prm);	//IPU1_0 -> IPU1_1, For Save Link in IPU1_1 Core
     IpcLink_CreateParams_Init(&pObj->IPCOut_IPU1_0_DSP1_0Prm);	//IPU1_0 -> DSP1_0, For Cammsys LUT Link in IPU1_0 Core
     IpcLink_CreateParams_Init(&pObj->IPCIn_DSP1_IPU1_0_0Prm);	//IPU1_0 -> DSP1_0, For Cammsys LUT Link in DSP1_0 Core
-    AlgorithmLink_DmaSwMsCreateParams_Init(&pObj->Alg_DmaSwMsPrm);
+    AlgorithmLink_DmaSwMsCreateParams_Init_DSP(&pObj->Alg_DmaSwMsPrm);
     IpcLink_CreateParams_Init(&pObj->IPCOut_DSP1_IPU1_0_0Prm);	//DSP1_0 -> IPU1_0, For Cammsys LUT Link in DSP1_0 Core
     IpcLink_CreateParams_Init(&pObj->IPCIn_IPU1_0_DSP1_0Prm);	//DSP1_0 -> IPU1_0, For Cammsys LUT Link in IPU1_0 Core
     DisplayLink_CreateParams_Init(&pObj->Display_videoPrm);
@@ -88,8 +88,10 @@ Void chains_lvdsVipMultiCam_Display_tda2xx_ResetLinkPrms(chains_lvdsVipMultiCam_
 
 Void chains_lvdsVipMultiCam_Display_tda2xx_SetPrms(chains_lvdsVipMultiCam_Display_tda2xxObj *pObj){
        (pObj->DupPrm).numOutQue = 2;
+#ifndef E500_SV_MULTICAM
        (pObj->Alg_DmaSwMsPrm).baseClassCreate.size  = sizeof(AlgorithmLink_DmaSwMsCreateParams);
        (pObj->Alg_DmaSwMsPrm).baseClassCreate.algId  = ALGORITHM_LINK_IPU_ALG_DMA_SWMS;
+#endif
        (pObj->MergePrm).numInQue = 2;
 }
 
@@ -175,9 +177,9 @@ Void chains_lvdsVipMultiCam_Display_tda2xx_ConnectLinks(chains_lvdsVipMultiCam_D
        pObj->MergePrm.inQueParams[1].prevLinkQueId = 1;
 
        //Dup -> Save //ryuhs74@20151028 - Add Save Link
-       pObj->DupPrm.outQueParams[2].nextLink = pObj->SyncLinkID;
-       pObj->Save_Prm.inQueParams.prevLinkId = pObj->DupLinkID;
-       pObj->Save_Prm.inQueParams.prevLinkQueId = 2;
+       //pObj->DupPrm.outQueParams[2].nextLink = pObj->SyncLinkID;
+       //pObj->Save_Prm.inQueParams.prevLinkId = pObj->DupLinkID;
+       //pObj->Save_Prm.inQueParams.prevLinkQueId = 2;
 
        //VPE -> Sync
        pObj->VPEPrm.outQueParams[0].nextLink = pObj->SyncLinkID;
