@@ -38,8 +38,10 @@ typedef struct {
 typedef yuyv yuvHD720P[HD720P_WIDTH];
 typedef yuyv yuvHD1080P[HD1080P_WIDTH];
 
-#define LinearInterpolation(x,q1,q2)\
-	((64-x)*q1 + x*q2)>>AVM_LUT_FRACTION_BITS
+#define ONE_PER_AVM_LUT_FRACTION_BITS	1<<AVM_LUT_FRACTION_BITS
+
+#define LinearInterpolation(x,q1,q2,perFraction,fractionBits)\
+	((perFraction-x)*q1 + x*q2)>>fractionBits
 
 ///https://en.wikipedia.org/wiki/Bilinear_interpolation
 #define BilinearInterpolation(q, lut, Q,  pitch)\
@@ -47,9 +49,9 @@ typedef yuyv yuvHD1080P[HD1080P_WIDTH];
 	UInt16 X =	lut->xFraction;\
 	UInt16 Y =	lut->yFraction;\
 	UInt16 R1,R2;\
-	R1 = LinearInterpolation(X,q[0].y,q[1].y);\
-	R2 = LinearInterpolation(X,q[pitch].y,q[pitch+1].y);\
-	Q = LinearInterpolation(Y,R1,R2);\
+	R1 = LinearInterpolation(X,q[0].y,q[1].y,64,AVM_LUT_FRACTION_BITS);\
+	R2 = LinearInterpolation(X,q[pitch].y,q[pitch+1].y,64,AVM_LUT_FRACTION_BITS);\
+	Q = LinearInterpolation(Y,R1,R2,64,AVM_LUT_FRACTION_BITS);\
 }
 ///https://en.wikipedia.org/wiki/Bilinear_interpolation
 #define BilinearInterpolationUV(q, lut, Q, pitch)\
@@ -57,9 +59,9 @@ typedef yuyv yuvHD1080P[HD1080P_WIDTH];
 	UInt16 X =	lut->xFraction;\
 	UInt16 Y =	lut->yFraction;\
 	UInt16 R1,R2;\
-	R1 = LinearInterpolation(X,q[0].uv,q[2].uv);\
-	R2 = LinearInterpolation(X,q[pitch].uv,q[pitch+2].uv);\
-	Q = LinearInterpolation(Y,R1,R2);\
+	R1 = LinearInterpolation(X,q[0].uv,q[2].uv,64,AVM_LUT_FRACTION_BITS);\
+	R2 = LinearInterpolation(X,q[pitch].uv,q[pitch+2].uv,64,AVM_LUT_FRACTION_BITS);\
+	Q = LinearInterpolation(Y,R1,R2,64,AVM_LUT_FRACTION_BITS);\
 }
 
 
