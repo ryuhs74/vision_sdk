@@ -108,7 +108,22 @@ Int32 Alg_FullViewProcess(Alg_FullView_Obj *algHandle,
 						   UInt32			  *RESTRICT viewLUT
                           )
 {
-	return makeView(inPtr[0],outPtr[0],width,height,inPitch[0],outPitch[0],startX,startY, viewLUT);
+	ViewInfo view;
+	ViewInfo lut;
+
+	view.height = height;
+	view.width = width;
+	view.pitch = inPitch[0]>>1;
+	view.startX = 20;
+	view.startY = 20;
+
+	lut.height = 558;
+	lut.width = 1248;
+	lut.pitch = 1248;
+	lut.startX = 0;
+	lut.startY = 0;
+
+	return makeView(inPtr[0],outPtr[0], viewLUT, &view, &lut);
 }
 
 

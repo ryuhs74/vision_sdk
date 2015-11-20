@@ -17,8 +17,17 @@ typedef struct
 	UInt8 uv;
 }yuyv;
 
+typedef struct
+{
+	UInt16 width;
+	UInt16 height;
+	UInt16 startX;
+	UInt16 startY;
+	UInt16 pitch;
+}ViewInfo;
+
 typedef struct {
-	unsigned short xFraction:AVM_LUT_FRACTION_BITS;
+	unsigned short xFraction:AVM_LUT_FRACTI0ON_BITS;
 	unsigned short xInteger:AVM_LUT_INTEGER_BITS;
 	unsigned short yFraction:AVM_LUT_FRACTION_BITS;
 	unsigned short yInteger:AVM_LUT_INTEGER_BITS;
@@ -37,7 +46,7 @@ typedef yuyv yuvHD1080P[HD1080P_WIDTH];
 	UInt16 A,B;\
 	A = 64 - X;\
 	B = 64 - Y;\
-	Q = (UInt8)((q[0].y*A*B + q[1].y*X*B + q[pitch].y*A*Y + q[pitch+1].y*X*Y)>>12);\
+	Q = (UInt8)((B*(q[0].y*A + q[1].y*X) + Y*(q[pitch].y*A + q[pitch+1].y*X))>>12);\
 }
 ///https://en.wikipedia.org/wiki/Bilinear_interpolation
 #define BilinearInterpolationUV(q, lut, Q, pitch)\
@@ -47,43 +56,43 @@ typedef yuyv yuvHD1080P[HD1080P_WIDTH];
 	UInt16 A,B;\
 	A = 64 - X;\
 	B = 64 - Y;\
-	Q = (UInt8)((q[0].uv*A*B + q[2].uv*X*B + q[pitch].uv*A*Y + q[pitch+2].uv*X*Y)>>12);\
+	Q = (UInt8)((B*(q[0].uv*A + q[2].uv*X) + Y*(q[pitch].uv*A + q[pitch+2].uv*X))>>12);\
 }
 
 
-static inline Int32 makeView720P(  UInt32            *RESTRICT inPtr,
-                           	   UInt32            *RESTRICT outPtr,
-							   UInt32             width,
-							   UInt32             height,
-							   UInt32             startX,
-							   UInt32             startY,
-							   UInt32			  *RESTRICT viewLUT
+static inline Int32 makeView720P(  UInt32       *RESTRICT inPtr,
+                           	   UInt32           *RESTRICT outPtr,
+							   UInt32			*RESTRICT viewLUTPtr,
+							   ViewInfo			*RESTRICT viewInfo,
+							   ViewInfo			*RESTRICT viewLUTInfo
                           )
 {
-    Int16 rowIdx;
-    Int16 colIdx;
+	UInt16 rowIdx;
+    UInt16 colIdx;
 
     yuvHD720P* iPtr;
     yuvHD720P* oPtr;
 
-    ViewLUT_Packed *lut = (ViewLUT_Packed*)viewLUT;
+    UInt16 width = viewInfo->width + viewInfo->startX;
+
+    ViewLUT_Packed *lut = ((ViewLUT_Packed*)viewLUTPtr) + (viewLUTInfo->pitch * viewLUTInfo->startY);
 
     iPtr  = (yuvHD720P*)inPtr;
-    oPtr = (yuvHD720P*)outPtr;
+    oPtr = ((yuvHD720P*)outPtr) + viewInfo->startY;
 
 #ifdef BUILD_DSP
 #pragma UNROLL(2);
 #pragma MUST_ITERATE(500,720, 2);
 #endif
-    for(rowIdx = startY; rowIdx < height ; rowIdx++)
+    for(rowIdx = 0; rowIdx < viewInfo->height ; rowIdx++)
     {
-    	lut = (ViewLUT_Packed*)(viewLUT) + rowIdx*width;
+    	lut += viewLUTInfo->pitch;
     	ViewLUT_Packed *lutbak;
 #ifdef BUILD_DSP
 #pragma UNROLL(4);
 #pragma MUST_ITERATE(500,1280, 4);
 #endif
-        for(colIdx = startX, lutbak = lut; colIdx < width ; colIdx++, lutbak++)
+        for(colIdx = viewInfo->startX, lutbak = lut + viewLUTInfo->startX; colIdx < width ; colIdx++, lutbak++)
         {
         	yuyv *q = &iPtr[lutbak->yInteger][lutbak->xInteger];
 
@@ -94,7 +103,7 @@ static inline Int32 makeView720P(  UInt32            *RESTRICT inPtr,
 #pragma UNROLL(2);
 #pragma MUST_ITERATE(350,640, 2);
 #endif
-        for(colIdx = startX, lutbak = lut; colIdx < width ; colIdx+=2, lutbak+=2)
+        for(colIdx = viewInfo->startX, lutbak = lut + viewLUTInfo->startX; colIdx < width ; colIdx+=2, lutbak+=2)
         {
         	yuyv *q = &iPtr[lutbak->yInteger][lutbak->xInteger & 0xfffe];
         	///U
@@ -108,39 +117,38 @@ static inline Int32 makeView720P(  UInt32            *RESTRICT inPtr,
     return SYSTEM_LINK_STATUS_SOK;
 }
 
-static inline Int32 makeView1080P(  UInt32            *RESTRICT inPtr,
-                           	   UInt32            *RESTRICT outPtr,
-							   UInt32             width,
-							   UInt32             height,
-							   UInt32             startX,
-							   UInt32             startY,
-							   UInt32			  *RESTRICT viewLUT
+static inline Int32 makeView1080P(  UInt32       *RESTRICT inPtr,
+                           	   UInt32           *RESTRICT outPtr,
+							   UInt32			*RESTRICT viewLUTPtr,
+							   ViewInfo			*RESTRICT viewInfo,
+							   ViewInfo			*RESTRICT viewLUTInfo
                           )
 {
-    Int16 rowIdx;
-    Int16 colIdx;
+	UInt16 rowIdx;
+    UInt16 colIdx;
 
     yuvHD1080P* iPtr;
     yuvHD1080P* oPtr;
 
-    ViewLUT_Packed *lut = (ViewLUT_Packed*)viewLUT;
+    ViewLUT_Packed *lut = ((ViewLUT_Packed*)viewLUTPtr) + (viewLUTInfo->pitch * viewLUTInfo->startY);
+    UInt16 width = viewInfo->width + viewInfo->startX;
 
     iPtr  = (yuvHD1080P*)inPtr;
-    oPtr = (yuvHD1080P*)outPtr;
+    oPtr = ((yuvHD1080P*)outPtr) + viewInfo->startY;
 
 #ifdef BUILD_DSP
 #pragma UNROLL(2);
-#pragma MUST_ITERATE(500,1080, 2);
+#pragma MUST_ITERATE(500,720, 2);
 #endif
-    for(rowIdx = startY; rowIdx < height ; rowIdx++)
+    for(rowIdx =0 ; rowIdx < viewInfo->height ; rowIdx++)
     {
-    	lut = (ViewLUT_Packed*)(viewLUT) + rowIdx*width;
+    	lut += viewLUTInfo->pitch;
     	ViewLUT_Packed *lutbak;
 #ifdef BUILD_DSP
 #pragma UNROLL(4);
-#pragma MUST_ITERATE(500,1920, 4);
+#pragma MUST_ITERATE(500,1280, 4);
 #endif
-        for(colIdx = startX, lutbak = lut; colIdx < width ; colIdx++, lutbak++)
+        for(colIdx = viewInfo->startX, lutbak = lut + viewLUTInfo->startX; colIdx < width ; colIdx++, lutbak++)
         {
         	yuyv *q = &iPtr[lutbak->yInteger][lutbak->xInteger];
 
@@ -149,9 +157,9 @@ static inline Int32 makeView1080P(  UInt32            *RESTRICT inPtr,
 #if 1
 #ifdef BUILD_DSP
 #pragma UNROLL(2);
-#pragma MUST_ITERATE(350,960, 2);
+#pragma MUST_ITERATE(350,640, 2);
 #endif
-        for(colIdx = startX, lutbak = lut; colIdx < width ; colIdx+=2, lutbak+=2)
+        for(colIdx = viewInfo->startX, lutbak = lut + viewLUTInfo->startX; colIdx < width ; colIdx+=2, lutbak+=2)
         {
         	yuyv *q = &iPtr[lutbak->yInteger][lutbak->xInteger & 0xfffe];
         	///U
@@ -167,26 +175,22 @@ static inline Int32 makeView1080P(  UInt32            *RESTRICT inPtr,
 
 
 
-static inline Int32 makeView(  UInt32            *RESTRICT inPtr,
-                           	   UInt32            *RESTRICT outPtr,
-							   UInt32             width,
-							   UInt32             height,
-							   UInt32             inPitch,
-							   UInt32             outPitch,
-							   UInt32             startX,
-							   UInt32             startY,
-							   UInt32			  *RESTRICT viewLUT
+static inline Int32 makeView(  UInt32       	*RESTRICT inPtr,
+                           	   UInt32           *RESTRICT outPtr,
+							   UInt32			*RESTRICT viewLUTPtr,
+							   ViewInfo			*RESTRICT viewInfo,
+							   ViewInfo			*RESTRICT viewLUTInfo
                           )
 {
-	if(inPitch != outPitch)
-		return SYSTEM_LINK_STATUS_EINVALID_PARAMS;
+	viewInfo->width = viewInfo->width < viewLUTInfo->width + viewLUTInfo->startX ? viewInfo->width : viewLUTInfo->width + viewLUTInfo->startX;
+	viewInfo->height = viewInfo->height < viewLUTInfo->height + viewLUTInfo->startY ? viewInfo->height : viewLUTInfo->height+ viewLUTInfo->startY;
 
-	if((inPitch >>1) == HD720P_WIDTH)
+	if(viewInfo->pitch == HD720P_WIDTH)
 	{
-		makeView720P(inPtr, outPtr, width, height, startX, startY, viewLUT);
-	}else if((inPitch >>1) == HD1080P_WIDTH)
+		makeView720P(inPtr, outPtr, viewLUTPtr, viewInfo, viewLUTInfo);
+	}else if(viewInfo->pitch == HD1080P_WIDTH)
 	{
-		makeView1080P(inPtr, outPtr, width, height, startX, startY, viewLUT);
+		makeView1080P(inPtr, outPtr, viewLUTPtr, viewInfo, viewLUTInfo);
 	}else
 	{
 		return SYSTEM_LINK_STATUS_EINVALID_PARAMS;
