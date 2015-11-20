@@ -178,7 +178,7 @@ static inline Int32 makeSingleView1080P(  UInt32       *RESTRICT inPtr,
 
 
 
-static inline Int32 makeView(  UInt32       	*RESTRICT inPtr,
+static inline Int32 makeSingleView(  UInt32       	*RESTRICT inPtr,
                            	   UInt32           *RESTRICT outPtr,
 							   UInt32			*RESTRICT viewLUTPtr,
 							   ViewInfo			*RESTRICT viewInfo,

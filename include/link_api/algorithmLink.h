@@ -102,9 +102,6 @@ typedef enum
     ALGORITHM_LINK_DSP_ALG_FRAMECOPY = 0,
     /**< Alg to copy i/p frame to o/p frame */
 
-    ALGORITHM_LINK_DSP_ALG_FULLVIEW = 0,
-    /**< Alg to full view */
-
     ALGORITHM_LINK_DSP_ALG_COLORTOGRAY,
     /**< Alg to convert color image to gray image */
 
@@ -140,6 +137,9 @@ typedef enum
 
     ALGORITHM_LINK_DSP_ALG_STEREO_POST_PROCESS,
     /**< Alg to do post processing on disparity output*/
+
+    ALGORITHM_LINK_DSP_ALG_FULLVIEW,
+    /**< Alg to full view */
 
     ALGORITHM_LINK_DSP_ALG_MAXNUM,
     /**< Should be the last value of this enumeration.

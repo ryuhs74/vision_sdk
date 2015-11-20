@@ -123,7 +123,7 @@ Int32 Alg_FullViewProcess(Alg_FullView_Obj *algHandle,
 	lut.startX = 0;
 	lut.startY = 0;
 
-	return makeView(inPtr[0],outPtr[0], viewLUT, &view, &lut);
+	return makeSingleView(inPtr[0],outPtr[0], viewLUT, &view, &lut);
 }
 
 
