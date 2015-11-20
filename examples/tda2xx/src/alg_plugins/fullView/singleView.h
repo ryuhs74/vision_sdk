@@ -33,6 +33,13 @@ typedef struct {
 	unsigned short yInteger:AVM_LUT_INTEGER_BITS;
 } ViewLUT_Packed;
 
+typedef struct {
+	unsigned char pos:8;
+	unsigned char y_b:8;
+	unsigned char cb_g:8;
+	unsigned char cr_r_overlay:8;
+} MaskLUT_Packed;
+
 #define HD720P_WIDTH	1280
 #define HD1080P_WIDTH	1920
 typedef yuyv yuvHD720P[HD720P_WIDTH];

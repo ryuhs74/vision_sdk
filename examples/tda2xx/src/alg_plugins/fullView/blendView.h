@@ -41,6 +41,7 @@ static inline Int32 makeBlendView720P(  UInt32       *RESTRICT inPtr_main,
     UInt16 colIdx;
 
 	UInt16 startX = viewInfo->startX;
+	MaskLUT_Packed* mask = ((MaskLUT_Packed*)carMask) + (childViewInfoLUT->pitch * childViewInfoLUT->startY) + childViewInfoLUT->startX;
 
 	oPtr+= viewInfo->startY;
 
@@ -53,15 +54,18 @@ static inline Int32 makeBlendView720P(  UInt32       *RESTRICT inPtr_main,
 #endif
 	for(rowIdx = 0; rowIdx < childViewInfoLUT->height; rowIdx++)
 	{
+		MaskLUT_Packed *maskBak;
+		mask += childViewInfoLUT->pitch;
+
 #ifdef BUILD_DSP
 #pragma UNROLL(2);
 #pragma MUST_ITERATE(100,720, 2);
 #endif
-		for(colIdx = 0; colIdx < childViewInfoLUT->width; colIdx++)
+		for(colIdx = 0,maskBak = mask; colIdx < childViewInfoLUT->width; colIdx++, maskBak++)
 		{
 			yuyv q1 = mainBuf[rowIdx][colIdx];
 			yuyv q2 = subBuf[rowIdx][colIdx];
-			UInt16 X = 128;///weight
+			UInt16 X = mask->cr_r_overlay;
 
 			oPtr[rowIdx][colIdx+startX].y = LinearInterpolation(X,q1.y,q2.y,256,8);
 			oPtr[rowIdx][colIdx+startX].uv = LinearInterpolation(X,q1.uv,q2.uv,256,8);
@@ -110,6 +114,7 @@ static inline Int32 makeBlendView1080P(  UInt32       *RESTRICT inPtr_main,
     UInt16 colIdx;
 
 	UInt16 startX = viewInfo->startX;
+	MaskLUT_Packed* mask = ((MaskLUT_Packed*)carMask) + (childViewInfoLUT->pitch * childViewInfoLUT->startY) + childViewInfoLUT->startX;
 
 	oPtr+= viewInfo->startY;
 
@@ -117,13 +122,24 @@ static inline Int32 makeBlendView1080P(  UInt32       *RESTRICT inPtr_main,
 
 	makeSingleView1080P(inPtr_sub,(UInt32*)subBuf,viewLUTPtr_sub,viewInfo,childViewInfoLUT);
 
+#ifdef BUILD_DSP
+#pragma UNROLL(2);
+#pragma MUST_ITERATE(100,720, 2);
+#endif
 	for(rowIdx = 0; rowIdx < childViewInfoLUT->height; rowIdx++)
 	{
-		for(colIdx = 0; colIdx < childViewInfoLUT->width; colIdx++)
+		MaskLUT_Packed *maskBak;
+		mask += childViewInfoLUT->pitch;
+
+#ifdef BUILD_DSP
+#pragma UNROLL(2);
+#pragma MUST_ITERATE(100,720, 2);
+#endif
+		for(colIdx = 0,maskBak = mask; colIdx < childViewInfoLUT->width; colIdx++, maskBak++)
 		{
 			yuyv q1 = mainBuf[rowIdx][colIdx];
 			yuyv q2 = subBuf[rowIdx][colIdx];
-			UInt16 X = 128;///weight
+			UInt16 X = maskBak->cr_r_overlay;
 
 			oPtr[rowIdx][colIdx+startX].y = LinearInterpolation(X,q1.y,q2.y,256,8);
 		}
