@@ -28,6 +28,7 @@ static uint32_t RxBufPos = 0;
 
 //ryuhs74@20151104 - Add Put CMD To GrpxSrcLink
 void GrpxSrcLink_putCmd( uint8_t _cmd );
+void E500_ViewMode_putCmd( uint8_t _cmd );
 
 
 static int LOCAL_UART_isReceivedAll(uint8_t *buf, uint16_t len)
@@ -157,6 +158,7 @@ static int UART_ParseCmd(uint8_t *rxBuf)
 		case 0x0A : //RIGHT - IRDA_KEY_RIGHT = (0x0A)
 		case 0x05 : //Full - IRDA_KEY_FULL = (0x05),
 			GrpxSrcLink_putCmd( GET_ARG2(rxBuf) );
+			E500_ViewMode_putCmd( GET_ARG2(rxBuf) );
 			break;
 		} //ryuhs74@20151020 - Add HDMI On/Off Test End
 		break;
