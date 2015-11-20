@@ -27,7 +27,7 @@ typedef struct
 }ViewInfo;
 
 typedef struct {
-	unsigned short xFraction:AVM_LUT_FRACTI0ON_BITS;
+	unsigned short xFraction:AVM_LUT_FRACTION_BITS;
 	unsigned short xInteger:AVM_LUT_INTEGER_BITS;
 	unsigned short yFraction:AVM_LUT_FRACTION_BITS;
 	unsigned short yInteger:AVM_LUT_INTEGER_BITS;
@@ -60,11 +60,11 @@ typedef yuyv yuvHD1080P[HD1080P_WIDTH];
 }
 
 
-static inline Int32 makeView720P(  UInt32       *RESTRICT inPtr,
+static inline Int32 makeSingleView720P(  UInt32       *RESTRICT inPtr,
                            	   UInt32           *RESTRICT outPtr,
 							   UInt32			*RESTRICT viewLUTPtr,
 							   ViewInfo			*RESTRICT viewInfo,
-							   ViewInfo			*RESTRICT viewLUTInfo
+							   ViewInfo			*RESTRICT childViewInfoLUT
                           )
 {
 	UInt16 rowIdx;
@@ -75,7 +75,7 @@ static inline Int32 makeView720P(  UInt32       *RESTRICT inPtr,
 
     UInt16 width = viewInfo->width + viewInfo->startX;
 
-    ViewLUT_Packed *lut = ((ViewLUT_Packed*)viewLUTPtr) + (viewLUTInfo->pitch * viewLUTInfo->startY);
+    ViewLUT_Packed *lut = ((ViewLUT_Packed*)viewLUTPtr) + (childViewInfoLUT->pitch * childViewInfoLUT->startY);
 
     iPtr  = (yuvHD720P*)inPtr;
     oPtr = ((yuvHD720P*)outPtr) + viewInfo->startY;
@@ -86,13 +86,13 @@ static inline Int32 makeView720P(  UInt32       *RESTRICT inPtr,
 #endif
     for(rowIdx = 0; rowIdx < viewInfo->height ; rowIdx++)
     {
-    	lut += viewLUTInfo->pitch;
+    	lut += childViewInfoLUT->pitch;
     	ViewLUT_Packed *lutbak;
 #ifdef BUILD_DSP
 #pragma UNROLL(4);
 #pragma MUST_ITERATE(500,1280, 4);
 #endif
-        for(colIdx = viewInfo->startX, lutbak = lut + viewLUTInfo->startX; colIdx < width ; colIdx++, lutbak++)
+        for(colIdx = viewInfo->startX, lutbak = lut + childViewInfoLUT->startX; colIdx < width ; colIdx++, lutbak++)
         {
         	yuyv *q = &iPtr[lutbak->yInteger][lutbak->xInteger];
 
@@ -103,7 +103,7 @@ static inline Int32 makeView720P(  UInt32       *RESTRICT inPtr,
 #pragma UNROLL(2);
 #pragma MUST_ITERATE(350,640, 2);
 #endif
-        for(colIdx = viewInfo->startX, lutbak = lut + viewLUTInfo->startX; colIdx < width ; colIdx+=2, lutbak+=2)
+        for(colIdx = viewInfo->startX, lutbak = lut + childViewInfoLUT->startX; colIdx < width ; colIdx+=2, lutbak+=2)
         {
         	yuyv *q = &iPtr[lutbak->yInteger][lutbak->xInteger & 0xfffe];
         	///U
@@ -117,11 +117,11 @@ static inline Int32 makeView720P(  UInt32       *RESTRICT inPtr,
     return SYSTEM_LINK_STATUS_SOK;
 }
 
-static inline Int32 makeView1080P(  UInt32       *RESTRICT inPtr,
+static inline Int32 makeSingleView1080P(  UInt32       *RESTRICT inPtr,
                            	   UInt32           *RESTRICT outPtr,
 							   UInt32			*RESTRICT viewLUTPtr,
 							   ViewInfo			*RESTRICT viewInfo,
-							   ViewInfo			*RESTRICT viewLUTInfo
+							   ViewInfo			*RESTRICT childViewInfoLUT
                           )
 {
 	UInt16 rowIdx;
@@ -130,7 +130,7 @@ static inline Int32 makeView1080P(  UInt32       *RESTRICT inPtr,
     yuvHD1080P* iPtr;
     yuvHD1080P* oPtr;
 
-    ViewLUT_Packed *lut = ((ViewLUT_Packed*)viewLUTPtr) + (viewLUTInfo->pitch * viewLUTInfo->startY);
+    ViewLUT_Packed *lut = ((ViewLUT_Packed*)viewLUTPtr) + (childViewInfoLUT->pitch * childViewInfoLUT->startY);
     UInt16 width = viewInfo->width + viewInfo->startX;
 
     iPtr  = (yuvHD1080P*)inPtr;
@@ -142,13 +142,13 @@ static inline Int32 makeView1080P(  UInt32       *RESTRICT inPtr,
 #endif
     for(rowIdx =0 ; rowIdx < viewInfo->height ; rowIdx++)
     {
-    	lut += viewLUTInfo->pitch;
+    	lut += childViewInfoLUT->pitch;
     	ViewLUT_Packed *lutbak;
 #ifdef BUILD_DSP
 #pragma UNROLL(4);
 #pragma MUST_ITERATE(500,1280, 4);
 #endif
-        for(colIdx = viewInfo->startX, lutbak = lut + viewLUTInfo->startX; colIdx < width ; colIdx++, lutbak++)
+        for(colIdx = viewInfo->startX, lutbak = lut + childViewInfoLUT->startX; colIdx < width ; colIdx++, lutbak++)
         {
         	yuyv *q = &iPtr[lutbak->yInteger][lutbak->xInteger];
 
@@ -159,7 +159,7 @@ static inline Int32 makeView1080P(  UInt32       *RESTRICT inPtr,
 #pragma UNROLL(2);
 #pragma MUST_ITERATE(350,640, 2);
 #endif
-        for(colIdx = viewInfo->startX, lutbak = lut + viewLUTInfo->startX; colIdx < width ; colIdx+=2, lutbak+=2)
+        for(colIdx = viewInfo->startX, lutbak = lut + childViewInfoLUT->startX; colIdx < width ; colIdx+=2, lutbak+=2)
         {
         	yuyv *q = &iPtr[lutbak->yInteger][lutbak->xInteger & 0xfffe];
         	///U
@@ -179,18 +179,18 @@ static inline Int32 makeView(  UInt32       	*RESTRICT inPtr,
                            	   UInt32           *RESTRICT outPtr,
 							   UInt32			*RESTRICT viewLUTPtr,
 							   ViewInfo			*RESTRICT viewInfo,
-							   ViewInfo			*RESTRICT viewLUTInfo
+							   ViewInfo			*RESTRICT childViewInfoLUT
                           )
 {
-	viewInfo->width = viewInfo->width < viewLUTInfo->width + viewLUTInfo->startX ? viewInfo->width : viewLUTInfo->width + viewLUTInfo->startX;
-	viewInfo->height = viewInfo->height < viewLUTInfo->height + viewLUTInfo->startY ? viewInfo->height : viewLUTInfo->height+ viewLUTInfo->startY;
+	viewInfo->width = viewInfo->width < childViewInfoLUT->width + childViewInfoLUT->startX ? viewInfo->width : childViewInfoLUT->width + childViewInfoLUT->startX;
+	viewInfo->height = viewInfo->height < childViewInfoLUT->height + childViewInfoLUT->startY ? viewInfo->height : childViewInfoLUT->height+ childViewInfoLUT->startY;
 
 	if(viewInfo->pitch == HD720P_WIDTH)
 	{
-		makeView720P(inPtr, outPtr, viewLUTPtr, viewInfo, viewLUTInfo);
+		makeSingleView720P(inPtr, outPtr, viewLUTPtr, viewInfo, childViewInfoLUT);
 	}else if(viewInfo->pitch == HD1080P_WIDTH)
 	{
-		makeView1080P(inPtr, outPtr, viewLUTPtr, viewInfo, viewLUTInfo);
+		makeSingleView1080P(inPtr, outPtr, viewLUTPtr, viewInfo, childViewInfoLUT);
 	}else
 	{
 		return SYSTEM_LINK_STATUS_EINVALID_PARAMS;
