@@ -167,9 +167,6 @@ typedef enum
     ALGORITHM_LINK_EVE_ALG_FRAMECOPY = 0,
     /**< Alg to copy i/p frame to o/p frame */
 
-    ALGORITHM_LINK_EVE_ALG_FULLVIEW = 0,
-    /**< Alg to full view */
-
     ALGORITHM_LINK_EVE_ALG_DENSE_OPTICAL_FLOW,
     /**< Alg to generate LUT to show optical Flow */
 
@@ -196,6 +193,9 @@ typedef enum
 
     ALGORITHM_LINK_EVE_ALG_REMAPMERGE,
     /**< Alg to copy subframe*/
+
+    ALGORITHM_LINK_EVE_ALG_FULLVIEW,
+    /**< Alg to full view */
 
     ALGORITHM_LINK_EVE_ALG_MAXNUM,
     /**< Should be the last value of this enumeration.
@@ -224,9 +224,6 @@ typedef enum
     ALGORITHM_LINK_A15_ALG_FRAMECOPY = 0,
     /**< Alg to copy i/p frame to o/p frame */
 
-    ALGORITHM_LINK_A15_ALG_FULLVIEW = 0,
-    /**< Alg to full view */
-
     ALGORITHM_LINK_A15_ALG_COLORTOGRAY,
     /**< Alg to convert color image to gray image */
 
@@ -238,6 +235,9 @@ typedef enum
 
     ALGORITHM_LINK_A15_ALG_LANE_DETECT_DRAW,
     /**< Alg to draw detected lanes in a video */
+
+    ALGORITHM_LINK_A15_ALG_FULLVIEW,
+    /**< Alg to full view */
 
     ALGORITHM_LINK_A15_ALG_MAXNUM,
     /**< Should be the last value of this enumeration.

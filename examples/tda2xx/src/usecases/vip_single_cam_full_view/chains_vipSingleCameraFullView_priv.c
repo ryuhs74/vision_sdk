@@ -41,7 +41,7 @@ Void chains_vipSingleCameraFullView_ResetLinkPrms(chains_vipSingleCameraFullView
 
 Void chains_vipSingleCameraFullView_SetPrms(chains_vipSingleCameraFullViewObj *pObj){
        (pObj->Alg_FullViewPrm).baseClassCreate.size  = sizeof(AlgorithmLink_FullViewCreateParams);
-       (pObj->Alg_FullViewPrm).baseClassCreate.algId  = ALGORITHM_LINK_A15_ALG_FRAMECOPY;
+       (pObj->Alg_FullViewPrm).baseClassCreate.algId  = ALGORITHM_LINK_A15_ALG_FULLVIEW;
 }
 
 Void chains_vipSingleCameraFullView_ConnectLinks(chains_vipSingleCameraFullViewObj *pObj){

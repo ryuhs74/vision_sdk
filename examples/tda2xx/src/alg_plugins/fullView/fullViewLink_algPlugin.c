@@ -351,7 +351,7 @@ Int32 AlgorithmLink_fullViewCreate(void * pObj, void * pCreateParams)
     }
 
     pFullViewObj->linkStatsInfo = Utils_linkStatsCollectorAllocInst(
-        AlgorithmLink_getLinkId(pObj), "ALG_FRAME_COPY");
+        AlgorithmLink_getLinkId(pObj), "FULL VIEW");
     UTILS_assert(NULL != pFullViewObj->linkStatsInfo);
 
     pFullViewObj->isFirstFrameRecv = FALSE;
