@@ -95,7 +95,6 @@ typedef struct {
 	  UInt32    Display_sv_org1LinkID;
 	  UInt32    GrpxSrcLinkID;
 	  UInt32    Display_GrpxLinkID;
-	  Uint32	 SaveLinkID;
 
 	  CaptureLink_CreateParams                CapturePrm;
 	  DupLink_CreateParams                    Dup_sv_orgPrm;
@@ -122,8 +121,6 @@ typedef struct {
 	  DisplayLink_CreateParams                Display_sv_org1Prm;
 	  GrpxSrcLink_CreateParams                GrpxSrcPrm;
 	  DisplayLink_CreateParams                Display_GrpxPrm;
-
-	  SaveLink_CreateParams				   SavePrm;	//ryuhs74@20151027 - Add Save Link
 #endif
 } chains_lvdsVipSurroundViewStandaloneObj;
 
