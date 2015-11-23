@@ -50,7 +50,7 @@ Void chains_lvdsVipMultiCam_Display_tda2xx_ResetLinkPrms(chains_lvdsVipMultiCam_
 Void chains_lvdsVipMultiCam_Display_tda2xx_SetPrms(chains_lvdsVipMultiCam_Display_tda2xxObj *pObj){
        (pObj->DupPrm).numOutQue = 2;
        (pObj->Alg_SurroundViewPrm).baseClassCreate.size  = sizeof(AlgorithmLink_SurroundViewCreateParams);
-       (pObj->Alg_SurroundViewPrm).baseClassCreate.algId  = ALGORITHM_LINK_IPU_ALG_DMA_SWMS;
+       (pObj->Alg_SurroundViewPrm).baseClassCreate.algId  = ALGORITHM_LINK_IPU_ALG_SURROUND_VIEW;
        (pObj->MergePrm).numInQue = 2;
 }
 

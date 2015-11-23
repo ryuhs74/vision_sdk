@@ -203,12 +203,13 @@ static Void chains_lvdsVipMultiCam_Display_SetAlgSurroundViewPrm(
     pPrm->initLayoutParams.outBufWidth  = pPrm->maxOutBufWidth;
     pPrm->initLayoutParams.outBufHeight = pPrm->maxOutBufHeight;
 
+#if 0
     pPrm->initLayoutParams.pLut1 = LUTAlloc(Basic_frontView);
     pPrm->initLayoutParams.pLut5 = LUTAlloc(Basic_frontNT);
     pPrm->initLayoutParams.pLut6 = LUTAlloc(Basic_rearNT);
     pPrm->initLayoutParams.pLut7 = LUTAlloc(Basic_leftNT);
     pPrm->initLayoutParams.pLut8 = LUTAlloc(Basic_rightNT);
-
+#endif
     switch (numLvdsCh)
     {
         case 1:
