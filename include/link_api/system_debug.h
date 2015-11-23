@@ -184,6 +184,16 @@ extern "C" {
 /**
  *******************************************************************************
  *
+ * \brief Enable real time debug of links CMD State
+ *
+ *******************************************************************************
+ */
+//#define SYSTEM_RT_STATS_LOG_CMD
+
+
+/**
+ *******************************************************************************
+ *
  *  \brief Enable real time logs of links at various processing time instances
  *   like input dequeing, procesing, output queueing etc
  *

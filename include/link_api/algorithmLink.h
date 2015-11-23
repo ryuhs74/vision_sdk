@@ -47,6 +47,7 @@ extern "C" {
  *******************************************************************************
  */
 #include <include/link_api/system.h>
+#include "src/utils_common/include/utils_lut.h" //ryuhs74@20151112 - Add
 
 /*******************************************************************************
  *  Defines
@@ -348,6 +349,7 @@ typedef struct
     UInt32                   algId;
     /**< Used to select the algorithm to be used in this link instance.
      *   See AlgorithmLink_algorithmID for the supported values */
+    //ViewMode					sViewmode;
 } AlgorithmLink_CreateParams;
 
 /**

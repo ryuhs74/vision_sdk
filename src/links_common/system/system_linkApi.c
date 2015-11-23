@@ -144,18 +144,25 @@ Int32 System_linkGetInfo(UInt32 linkId, System_LinkInfo * info)
     Int32 status;
     UInt32 procId;
 
+
+    Vps_printf(" SYSTEM: linkId : %d, ", linkId);
     procId = SYSTEM_GET_PROC_ID(linkId);
+    Vps_printf(" procId(SYSTEM_GET_PROC_ID) : %d\n",procId);
 
     UTILS_assert(procId < SYSTEM_PROC_MAX);
 
+    if( linkId == 768 ) procId = 0; //ryuhs74
+
     if ((procId != System_getSelfProcId()) && (procId != SYSTEM_PROC_INVALID))
     {
+    	Vps_printf(" SYSTEM: Call System_ipcSendMsg\n");
         status =
             System_ipcSendMsg(linkId, SYSTEM_CMD_GET_INFO, info,
                                   sizeof(*info), TRUE);
     }
     else
     {
+    	Vps_printf(" SYSTEM: Call System_linkGetInfo_local\n");
         status = System_linkGetInfo_local(linkId, info);
     }
 

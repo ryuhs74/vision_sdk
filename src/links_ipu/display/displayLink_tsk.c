@@ -110,38 +110,68 @@ Int32 DisplayLink_tskRun(DisplayLink_Obj *pObj, Utils_TskHndl *pTsk,
         switch (cmd)
         {
             case DISPLAY_LINK_CMD_RELEASE_FRAMES:
+//#ifdef SYSTEM_RT_STATS_LOG_CMD
+//    Vps_printf(" DISPLAY: tskRun DISPLAY_LINK_CMD_RELEASE_FRAMES start !!!\n");
+//#endif
                 Utils_tskAckOrFreeMsg(pRunMsg, status);
 
                 flushCmds[0] = DISPLAY_LINK_CMD_RELEASE_FRAMES;
                 Utils_tskFlushMsg(pTsk, flushCmds, 1);
 
                 DisplayLink_drvReleaseData(pObj);
+//#ifdef SYSTEM_RT_STATS_LOG_CMD
+//    Vps_printf(" DISPLAY: tskRun DISPLAY_LINK_CMD_RELEASE_FRAMES end !!!\n");
+//#endif
                 break;
 
             case DISPLAY_LINK_CMD_GET_STATISTICS:
+//#ifdef SYSTEM_RT_STATS_LOG_CMD
+//    Vps_printf(" DISPLAY: tskRun DISPLAY_LINK_CMD_GET_STATISTICS start !!!\n");
+//#endif
                 DisplayLink_drvGetStatistics(pObj, Utils_msgGetPrm(pRunMsg));
                 Utils_tskAckOrFreeMsg(pRunMsg, status);
+//#ifdef SYSTEM_RT_STATS_LOG_CMD
+//    Vps_printf(" DISPLAY: tskRun DISPLAY_LINK_CMD_GET_STATISTICS end !!!\n");
+//#endif
                 break;
 
             case SYSTEM_CMD_STOP:
+//#ifdef SYSTEM_RT_STATS_LOG_CMD
+//    Vps_printf(" DISPLAY: tskRun SYSTEM_CMD_STOP start !!!\n");
+//#endif
                 runDone = TRUE;
                 runAckMsg = TRUE;
+//#ifdef SYSTEM_RT_STATS_LOG_CMD
+//    Vps_printf(" DISPLAY: tskRun SYSTEM_CMD_STOP end !!!\n");
+//#endif
                 break;
 
             case SYSTEM_CMD_NEW_DATA:
+//#ifdef SYSTEM_RT_STATS_LOG_CMD
+//    Vps_printf(" DISPLAY: tskRun SYSTEM_CMD_NEW_DATA start !!!\n");
+//#endif
                 Utils_tskAckOrFreeMsg(pRunMsg, status);
 
                 flushCmds[0] = SYSTEM_CMD_NEW_DATA;
                 Utils_tskFlushMsg(pTsk, flushCmds, 1);
 
                 DisplayLink_drvProcessData(pObj);
+//#ifdef SYSTEM_RT_STATS_LOG_CMD
+//    Vps_printf(" DISPLAY: tskRun SYSTEM_CMD_NEW_DATA end !!!\n");
+//#endif
                 break;
 
             case SYSTEM_CMD_DELETE:
+//#ifdef SYSTEM_RT_STATS_LOG_CMD
+//    Vps_printf(" DISPLAY: tskRun SYSTEM_CMD_DELETE start !!!\n");
+//#endif
                 *done = TRUE;
                 *ackMsg = TRUE;
                 *pMsg = pRunMsg;
                 runDone = TRUE;
+//#ifdef SYSTEM_RT_STATS_LOG_CMD
+//    Vps_printf(" DISPLAY: tskRun SYSTEM_CMD_DELETE end !!!\n");
+//#endif
                 break;
 
             /*
@@ -149,18 +179,33 @@ Int32 DisplayLink_tskRun(DisplayLink_Obj *pObj, Utils_TskHndl *pTsk,
              * displayed on the display
              */
             case DISPLAY_LINK_CMD_SWITCH_CH:
+//#ifdef SYSTEM_RT_STATS_LOG_CMD
+//    Vps_printf(" DISPLAY: tskRun DISPLAY_LINK_CMD_SWITCH_CH start !!!\n");
+//#endif
                 status =
                     DisplayLink_drvSwitchCh(pObj,
                                             Utils_msgGetPrm(pRunMsg));
                 Utils_tskAckOrFreeMsg(pRunMsg, status);
+//#ifdef SYSTEM_RT_STATS_LOG_CMD
+//    Vps_printf(" DISPLAY: tskRun DISPLAY_LINK_CMD_SWITCH_CH end !!!\n");
+//#endif
                 break;
 
             case SYSTEM_CMD_PRINT_STATISTICS:
+//#ifdef SYSTEM_RT_STATS_LOG_CMD
+//   Vps_printf(" DISPLAY: tskRun SYSTEM_CMD_PRINT_STATISTICS start !!!\n");
+//#endif
                 DisplayLink_drvPrintStatistics(pObj);
                 Utils_tskAckOrFreeMsg(pRunMsg, status);
+//#ifdef SYSTEM_RT_STATS_LOG_CMD
+//    Vps_printf(" DISPLAY: tskRun SYSTEM_CMD_PRINT_STATISTICS end !!!\n");
+//#endif
                 break;
 
             default:
+//#ifdef SYSTEM_RT_STATS_LOG_CMD
+//    Vps_printf(" DISPLAY: tskRun default start !!!\n");
+//#endif
                 Utils_tskAckOrFreeMsg(pRunMsg, status);
                 break;
         }
@@ -249,17 +294,28 @@ Void DisplayLink_tskMain(struct Utils_TskHndl *pTsk, Utils_MsgHndl *pMsg)
                     status =
                         DisplayLink_tskRun(pObj, pTsk, &pMsg, &done, &ackMsg);
                 }
-
                 break;
             case SYSTEM_CMD_DELETE:
+//#ifdef SYSTEM_RT_STATS_LOG_CMD
+//    Vps_printf(" DISPLAY: SYSTEM_CMD_DELETE start !!!\n");
+//#endif
                 done = TRUE;
                 ackMsg = TRUE;
+//#ifdef SYSTEM_RT_STATS_LOG_CMD
+//    Vps_printf(" DISPLAY: tskMain SYSTEM_CMD_DELETE start !!!\n");
+//#endif
                 break;
             case DISPLAY_LINK_CMD_SWITCH_CH:
+//#ifdef SYSTEM_RT_STATS_LOG_CMD
+//    Vps_printf(" DISPLAY: tskMain SYSTEM_CMD_DELETE start !!!\n");
+//#endif
                 status =
                     DisplayLink_drvSwitchCh(pObj,
                                             Utils_msgGetPrm(pMsg));
                 Utils_tskAckOrFreeMsg(pMsg, status);
+//#ifdef SYSTEM_RT_STATS_LOG_CMD
+//    Vps_printf(" DISPLAY: tskMain SYSTEM_CMD_DELETE start !!!\n");
+//#endif
                 break;
 
             default:

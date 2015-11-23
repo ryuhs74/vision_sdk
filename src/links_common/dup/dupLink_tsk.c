@@ -59,6 +59,8 @@ Int32 DupLink_drvCreate(DupLink_Obj * pObj, DupLink_CreateParams * pPrm)
     Int32 status;
     System_Buffer *pSysBuf;
 
+    Vps_printf(" Duplicate: Create in progress !!!\n");
+
     memcpy(&pObj->createArgs, pPrm, sizeof(pObj->createArgs));
     UTILS_assert(pObj->createArgs.numOutQue <= DUP_LINK_MAX_OUT_QUE);
 
@@ -105,6 +107,8 @@ Int32 DupLink_drvCreate(DupLink_Obj * pObj, DupLink_CreateParams * pPrm)
     }
 
     memset(&pObj->stats, 0, sizeof(pObj->stats));
+
+    Vps_printf(" Duplicate: Create in Done !!!\n");
 
     return SYSTEM_LINK_STATUS_SOK;
 }
