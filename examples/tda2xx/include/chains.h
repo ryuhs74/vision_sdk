@@ -56,6 +56,7 @@ extern "C" {
 #include <include/link_api/ipcLink.h>
 #include <include/link_api/algorithmLink_edgeDetection.h>
 #include <include/link_api/algorithmLink_frameCopy.h>
+#include <include/link_api/algorithmLink_fullView.h>
 #include <include/link_api/algorithmLink_dmaSwMs.h>
 #include <include/link_api/algorithmLink_geometricAlignment.h>
 #include <include/link_api/algorithmLink_photoAlignment.h>
@@ -349,6 +350,17 @@ Void chains_vipSingleCam_DualDisplayEdgeDetection(Chains_Ctrl *chainsCfg);
  *******************************************************************************
  */
 Void Chains_vipSingleCameraFrameCopy(Chains_Ctrl *chainsCfg);
+
+/**
+ *******************************************************************************
+ *
+ * \brief   Single Channel Capture Display usecase with frame copy algorithm
+ *
+ * \param   chainsCfg         [IN] Chains_Ctrl
+ *
+ *******************************************************************************
+ */
+Void Chains_vipSingleCameraFullView(Chains_Ctrl *chainsCfg);
 
 /**
  *******************************************************************************

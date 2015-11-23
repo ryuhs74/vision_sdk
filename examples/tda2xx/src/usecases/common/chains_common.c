@@ -269,7 +269,7 @@ Void ChainsCommon_SingleCam_SetCapturePrms(
             pOutprms = &pInstPrm->outParams[streamId];
             pOutprms->width         =   captureOutWidth;
             pOutprms->height        =   captureOutHeight;
-            pOutprms->dataFormat    =   SYSTEM_DF_YUV420SP_UV;
+            pOutprms->dataFormat    =   SYSTEM_DF_YUV422I_YUYV;
             pOutprms->maxWidth      =   pOutprms->width;
             pOutprms->maxHeight     =   pOutprms->height;
             if((pInprms->width != pOutprms->width) ||
@@ -459,7 +459,7 @@ Void ChainsCommon_StereoCam_SetCapturePrms(
             pOutprms = &pInstPrm->outParams[streamId];
             pOutprms->width         =   captureOutWidth;
             pOutprms->height        =   captureOutHeight;
-            pOutprms->dataFormat    =   SYSTEM_DF_YUV420SP_UV;
+            pOutprms->dataFormat    =   SYSTEM_DF_YUV422I_YUYV;
             pOutprms->maxWidth      =   pOutprms->width;
             pOutprms->maxHeight     =   pOutprms->height;
             if((pInprms->width != pOutprms->width) ||
@@ -629,7 +629,7 @@ Void ChainsCommon_MultiCam_SetCapturePrms(
             pOutprms = &pInstPrm->outParams[streamId]; //ryuhs74@20151022 - YUV Test
             pOutprms->width         =   pInprms->width;
             pOutprms->height        =   pInprms->height;
-            pOutprms->dataFormat    =   SYSTEM_DF_YUV420SP_UV;//SYSTEM_DF_YUV420SP_UV; //ryuhs74@20151022 - Change YUV Output Format -> SYSTEM_DF_YUV422SP_UV Å×½ºÆ® ÁøÇàÇØ¾ß ÇÔ
+            pOutprms->dataFormat    =   SYSTEM_DF_YUV422I_YUYV;//SYSTEM_DF_YUV420SP_UV; //ryuhs74@20151022 - Change YUV Output Format -> SYSTEM_DF_YUV422SP_UV ï¿½×½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ï¿½Ø¾ï¿½ ï¿½ï¿½
             /*
                      //SYSTEM_DF_YUV422I_UYVY = 0x0000, YUV 422 Interleaved format - UYVY.
                 	 //SYSTEM_DF_YUV422I_YUYV, YUV 422 Interleaved format - YUYV.

@@ -138,6 +138,9 @@ typedef enum
     ALGORITHM_LINK_DSP_ALG_STEREO_POST_PROCESS,
     /**< Alg to do post processing on disparity output*/
 
+    ALGORITHM_LINK_DSP_ALG_FULLVIEW,
+    /**< Alg to full view */
+
     ALGORITHM_LINK_DSP_ALG_MAXNUM,
     /**< Should be the last value of this enumeration.
      *   Will be used by Link/driver for validating the input parameters. */
@@ -191,6 +194,9 @@ typedef enum
     ALGORITHM_LINK_EVE_ALG_REMAPMERGE,
     /**< Alg to copy subframe*/
 
+    ALGORITHM_LINK_EVE_ALG_FULLVIEW,
+    /**< Alg to full view */
+
     ALGORITHM_LINK_EVE_ALG_MAXNUM,
     /**< Should be the last value of this enumeration.
      *   Will be used by Link/driver for validating the input parameters. */
@@ -229,6 +235,9 @@ typedef enum
 
     ALGORITHM_LINK_A15_ALG_LANE_DETECT_DRAW,
     /**< Alg to draw detected lanes in a video */
+
+    ALGORITHM_LINK_A15_ALG_FULLVIEW,
+    /**< Alg to full view */
 
     ALGORITHM_LINK_A15_ALG_MAXNUM,
     /**< Should be the last value of this enumeration.

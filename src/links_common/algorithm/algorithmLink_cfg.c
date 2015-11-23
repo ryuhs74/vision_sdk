@@ -29,6 +29,7 @@
 #include <include/link_api/algorithmLink.h>
 #include <include/link_api/algorithmLink_edgeDetection.h>
 #include <include/link_api/algorithmLink_frameCopy.h>
+#include <include/link_api/algorithmLink_fullView.h>
 #include <include/link_api/algorithmLink_dmaSwMs.h>
 #include <include/link_api/algorithmLink_colorToGray.h>
 #include <include/link_api/algorithmLink_synthesis.h>
@@ -85,6 +86,7 @@ Int32 AlgorithmLink_initAlgPlugins()
 #ifdef BUILD_DSP
     /** For all alorithms on Dsp */
     AlgorithmLink_FrameCopy_initPlugin();
+    AlgorithmLink_FullView_initPlugin();
     AlgorithmLink_ColorToGray_initPlugin();
     AlgorithmLink_DmaSwMs_initPlugin();
     AlgorithmLink_ObjectDetection_initPlugin();
@@ -109,6 +111,7 @@ Int32 AlgorithmLink_initAlgPlugins()
 #ifdef BUILD_ARP32
     /** For all alorithms on Eve */
     AlgorithmLink_FrameCopy_initPlugin();
+    AlgorithmLink_FullView_initPlugin();
     AlgorithmLink_softIsp_initPlugin();
     #ifdef TDA2XX_FAMILY_BUILD
     AlgorithmLink_census_initPlugin();
@@ -148,6 +151,7 @@ Int32 AlgorithmLink_initAlgPlugins()
 #ifdef BUILD_A15
     /** For all alorithms on A15 */
     AlgorithmLink_FrameCopy_initPlugin();
+    AlgorithmLink_FullView_initPlugin();
     AlgorithmLink_DmaSwMs_initPlugin();
     AlgorithmLink_sparseOpticalFlowDraw_initPlugin();
     AlgorithmLink_laneDetectDraw_initPlugin();
