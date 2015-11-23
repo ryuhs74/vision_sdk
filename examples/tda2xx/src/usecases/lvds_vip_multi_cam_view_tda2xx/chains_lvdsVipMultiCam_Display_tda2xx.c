@@ -184,15 +184,15 @@ static Void chains_lvdsVipMultiCam_Display_SetSyncPrm(
  *
  *******************************************************************************
 */
-static Void chains_lvdsVipMultiCam_Display_SetAlgSurroundViewPrm(
-                    AlgorithmLink_SurroundViewCreateParams *pPrm,
+static Void chains_lvdsVipMultiCam_Display_SetAlgDmaSwMsPrm(
+                    AlgorithmLink_DmaSwMsCreateParams *pPrm,
                     UInt32 numLvdsCh,
                     UInt32 displayWidth,
                     UInt32 displayHeight
                    )
 {
     UInt32 winId;
-    AlgorithmLink_SurroundViewLayoutWinInfo *pWinInfo;
+    AlgorithmLink_DmaSwMsLayoutWinInfo *pWinInfo;
     UInt32 widthFactor, heightFactor;
 
     pPrm->maxOutBufWidth     = displayWidth;
@@ -204,13 +204,6 @@ static Void chains_lvdsVipMultiCam_Display_SetAlgSurroundViewPrm(
     pPrm->initLayoutParams.outBufWidth  = pPrm->maxOutBufWidth;
     pPrm->initLayoutParams.outBufHeight = pPrm->maxOutBufHeight;
 
-#if 0
-    pPrm->initLayoutParams.pLut1 = LUTAlloc(Basic_frontView);
-    pPrm->initLayoutParams.pLut5 = LUTAlloc(Basic_frontNT);
-    pPrm->initLayoutParams.pLut6 = LUTAlloc(Basic_rearNT);
-    pPrm->initLayoutParams.pLut7 = LUTAlloc(Basic_leftNT);
-    pPrm->initLayoutParams.pLut8 = LUTAlloc(Basic_rightNT);
-#endif
     switch (numLvdsCh)
     {
         case 1:
@@ -347,8 +340,8 @@ Void chains_lvdsVipMultiCam_Display_tda2xx_SetAppPrms(chains_lvdsVipMultiCam_Dis
                 pObj->numLvdsCh
         );
 
-    chains_lvdsVipMultiCam_Display_SetAlgSurroundViewPrm(
-                            &pUcObj->Alg_SurroundViewPrm,
+    chains_lvdsVipMultiCam_Display_SetAlgDmaSwMsPrm(
+                            &pUcObj->Alg_DmaSwMsPrm,
                             pObj->numLvdsCh,
                             CAPTURE_SENSOR_WIDTH,
                             CAPTURE_SENSOR_HEIGHT
@@ -514,7 +507,7 @@ Void Chains_lvdsVipMultiCam_Display_tda2xx(Chains_Ctrl *chainsCfg)
                 break;
             case '2':
             {
-            	//int i = 0; //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ß¿ï¿½ Save Prm ï¿½ï¿½ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½Ù²Û´ï¿½.
+            	//int i = 0; //ÄÄÆÄÀÏÀ» À§ÇØ ÀÏ´Ü ¼±¾ðÇÑ º¯¼ö, ³ªÁß¿¡ Save Prm ±¸Á¶Ã¼·Î ¹Ù²Û´Ù.
             	gisCapture = 1;
             	Vps_printf("**********************************gisCapture : %d\n", gisCapture);
             	//ryuhs74@20151029 - Add File Save Command
@@ -522,8 +515,8 @@ Void Chains_lvdsVipMultiCam_Display_tda2xx(Chains_Ctrl *chainsCfg)
             	/*
             	 System_linkControl(chainsObj.ucObj.Save_SaveLinkID,
             			           SYSTEM_CMD_FILE_SAVE,
-            			           NULL, //Save Prm ï¿½ï¿½ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
-								   0,//Save Prm ï¿½ï¿½ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+            			           NULL, //Save Prm ±¸Á¶Ã¼·Î ¼öÁ¤ ¿¹Á¤
+								   0,//Save Prm ±¸Á¶Ã¼·Î ¼öÁ¤ ¿¹Á¤
 								   TRUE);
 				*/
             }
