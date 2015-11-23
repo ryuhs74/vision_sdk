@@ -1,0 +1,9 @@
+UseCase: chains_lvdsVipMultiCam_Display_tda2xx
+
+Capture -> Dup -> VPE -> Sync -> Alg_DmaSwMs -> Merge
+
+Dup -> Merge
+
+Merge -> Display_video
+
+GrpxSrc -> Display_Grpx
