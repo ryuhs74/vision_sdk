@@ -69,75 +69,6 @@ typedef struct {
 /**
  *******************************************************************************
  *
- * \brief   Set VPE Create Parameters
- *
- *          This function is used to set the VPE params.
- *          It is called in Create function. It is advisable to have
- *          chains_surround_View_ResetLinkPrm prior to set params
- *          so all the default params get set.
- *          Scaling parameters are set .
- *
- *          Scale each CH to 1/2x size
- *
- * \param   pPrm    [OUT]    VpeLink_CreateParams
- *
- *******************************************************************************
-*/
-static Void chains_surround_View_SetVpePrm(
-                    VpeLink_CreateParams *pPrm,
-                    UInt32 numLvdsCh,
-                    UInt32 displayWidth,
-                    UInt32 displayHeight
-                    )
-{
-    UInt16 chId;
-    UInt32 widthFactor, heightFactor;
-
-    pPrm->enableOut[0] = TRUE;
-
-    switch (numLvdsCh)
-    {
-        case 1:
-            widthFactor  = 1;
-            heightFactor = 1;
-            break;
-        case 2:
-            widthFactor  = 2;
-            heightFactor = 1;
-            break;
-        case 3:
-        case 4:
-            widthFactor  = 2;
-            heightFactor = 2;
-            break;
-        case 5:
-        case 6:
-            widthFactor  = 2;
-            heightFactor = 3;
-            break;
-        default:
-            widthFactor  = 2;
-            heightFactor = 2;
-            break;
-    }
-
-    for(chId = 0; chId < numLvdsCh; chId++)
-    {
-        pPrm->chParams[chId].outParams[0].width
-            = SystemUtils_floor(displayWidth/widthFactor, 16);
-
-        pPrm->chParams[chId].outParams[0].height
-            = displayHeight/heightFactor;
-
-        pPrm->chParams[chId].outParams[0].dataFormat
-            = SYSTEM_DF_YUV420SP_UV;
-        pPrm->chParams[chId].outParams[0].numBufsPerCh = 4;
-    }
-}
-
-/**
- *******************************************************************************
- *
  * \brief   Set Sync Create Parameters
  *
  *          This function is used to set the sync params.
@@ -203,7 +134,7 @@ static Void chains_surround_View_SetAlgSurroundViewPrm(
     pPrm->initLayoutParams.outBufWidth  = pPrm->maxOutBufWidth;
     pPrm->initLayoutParams.outBufHeight = pPrm->maxOutBufHeight;
 
-#if 0
+#if 1
     pPrm->initLayoutParams.pLut1 = LUTAlloc(Basic_frontView);
     pPrm->initLayoutParams.pLut5 = LUTAlloc(Basic_frontNT);
     pPrm->initLayoutParams.pLut6 = LUTAlloc(Basic_rearNT);
@@ -336,10 +267,6 @@ Void chains_surround_View_SetAppPrms(chains_surround_ViewObj *pUcObj, Void *appO
             pObj->numLvdsCh
             );
 
-    chains_surround_View_SetVpePrm(&pUcObj->VPEPrm,
-                                                pObj->numLvdsCh,
-                                                CAPTURE_SENSOR_WIDTH,
-                                                CAPTURE_SENSOR_HEIGHT);
     chains_surround_View_SetSyncPrm(
                 &pUcObj->SyncPrm,
                 pObj->numLvdsCh

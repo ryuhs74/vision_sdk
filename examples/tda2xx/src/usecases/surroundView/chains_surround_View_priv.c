@@ -19,7 +19,6 @@
 Void chains_surround_View_SetLinkId(chains_surround_ViewObj *pObj){
        pObj->CaptureLinkID                  = SYSTEM_LINK_ID_CAPTURE;
        pObj->DupLinkID                      = IPU1_0_LINK (SYSTEM_LINK_ID_DUP_0);
-       pObj->VPELinkID                      = SYSTEM_LINK_ID_VPE_0;
        pObj->SyncLinkID                     = IPU1_0_LINK (SYSTEM_LINK_ID_SYNC_0);
        pObj->IPCOut_IPU1_0_A15_0_0LinkID    = IPU1_0_LINK (SYSTEM_LINK_ID_IPC_OUT_0);
        pObj->IPCIn_A15_0_IPU1_0_0LinkID     = DSP1_LINK (SYSTEM_LINK_ID_IPC_IN_0);
@@ -38,7 +37,6 @@ Void chains_surround_View_SetLinkId(chains_surround_ViewObj *pObj){
 Void chains_surround_View_ResetLinkPrms(chains_surround_ViewObj *pObj){
        CaptureLink_CreateParams_Init(&pObj->CapturePrm);
        DupLink_CreateParams_Init(&pObj->DupPrm);
-       VpeLink_CreateParams_Init(&pObj->VPEPrm);
        SyncLink_CreateParams_Init(&pObj->SyncPrm);
        IpcLink_CreateParams_Init(&pObj->IPCOut_IPU1_0_A15_0_0Prm);
        IpcLink_CreateParams_Init(&pObj->IPCIn_A15_0_IPU1_0_0Prm);
@@ -70,19 +68,15 @@ Void chains_surround_View_ConnectLinks(chains_surround_ViewObj *pObj){
        pObj->DupPrm.inQueParams.prevLinkQueId = 0;
 
        //Dup -> VPE
-       pObj->DupPrm.outQueParams[0].nextLink = pObj->VPELinkID;
-       pObj->VPEPrm.inQueParams.prevLinkId = pObj->DupLinkID;
-       pObj->VPEPrm.inQueParams.prevLinkQueId = 0;
+       pObj->DupPrm.outQueParams[0].nextLink = pObj->SyncLinkID;
+       pObj->SyncPrm.inQueParams.prevLinkId = pObj->DupLinkID;
+       pObj->SyncPrm.inQueParams.prevLinkQueId = 0;
 
        //Dup -> Merge
        pObj->DupPrm.outQueParams[1].nextLink = pObj->MergeLinkID;
        pObj->MergePrm.inQueParams[1].prevLinkId = pObj->DupLinkID;
        pObj->MergePrm.inQueParams[1].prevLinkQueId = 1;
 
-       //VPE -> Sync
-       pObj->VPEPrm.outQueParams[0].nextLink = pObj->SyncLinkID;
-       pObj->SyncPrm.inQueParams.prevLinkId = pObj->VPELinkID;
-       pObj->SyncPrm.inQueParams.prevLinkQueId = 0;
 
        //Sync -> Alg_SurroundView
        pObj->SyncPrm.outQueParams.nextLink = pObj->IPCOut_IPU1_0_A15_0_0LinkID;
@@ -145,9 +139,6 @@ Int32 chains_surround_View_Create(chains_surround_ViewObj *pObj, Void *appObj){
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
        status = System_linkCreate(pObj->DupLinkID, &pObj->DupPrm, sizeof(pObj->DupPrm));
-       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
-
-       status = System_linkCreate(pObj->VPELinkID, &pObj->VPEPrm, sizeof(pObj->VPEPrm));
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
        status = System_linkCreate(pObj->SyncLinkID, &pObj->SyncPrm, sizeof(pObj->SyncPrm));
@@ -218,9 +209,6 @@ Int32 chains_surround_View_Start(chains_surround_ViewObj *pObj){
        status = System_linkStart(pObj->SyncLinkID);
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
-       status = System_linkStart(pObj->VPELinkID);
-       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
-
        status = System_linkStart(pObj->DupLinkID);
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
@@ -268,8 +256,6 @@ Int32 chains_surround_View_Stop(chains_surround_ViewObj *pObj){
        status = System_linkStop(pObj->SyncLinkID);
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
-       status = System_linkStop(pObj->VPELinkID);
-       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
        status = System_linkStop(pObj->IPCIn_A15_0_IPU1_0_0LinkID);
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
@@ -320,9 +306,6 @@ Int32 chains_surround_View_Delete(chains_surround_ViewObj *pObj){
        status = System_linkDelete(pObj->SyncLinkID);
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
-       status = System_linkDelete(pObj->VPELinkID);
-       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
-
        status = System_linkDelete(pObj->DupLinkID);
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
@@ -335,7 +318,6 @@ Int32 chains_surround_View_Delete(chains_surround_ViewObj *pObj){
 Void chains_surround_View_printBufferStatistics(chains_surround_ViewObj *pObj){
        System_linkPrintBufferStatistics(pObj->CaptureLinkID);
        System_linkPrintBufferStatistics(pObj->DupLinkID);
-       System_linkPrintBufferStatistics(pObj->VPELinkID);
        System_linkPrintBufferStatistics(pObj->SyncLinkID);
        System_linkPrintBufferStatistics(pObj->IPCOut_IPU1_0_A15_0_0LinkID);
        Task_sleep(500);
@@ -354,7 +336,6 @@ Void chains_surround_View_printBufferStatistics(chains_surround_ViewObj *pObj){
 Void chains_surround_View_printStatistics(chains_surround_ViewObj *pObj){
        System_linkPrintStatistics(pObj->CaptureLinkID);
        System_linkPrintStatistics(pObj->DupLinkID);
-       System_linkPrintStatistics(pObj->VPELinkID);
        System_linkPrintStatistics(pObj->SyncLinkID);
        System_linkPrintStatistics(pObj->IPCOut_IPU1_0_A15_0_0LinkID);
        Task_sleep(500);

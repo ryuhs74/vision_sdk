@@ -35,7 +35,6 @@
 typedef struct {
        UInt32    CaptureLinkID;
        UInt32    DupLinkID;
-       UInt32    VPELinkID;
        UInt32    SyncLinkID;
        UInt32    IPCOut_IPU1_0_A15_0_0LinkID;
        UInt32    IPCIn_A15_0_IPU1_0_0LinkID;
@@ -49,7 +48,6 @@ typedef struct {
 
        CaptureLink_CreateParams                CapturePrm;
        DupLink_CreateParams                    DupPrm;
-       VpeLink_CreateParams                    VPEPrm;
        SyncLink_CreateParams                   SyncPrm;
        IpcLink_CreateParams                    IPCOut_IPU1_0_A15_0_0Prm;
        IpcLink_CreateParams                    IPCIn_A15_0_IPU1_0_0Prm;

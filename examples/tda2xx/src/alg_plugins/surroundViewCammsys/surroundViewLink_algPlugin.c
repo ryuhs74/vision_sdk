@@ -23,7 +23,7 @@
  *******************************************************************************
  */
 #include "surroundViewLink_priv.h"
-
+#include "singleView.h"
 /**
  *******************************************************************************
  *
@@ -815,6 +815,57 @@ Int32 AlgorithmLink_surroundViewDoDmaCopyFill(void * pObj,
 
     return status;
 }
+Int32 AlgorithmLink_surroundViewMakeTopView(void * pObj,
+                    AlgorithmLink_SurroundViewObj *pSurroundViewObj,
+                    System_VideoFrameCompositeBuffer *pInFrameCompositeBuffer,
+                    System_VideoFrameBuffer *pOutFrameBuffer
+                    )
+{
+    Int32 status    = SYSTEM_LINK_STATUS_SOK;
+    AlgorithmLink_SurroundViewLayoutParams *pLayoutPrm;
+
+	ViewInfo sideView;
+	ViewInfo sideViewLut;
+
+
+    AlgorithmLink_surroundViewDoDmaFill(pObj, pSurroundViewObj, pOutFrameBuffer);
+
+    pLayoutPrm = &pSurroundViewObj->curLayoutPrm;
+
+
+
+    sideView.width = 712;
+	sideView.height = 508;
+    sideView.pitch = 1280;
+    sideView.startX = 550;
+    sideView.startY = 16;
+
+    sideViewLut.width = 712;
+    sideViewLut.height = 508;
+    sideViewLut.pitch = 712;
+    sideViewLut.startX = 0;
+    sideViewLut.startY = 0;
+
+	status =  makeSingleView(pInFrameCompositeBuffer->bufAddr[0][3],pOutFrameBuffer->bufAddr[0], pLayoutPrm->pLut1, &sideView, &sideViewLut);
+#if 0
+    sideView.width = 520;
+	sideView.height = 688;
+    sideView.pitch = 1280;
+    sideView.startX = 16;
+    sideView.startY = 16;
+
+    sideViewLut.width = 712;
+    sideViewLut.height = 508;
+    sideViewLut.pitch = 712;
+    sideViewLut.startX = 0;
+    sideViewLut.startY = 0;
+	status =  makeSingleView(pInFrameCompositeBuffer->bufAddr[0][3],pOutFrameBuffer->bufAddr[0], pLayoutPrm->pLut5, &sideView, &sideViewLut);
+	status =  makeSingleView(pInFrameCompositeBuffer->bufAddr[0][3],pOutFrameBuffer->bufAddr[0], pLayoutPrm->pLut6, &sideView, &sideViewLut);
+	status =  makeSingleView(pInFrameCompositeBuffer->bufAddr[0][3],pOutFrameBuffer->bufAddr[0], pLayoutPrm->pLut7, &sideView, &sideViewLut);
+	status =  makeSingleView(pInFrameCompositeBuffer->bufAddr[0][3],pOutFrameBuffer->bufAddr[0], pLayoutPrm->pLut8, &sideView, &sideViewLut);
+#endif
+    return status;
+}
 
 
 /**
@@ -934,7 +985,7 @@ Int32 AlgorithmLink_surroundViewProcess(void * pObj)
             linkStatsInfo->linkStats.chStats
                     [pInBuffer->chNum].outBufCount[0]++;
 
-            AlgorithmLink_surroundViewDoDmaCopyFill(
+            AlgorithmLink_surroundViewMakeTopView(
                     pObj,
                     pSurroundViewObj,
                     pInFrameCompositeBuffer,
