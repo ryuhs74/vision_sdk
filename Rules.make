@@ -344,7 +344,7 @@ endif
 #
 # Change below to include or exclude certain core's
 #
-PROC_DSP1_INCLUDE=no
+PROC_DSP1_INCLUDE=yes
 PROC_DSP2_INCLUDE=no
 PROC_EVE1_INCLUDE=no
 PROC_EVE2_INCLUDE=no

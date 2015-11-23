@@ -28,6 +28,7 @@
 #include <include/link_api/mergeLink.h>
 #include <include/link_api/grpxSrcLink.h>
 #include <include/link_api/displayLink.h>
+#include <include/link_api/ipcLink.h>
 
 #include <include/link_api/saveLink.h> //ryuhs74@20151027 - Add Save Link
 
@@ -36,7 +37,11 @@ typedef struct {
        UInt32    DupLinkID;
        UInt32    VPELinkID;
        UInt32    SyncLinkID;
+       UInt32    IPCOut_IPU1_0_A15_0_0LinkID;
+       UInt32    IPCIn_A15_0_IPU1_0_0LinkID;
        UInt32    Alg_SurroundViewLinkID;
+       UInt32    IPCOut_A15_0_IPU1_0_0LinkID;
+       UInt32    IPCIn_IPU1_0_A15_0_0LinkID;
        UInt32    MergeLinkID;
        UInt32    Display_videoLinkID;
        UInt32    GrpxSrcLinkID;
@@ -46,7 +51,11 @@ typedef struct {
        DupLink_CreateParams                    DupPrm;
        VpeLink_CreateParams                    VPEPrm;
        SyncLink_CreateParams                   SyncPrm;
+       IpcLink_CreateParams                    IPCOut_IPU1_0_A15_0_0Prm;
+       IpcLink_CreateParams                    IPCIn_A15_0_IPU1_0_0Prm;
        AlgorithmLink_SurroundViewCreateParams       Alg_SurroundViewPrm;
+       IpcLink_CreateParams                    IPCOut_A15_0_IPU1_0_0Prm;
+       IpcLink_CreateParams                    IPCIn_IPU1_0_A15_0_0Prm;
        MergeLink_CreateParams                  MergePrm;
        DisplayLink_CreateParams                Display_videoPrm;
        GrpxSrcLink_CreateParams                GrpxSrcPrm;

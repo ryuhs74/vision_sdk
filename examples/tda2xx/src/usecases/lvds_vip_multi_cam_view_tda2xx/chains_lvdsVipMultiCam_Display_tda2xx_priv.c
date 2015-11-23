@@ -21,7 +21,11 @@ Void chains_lvdsVipMultiCam_Display_tda2xx_SetLinkId(chains_lvdsVipMultiCam_Disp
        pObj->DupLinkID                      = IPU1_0_LINK (SYSTEM_LINK_ID_DUP_0);
        pObj->VPELinkID                      = SYSTEM_LINK_ID_VPE_0;
        pObj->SyncLinkID                     = IPU1_0_LINK (SYSTEM_LINK_ID_SYNC_0);
-       pObj->Alg_SurroundViewLinkID         = IPU1_0_LINK (SYSTEM_LINK_ID_ALG_0);
+       pObj->IPCOut_IPU1_0_A15_0_0LinkID    = IPU1_0_LINK (SYSTEM_LINK_ID_IPC_OUT_0);
+       pObj->IPCIn_A15_0_IPU1_0_0LinkID     = DSP1_LINK (SYSTEM_LINK_ID_IPC_IN_0);
+       pObj->Alg_SurroundViewLinkID         = DSP1_LINK (SYSTEM_LINK_ID_ALG_0);
+       pObj->IPCOut_A15_0_IPU1_0_0LinkID    = DSP1_LINK (SYSTEM_LINK_ID_IPC_OUT_0);
+       pObj->IPCIn_IPU1_0_A15_0_0LinkID     = IPU1_0_LINK (SYSTEM_LINK_ID_IPC_IN_0);
        pObj->MergeLinkID                    = IPU1_0_LINK (SYSTEM_LINK_ID_MERGE_0);
        pObj->Display_videoLinkID            = SYSTEM_LINK_ID_DISPLAY_0;
        pObj->GrpxSrcLinkID                  = IPU1_0_LINK (SYSTEM_LINK_ID_GRPX_SRC_0);
@@ -36,7 +40,11 @@ Void chains_lvdsVipMultiCam_Display_tda2xx_ResetLinkPrms(chains_lvdsVipMultiCam_
        DupLink_CreateParams_Init(&pObj->DupPrm);
        VpeLink_CreateParams_Init(&pObj->VPEPrm);
        SyncLink_CreateParams_Init(&pObj->SyncPrm);
+       IpcLink_CreateParams_Init(&pObj->IPCOut_IPU1_0_A15_0_0Prm);
+       IpcLink_CreateParams_Init(&pObj->IPCIn_A15_0_IPU1_0_0Prm);
        AlgorithmLink_SurroundViewCreateParams_Init(&pObj->Alg_SurroundViewPrm);
+       IpcLink_CreateParams_Init(&pObj->IPCOut_A15_0_IPU1_0_0Prm);
+       IpcLink_CreateParams_Init(&pObj->IPCIn_IPU1_0_A15_0_0Prm);
        MergeLink_CreateParams_Init(&pObj->MergePrm);
        DisplayLink_CreateParams_Init(&pObj->Display_videoPrm);
        GrpxSrcLink_CreateParams_Init(&pObj->GrpxSrcPrm);
@@ -50,7 +58,7 @@ Void chains_lvdsVipMultiCam_Display_tda2xx_ResetLinkPrms(chains_lvdsVipMultiCam_
 Void chains_lvdsVipMultiCam_Display_tda2xx_SetPrms(chains_lvdsVipMultiCam_Display_tda2xxObj *pObj){
        (pObj->DupPrm).numOutQue = 2;
        (pObj->Alg_SurroundViewPrm).baseClassCreate.size  = sizeof(AlgorithmLink_SurroundViewCreateParams);
-       (pObj->Alg_SurroundViewPrm).baseClassCreate.algId  = ALGORITHM_LINK_IPU_ALG_SURROUND_VIEW;
+       (pObj->Alg_SurroundViewPrm).baseClassCreate.algId  = ALGORITHM_LINK_DSP_ALG_SURROUND_VIEW;
        (pObj->MergePrm).numInQue = 2;
 }
 
@@ -71,25 +79,42 @@ Void chains_lvdsVipMultiCam_Display_tda2xx_ConnectLinks(chains_lvdsVipMultiCam_D
        pObj->MergePrm.inQueParams[1].prevLinkId = pObj->DupLinkID;
        pObj->MergePrm.inQueParams[1].prevLinkQueId = 1;
 
-       //Dup -> Save //ryuhs74@20151028 - Add Save Link
-       pObj->DupPrm.outQueParams[2].nextLink = pObj->SyncLinkID;
-       pObj->Save_Prm.inQueParams.prevLinkId = pObj->DupLinkID;
-       pObj->Save_Prm.inQueParams.prevLinkQueId = 2;
-
        //VPE -> Sync
        pObj->VPEPrm.outQueParams[0].nextLink = pObj->SyncLinkID;
        pObj->SyncPrm.inQueParams.prevLinkId = pObj->VPELinkID;
        pObj->SyncPrm.inQueParams.prevLinkQueId = 0;
 
        //Sync -> Alg_SurroundView
-       pObj->SyncPrm.outQueParams.nextLink = pObj->Alg_SurroundViewLinkID;
-       pObj->Alg_SurroundViewPrm.inQueParams.prevLinkId = pObj->SyncLinkID;
+       pObj->SyncPrm.outQueParams.nextLink = pObj->IPCOut_IPU1_0_A15_0_0LinkID;
+       pObj->IPCOut_IPU1_0_A15_0_0Prm.inQueParams.prevLinkId = pObj->SyncLinkID;
+       pObj->IPCOut_IPU1_0_A15_0_0Prm.inQueParams.prevLinkQueId = 0;
+
+
+       //IPCOut_IPU1_0_A15_0_0 -> IPCIn_A15_0_IPU1_0_0
+       pObj->IPCOut_IPU1_0_A15_0_0Prm.outQueParams.nextLink = pObj->IPCIn_A15_0_IPU1_0_0LinkID;
+       pObj->IPCIn_A15_0_IPU1_0_0Prm.inQueParams.prevLinkId = pObj->IPCOut_IPU1_0_A15_0_0LinkID;
+       pObj->IPCIn_A15_0_IPU1_0_0Prm.inQueParams.prevLinkQueId = 0;
+
+       //IPCIn_A15_0_IPU1_0_0 -> Alg_FullView
+       pObj->IPCIn_A15_0_IPU1_0_0Prm.outQueParams.nextLink = pObj->Alg_SurroundViewLinkID;
+       pObj->Alg_SurroundViewPrm.inQueParams.prevLinkId = pObj->IPCIn_A15_0_IPU1_0_0LinkID;
        pObj->Alg_SurroundViewPrm.inQueParams.prevLinkQueId = 0;
 
-       //Alg_SurroundView -> Merge
-       pObj->Alg_SurroundViewPrm.outQueParams.nextLink = pObj->MergeLinkID;
-       pObj->MergePrm.inQueParams[0].prevLinkId = pObj->Alg_SurroundViewLinkID;
+       //Alg_FullView -> IPCOut_A15_0_IPU1_0_0
+       pObj->Alg_SurroundViewPrm.outQueParams.nextLink = pObj->IPCOut_A15_0_IPU1_0_0LinkID;
+       pObj->IPCOut_A15_0_IPU1_0_0Prm.inQueParams.prevLinkId = pObj->Alg_SurroundViewLinkID;
+       pObj->IPCOut_A15_0_IPU1_0_0Prm.inQueParams.prevLinkQueId = 0;
+
+       //IPCOut_A15_0_IPU1_0_0 -> IPCIn_IPU1_0_A15_0_0
+       pObj->IPCOut_A15_0_IPU1_0_0Prm.outQueParams.nextLink = pObj->IPCIn_IPU1_0_A15_0_0LinkID;
+       pObj->IPCIn_IPU1_0_A15_0_0Prm.inQueParams.prevLinkId = pObj->IPCOut_A15_0_IPU1_0_0LinkID;
+       pObj->IPCIn_IPU1_0_A15_0_0Prm.inQueParams.prevLinkQueId = 0;
+
+       //IPCIn_IPU1_0_A15_0_0 -> Display_Video
+       pObj->IPCIn_IPU1_0_A15_0_0Prm.outQueParams.nextLink = pObj->MergeLinkID;
+       pObj->MergePrm.inQueParams[0].prevLinkId = pObj->IPCIn_IPU1_0_A15_0_0LinkID;
        pObj->MergePrm.inQueParams[0].prevLinkQueId = 0;
+
 
        //Merge -> Display_video
        pObj->MergePrm.outQueParams.nextLink = pObj->Display_videoLinkID;
@@ -128,7 +153,18 @@ Int32 chains_lvdsVipMultiCam_Display_tda2xx_Create(chains_lvdsVipMultiCam_Displa
        status = System_linkCreate(pObj->SyncLinkID, &pObj->SyncPrm, sizeof(pObj->SyncPrm));
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
+       status = System_linkCreate(pObj->IPCOut_IPU1_0_A15_0_0LinkID, &pObj->IPCOut_IPU1_0_A15_0_0Prm, sizeof(pObj->IPCOut_IPU1_0_A15_0_0Prm));
+       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
+       status = System_linkCreate(pObj->IPCIn_A15_0_IPU1_0_0LinkID, &pObj->IPCIn_A15_0_IPU1_0_0Prm, sizeof(pObj->IPCIn_A15_0_IPU1_0_0Prm));
+
        status = System_linkCreate(pObj->Alg_SurroundViewLinkID, &pObj->Alg_SurroundViewPrm, sizeof(pObj->Alg_SurroundViewPrm));
+       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
+       status = System_linkCreate(pObj->IPCOut_A15_0_IPU1_0_0LinkID, &pObj->IPCOut_A15_0_IPU1_0_0Prm, sizeof(pObj->IPCOut_A15_0_IPU1_0_0Prm));
+       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
+       status = System_linkCreate(pObj->IPCIn_IPU1_0_A15_0_0LinkID, &pObj->IPCIn_IPU1_0_A15_0_0Prm, sizeof(pObj->IPCIn_IPU1_0_A15_0_0Prm));
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
        status = System_linkCreate(pObj->MergeLinkID, &pObj->MergePrm, sizeof(pObj->MergePrm));
@@ -164,7 +200,19 @@ Int32 chains_lvdsVipMultiCam_Display_tda2xx_Start(chains_lvdsVipMultiCam_Display
        status = System_linkStart(pObj->MergeLinkID);
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
+       status = System_linkStart(pObj->IPCIn_IPU1_0_A15_0_0LinkID);
+       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
+       status = System_linkStart(pObj->IPCOut_A15_0_IPU1_0_0LinkID);
+       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
        status = System_linkStart(pObj->Alg_SurroundViewLinkID);
+       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
+       status = System_linkStart(pObj->IPCIn_A15_0_IPU1_0_0LinkID);
+       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
+       status = System_linkStart(pObj->IPCOut_IPU1_0_A15_0_0LinkID);
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
        status = System_linkStart(pObj->SyncLinkID);
@@ -202,7 +250,19 @@ Int32 chains_lvdsVipMultiCam_Display_tda2xx_Stop(chains_lvdsVipMultiCam_Display_
        status = System_linkStop(pObj->MergeLinkID);
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
+       status = System_linkStop(pObj->IPCIn_IPU1_0_A15_0_0LinkID);
+       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
+       status = System_linkStop(pObj->IPCOut_A15_0_IPU1_0_0LinkID);
+       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
        status = System_linkStop(pObj->Alg_SurroundViewLinkID);
+       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
+       status = System_linkStop(pObj->IPCIn_A15_0_IPU1_0_0LinkID);
+       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
+       status = System_linkStop(pObj->IPCOut_IPU1_0_A15_0_0LinkID);
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
        status = System_linkStop(pObj->SyncLinkID);
@@ -210,6 +270,12 @@ Int32 chains_lvdsVipMultiCam_Display_tda2xx_Stop(chains_lvdsVipMultiCam_Display_
 
        status = System_linkStop(pObj->VPELinkID);
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+       status = System_linkStop(pObj->IPCIn_A15_0_IPU1_0_0LinkID);
+       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
+       status = System_linkStop(pObj->IPCOut_IPU1_0_A15_0_0LinkID);
+       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
 
        status = System_linkStop(pObj->DupLinkID);
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
@@ -236,7 +302,19 @@ Int32 chains_lvdsVipMultiCam_Display_tda2xx_Delete(chains_lvdsVipMultiCam_Displa
        status = System_linkDelete(pObj->MergeLinkID);
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
+       status = System_linkDelete(pObj->IPCIn_IPU1_0_A15_0_0LinkID);
+       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
+       status = System_linkDelete(pObj->IPCOut_A15_0_IPU1_0_0LinkID);
+       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
        status = System_linkDelete(pObj->Alg_SurroundViewLinkID);
+       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
+       status = System_linkDelete(pObj->IPCIn_A15_0_IPU1_0_0LinkID);
+       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
+       status = System_linkDelete(pObj->IPCOut_IPU1_0_A15_0_0LinkID);
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
        status = System_linkDelete(pObj->SyncLinkID);
@@ -259,7 +337,13 @@ Void chains_lvdsVipMultiCam_Display_tda2xx_printBufferStatistics(chains_lvdsVipM
        System_linkPrintBufferStatistics(pObj->DupLinkID);
        System_linkPrintBufferStatistics(pObj->VPELinkID);
        System_linkPrintBufferStatistics(pObj->SyncLinkID);
+       System_linkPrintBufferStatistics(pObj->IPCOut_IPU1_0_A15_0_0LinkID);
+       Task_sleep(500);
+       System_linkPrintBufferStatistics(pObj->IPCIn_A15_0_IPU1_0_0LinkID);
        System_linkPrintBufferStatistics(pObj->Alg_SurroundViewLinkID);
+       System_linkPrintBufferStatistics(pObj->IPCOut_A15_0_IPU1_0_0LinkID);
+       Task_sleep(500);
+       System_linkPrintBufferStatistics(pObj->IPCIn_IPU1_0_A15_0_0LinkID);
        System_linkPrintBufferStatistics(pObj->MergeLinkID);
        System_linkPrintBufferStatistics(pObj->Display_videoLinkID);
        System_linkPrintBufferStatistics(pObj->GrpxSrcLinkID);
@@ -272,7 +356,13 @@ Void chains_lvdsVipMultiCam_Display_tda2xx_printStatistics(chains_lvdsVipMultiCa
        System_linkPrintStatistics(pObj->DupLinkID);
        System_linkPrintStatistics(pObj->VPELinkID);
        System_linkPrintStatistics(pObj->SyncLinkID);
+       System_linkPrintStatistics(pObj->IPCOut_IPU1_0_A15_0_0LinkID);
+       Task_sleep(500);
+       System_linkPrintStatistics(pObj->IPCIn_A15_0_IPU1_0_0LinkID);
        System_linkPrintStatistics(pObj->Alg_SurroundViewLinkID);
+       System_linkPrintStatistics(pObj->IPCOut_A15_0_IPU1_0_0LinkID);
+       Task_sleep(500);
+       System_linkPrintStatistics(pObj->IPCIn_IPU1_0_A15_0_0LinkID);
        System_linkPrintStatistics(pObj->MergeLinkID);
        System_linkPrintStatistics(pObj->Display_videoLinkID);
        System_linkPrintStatistics(pObj->GrpxSrcLinkID);
