@@ -32,27 +32,46 @@
 
 #include <include/link_api/saveLink.h> //ryuhs74@20151027 - Add Save Link
 
-#define E500_SV_MULTICAM
+//#define E500_SV_MULTICAM
 typedef struct {
        UInt32    CaptureLinkID;
        UInt32    DupLinkID;
+#ifndef E500_SV_MULTICAM
        UInt32    VPELinkID;
+#endif
        UInt32    SyncLinkID;
        UInt32    Alg_DmaSwMsLinkID;
+#ifndef E500_SV_MULTICAM
        UInt32    MergeLinkID;
+#endif
        UInt32    Display_videoLinkID;
        UInt32    GrpxSrcLinkID;
        UInt32    Display_GrpxLinkID;
 
        CaptureLink_CreateParams                CapturePrm;
        DupLink_CreateParams                    DupPrm;
+#ifndef E500_SV_MULTICAM
        VpeLink_CreateParams                    VPEPrm;
+#endif
        SyncLink_CreateParams                   SyncPrm;
        AlgorithmLink_DmaSwMsCreateParams       Alg_DmaSwMsPrm;
+#ifndef E500_SV_MULTICAM
        MergeLink_CreateParams                  MergePrm;
+#endif
        DisplayLink_CreateParams                Display_videoPrm;
        GrpxSrcLink_CreateParams                GrpxSrcPrm;
        DisplayLink_CreateParams                Display_GrpxPrm;
+
+
+       UInt32    IPCOut_IPU1_0_DSP1_0LinkID;	//IPU1_0 -> DSP1_0, For Cammsys LUT Link in IPU1_0 Core
+       UInt32    IPCIn_DSP1_IPU1_0_0LinkID;		//IPU1_0 -> DSP1_0, For Cammsys LUT Link in DSP1_0 Core
+       UInt32    IPCOut_DSP1_IPU1_0_0LinkID;	//DSP1_0 -> IPU1_0, For Cammsys LUT Link in DSP1_0 Core
+       UInt32    IPCIn_IPU1_0_DSP1_0LinkID;		//DSP1_0 -> IPU1_0, For Cammsys LUT Link in IPU1_0 Core
+
+       IpcLink_CreateParams                    IPCOut_IPU1_0_DSP1_0Prm;	//IPU1_0 -> DSP1_0, For Cammsys LUT Link in IPU1_0 Core
+       IpcLink_CreateParams                    IPCIn_DSP1_IPU1_0_0Prm;	//IPU1_0 -> DSP1_0, For Cammsys LUT Link in DSP1_0 Core
+       IpcLink_CreateParams                    IPCOut_DSP1_IPU1_0_0Prm;	//DSP1_0 -> IPU1_0, For Cammsys LUT Link in DSP1_0 Core
+       IpcLink_CreateParams                    IPCIn_IPU1_0_DSP1_0Prm;	//DSP1_0 -> IPU1_0, For Cammsys LUT Link in IPU1_0 Core
 
 #ifdef E500_SV_MULTICAM
        //Add

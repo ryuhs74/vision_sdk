@@ -31,6 +31,7 @@
 #include <include/link_api/algorithmLink_frameCopy.h>
 #include <include/link_api/algorithmLink_fullView.h>
 #include <include/link_api/algorithmLink_dmaSwMs.h>
+#include <include/link_api/algorithmLink_surroundView.h>
 #include <include/link_api/algorithmLink_colorToGray.h>
 #include <include/link_api/algorithmLink_synthesis.h>
 #include <include/link_api/algorithmLink_geometricAlignment.h>
@@ -89,6 +90,7 @@ Int32 AlgorithmLink_initAlgPlugins()
     AlgorithmLink_FullView_initPlugin();
     AlgorithmLink_ColorToGray_initPlugin();
     AlgorithmLink_DmaSwMs_initPlugin();
+    AlgorithmLink_SurroundView_initPlugin();
     AlgorithmLink_ObjectDetection_initPlugin();
     AlgorithmLink_vectorToImage_initPlugin();
     AlgorithmLink_sparseOpticalFlowDraw_initPlugin();
@@ -132,6 +134,7 @@ Int32 AlgorithmLink_initAlgPlugins()
 #ifdef BUILD_M4
     /** For all alorithms on IPU (M4) */
     AlgorithmLink_DmaSwMs_initPlugin();
+    AlgorithmLink_SurroundView_initPlugin();
 #endif
 
 #ifdef BUILD_M4_0
@@ -153,6 +156,7 @@ Int32 AlgorithmLink_initAlgPlugins()
     AlgorithmLink_FrameCopy_initPlugin();
     AlgorithmLink_FullView_initPlugin();
     AlgorithmLink_DmaSwMs_initPlugin();
+    AlgorithmLink_SurroundView_initPlugin();
     AlgorithmLink_sparseOpticalFlowDraw_initPlugin();
     AlgorithmLink_laneDetectDraw_initPlugin();
 #endif

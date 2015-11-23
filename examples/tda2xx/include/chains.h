@@ -450,7 +450,7 @@ Void Chains_vipSingleCameraSparseOpticalFlow(Chains_Ctrl * chainsCfg);
  *******************************************************************************
 */
 Void Chains_lvdsVipMultiCam_Display_tda2xx(Chains_Ctrl *chainsCfg);
-
+Void Chains_surround_View(Chains_Ctrl *chainsCfg);
 /**
  *******************************************************************************
  *

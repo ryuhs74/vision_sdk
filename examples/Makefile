@@ -66,6 +66,7 @@ include $(MODULE_SRC_BASE_PATH)/tda2xx/src/usecases/ov490_vip_sv_standalone/SRC_
 include $(MODULE_SRC_BASE_PATH)/tda2xx/src/usecases/vip_single_cam_view_dsswb/SRC_FILES.MK
 include $(MODULE_SRC_BASE_PATH)/tda2xx/src/usecases/fast_boot_iss_capture_isp_simcop_pd_display/SRC_FILES.MK
 include $(MODULE_SRC_BASE_PATH)/tda2xx/src/usecases/vip_single_cam_view_encdec/SRC_FILES.MK
+include $(MODULE_SRC_BASE_PATH)/tda2xx/src/usecases/surroundView/SRC_FILES.MK
 
 # Core/SoC/platform specific source files and CFLAGS
 # Example:

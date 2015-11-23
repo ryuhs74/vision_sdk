@@ -1816,7 +1816,7 @@ void Start_AVM_E500() //ryuhs74@20151020 - Add HDMI On/Off Test
 
 	Chains_lvdsVipSurroundViewStandalone(&gChains_usecaseCfg);
 #else
-	Chains_lvdsVipMultiCam_Display_tda2xx(&gChains_usecaseCfg);
+	Chains_surround_View(&gChains_usecaseCfg);
 #endif
 }
 /**

@@ -1866,6 +1866,12 @@ Void ChainsCommon_SetGrpxSrcPrms(
     pPrm->statsDisplayEnable = TRUE;
     pPrm->statsPrintParams.startX = pPrm->logoParams.startX;
     pPrm->statsPrintParams.startY = displayHeight - 134 - pPrm->logoParams.startY;
+
+
+    pPrm->sViewmode.viewmode = TOP_VIEW;
+    pPrm->sViewmode.viewnt = FRONT_VIEW;
+    pPrm->sViewmode.prvVient = FRONT_VIEW;
+    pPrm->avm_e500LayoutEnable = TRUE;
 }
 
 /**

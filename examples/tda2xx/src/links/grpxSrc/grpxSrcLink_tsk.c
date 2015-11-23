@@ -51,8 +51,8 @@ Int32 GrpxSrcLink_initAndDrawStaticBmp(GrpxSrcLink_Obj * pObj,
     Int32 status, frameId;
     Draw2D_BufInfo bufInfo;
     GrpxSrcLink_CreateParams *createPrms = &pObj->createArgs;
-    GrpxSrcLink_LogoParameters   *logoPrms; 	//ryuhs74@220151103 - Not Used AVM-E500
-    Draw2D_BmpPrm bmpPrm;						//ryuhs74@220151103 - Not Used AVM-E500
+    //GrpxSrcLink_LogoParameters   *logoPrms; 	//ryuhs74@220151103 - Not Used AVM-E500
+ //   Draw2D_BmpPrm bmpPrm;						//ryuhs74@220151103 - Not Used AVM-E500
 
     System_VideoFrameBuffer *pSysVidBuf;
 
@@ -85,7 +85,7 @@ Int32 GrpxSrcLink_initAndDrawStaticBmp(GrpxSrcLink_Obj * pObj,
         }
 
         Draw2D_clearBuf(pObj->draw2DHndl);
-#if 1 //ryuhs74@220151103 - Not Used AVM-E500
+#if 0 //ryuhs74@220151103 - Not Used AVM-E500
         if (createPrms->logoDisplayEnable)
         {
             logoPrms = &createPrms->logoParams;
