@@ -28,9 +28,11 @@
 #include <include/link_api/mergeLink.h>
 #include <include/link_api/grpxSrcLink.h>
 #include <include/link_api/displayLink.h>
+#include <include/link_api/ipcLink.h>
 
 #include <include/link_api/saveLink.h> //ryuhs74@20151027 - Add Save Link
 
+#define E500_SV_MULTICAM
 typedef struct {
        UInt32    CaptureLinkID;
        UInt32    DupLinkID;
@@ -52,8 +54,26 @@ typedef struct {
        GrpxSrcLink_CreateParams                GrpxSrcPrm;
        DisplayLink_CreateParams                Display_GrpxPrm;
 
-       //Uint32 Save_SaveLinkID;				//ryuhs74220151027 - Add Save Link
-       SaveLink_CreateParams				Save_Prm;//ryuhs74220151027 - Add Save Link
+#ifdef E500_SV_MULTICAM
+       //Add
+       UInt32    IPCOut_IPU1_0_DSP1_0LinkID;	//IPU1_0 -> DSP1_0, For Cammsys LUT Link in IPU1_0 Core
+       UInt32    IPCIn_DSP1_IPU1_0_0LinkID;		//IPU1_0 -> DSP1_0, For Cammsys LUT Link in DSP1_0 Core
+       UInt32    IPCOut_DSP1_IPU1_0_0LinkID;	//DSP1_0 -> IPU1_0, For Cammsys LUT Link in DSP1_0 Core
+       UInt32    IPCIn_IPU1_0_DSP1_0LinkID;		//DSP1_0 -> IPU1_0, For Cammsys LUT Link in IPU1_0 Core
+
+       IpcLink_CreateParams                    IPCOut_IPU1_0_DSP1_0Prm;	//IPU1_0 -> DSP1_0, For Cammsys LUT Link in IPU1_0 Core
+       IpcLink_CreateParams                    IPCIn_DSP1_IPU1_0_0Prm;	//IPU1_0 -> DSP1_0, For Cammsys LUT Link in DSP1_0 Core
+       IpcLink_CreateParams                    IPCOut_DSP1_IPU1_0_0Prm;	//DSP1_0 -> IPU1_0, For Cammsys LUT Link in DSP1_0 Core
+       IpcLink_CreateParams                    IPCIn_IPU1_0_DSP1_0Prm;	//DSP1_0 -> IPU1_0, For Cammsys LUT Link in IPU1_0 Core
+
+       //UInt32    IPCOut_IPU1_0_IPU1_1LinkID;	//IPU1_0 -> IPU1_1, For Save Link in IPU1_0 Core
+       //UInt32    IPCIn_IPU1_IPU1_0_1LinkID; 	//IPU1_0 -> IPU1_1, For Save Link in IPU1_1 Core
+       //Uint32	 SaveLinkID;
+
+       // IpcLink_CreateParams                    IPCOut_IPU1_0_IPU1_1Prm;	//IPU1_0 -> IPU1_1, For Save Link in IPU1_0 Core
+       // IpcLink_CreateParams                    IPCIn_IPU1_IPU1_0_1Prm;	//IPU1_0 -> IPU1_1, For Save Link in IPU1_1 Core
+       // SaveLink_CreateParams				Save_Prm;//ryuhs74220151027 - Add Save Link
+#endif
 } chains_lvdsVipMultiCam_Display_tda2xxObj;
 
 Void chains_lvdsVipMultiCam_Display_tda2xx_SetLinkId(chains_lvdsVipMultiCam_Display_tda2xxObj *pObj);

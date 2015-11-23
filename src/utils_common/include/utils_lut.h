@@ -45,7 +45,7 @@ typedef enum lut_index
 	cmaskNT,
 	Basic_frontFullView,
 	Basit_rearFullView,
-	MAX_LUT_INDEX,
+	MAX_LUT_INDEX
 }LUT_INDEX;
 
 void* LUTAlloc(LUT_INDEX index );

@@ -33,6 +33,9 @@
 #include <src/utils_common/include/utils_idle.h>
 #endif
 
+#include <src/utils_common/include/utils_lut.h> //ryuhs74@20151112 - Add
+#include <examples/tda2xx/src/links/uartCmd/uartCmd_priv.h> //ryuhs74@20151105 - Test UI CMD
+UInt32 gE500LUTLinkID; //ryuhs74@20151112 - Add
 
 /**
  *******************************************************************************
@@ -54,6 +57,9 @@ Int32 AlgorithmLink_pluginCreate(AlgorithmLink_Obj *pObj, Utils_MsgHndl *pMsg)
     UInt32 algId;
     Int32 status = SYSTEM_LINK_STATUS_SOK;
 
+//#ifdef SYSTEM_DEBUG_CAPTURE
+ //   Vps_printf(" Algorithm: Create in progress !!!\n");
+//#endif
     pCreateParams = (AlgorithmLink_CreateParams *)(Utils_msgGetPrm(pMsg));
     pObj->algId   = (pCreateParams->algId);
     pObj->callbackPutEmptyBuffers = NULL;
@@ -103,7 +109,9 @@ Int32 AlgorithmLink_pluginCreate(AlgorithmLink_Obj *pObj, Utils_MsgHndl *pMsg)
                    " (algId = %d) !!!\n", pObj->algId);
         #endif
     }
-
+//#ifdef SYSTEM_DEBUG_CAPTURE
+//    Vps_printf(" Algorithm: Create in Done !!!\n");
+//#endif
     return status;
 }
 
@@ -194,7 +202,7 @@ Void AlgorithmLink_tskMain(struct Utils_TskHndl *pTsk, Utils_MsgHndl *pMsg)
             Utils_tskAckOrFreeMsg(pMsg, status);
             break;
         case SYSTEM_CMD_NEW_DATA:
-
+//Vps_printf("Alg: tskMain SYSTEM_CMD_NEW_DATA LinkId: %d start !!!\n",pObj->linkId);
           Utils_tskAckOrFreeMsg(pMsg, 0);
 
           flushCmds[0] = SYSTEM_CMD_NEW_DATA;
@@ -217,7 +225,7 @@ Void AlgorithmLink_tskMain(struct Utils_TskHndl *pTsk, Utils_MsgHndl *pMsg)
 #endif
               }
           }
-
+//Vps_printf("Alg: tskMain SYSTEM_CMD_NEW_DATA LinkId: %d end !!!\n");
           break;
 
         case ALGORITHM_LINK_CMD_CONFIG:
@@ -340,6 +348,105 @@ Void AlgorithmLink_tskMain(struct Utils_TskHndl *pTsk, Utils_MsgHndl *pMsg)
             }
             Utils_tskAckOrFreeMsg(pMsg, status);
             break;
+            /*/ryuhs74@20151103 - Add AVM-E500 Draw Layout START
+			 case SYSTEM_CMD_FRONT_SIDE_VIEW:
+				 memcpy(&pObj->createArgs, Utils_msgGetPrm(pMsg), sizeof(AlgorithmLink_CreateParams));
+
+				 Vps_printf("CMD Call SYSTEM_CMD_REAR_SIDE_VIEW viewmode : %d, viewnt: %d\n", pObj->createArgs.sViewmode.viewmode, pObj->createArgs.sViewmode.viewnt);
+				 if( pObj->createArgs.sViewmode.viewmode != TOP_VIEW )
+				 {
+
+				 }
+
+				 pObj->createArgs.sViewmode.viewmode =  TOP_VIEW;
+				 pObj->createArgs.sViewmode.viewnt = FRONT_VIEW;
+
+				 pObj->createArgs.sViewmode.prvVient =  pObj->createArgs.sViewmode.viewnt = FRONT_VIEW;
+
+				 Utils_tskAckOrFreeMsg(pMsg, SYSTEM_LINK_STATUS_SOK);
+				 break;
+			 case SYSTEM_CMD_REAR_SIDE_VIEW:
+				 memcpy(&pObj->createArgs, Utils_msgGetPrm(pMsg), sizeof(AlgorithmLink_CreateParams));
+
+				 Vps_printf("CMD Call SYSTEM_CMD_REAR_SIDE_VIEW viewmode : %d, viewnt: %d\n", pObj->createArgs.sViewmode.viewmode, pObj->createArgs.sViewmode.viewnt);
+				 if( pObj->createArgs.sViewmode.viewmode != TOP_VIEW )
+				 {
+
+				 }
+
+				 pObj->createArgs.sViewmode.viewmode =  TOP_VIEW;
+				 pObj->createArgs.sViewmode.viewnt = REAR_VIEW;
+
+				 pObj->createArgs.sViewmode.prvVient =  pObj->createArgs.sViewmode.viewnt = FRONT_VIEW;
+
+
+				 Utils_tskAckOrFreeMsg(pMsg, SYSTEM_LINK_STATUS_SOK);
+				 break;
+			 case SYSTEM_CMD_RIGH_SIDE_VIEW:
+				 memcpy(&pObj->createArgs, Utils_msgGetPrm(pMsg), sizeof(AlgorithmLink_CreateParams));
+
+				 Vps_printf("CMD Call SYSTEM_CMD_REAR_SIDE_VIEW viewmode : %d, viewnt: %d\n", pObj->createArgs.sViewmode.viewmode, pObj->createArgs.sViewmode.viewnt);
+				 if( pObj->createArgs.sViewmode.viewmode != TOP_VIEW )
+				 {
+
+				 }
+
+				 pObj->createArgs.sViewmode.viewmode =  TOP_VIEW;
+				 pObj->createArgs.sViewmode.viewnt = RIGHT_VIEW;
+
+				 pObj->createArgs.sViewmode.prvVient =  pObj->createArgs.sViewmode.viewnt = FRONT_VIEW;
+
+
+				 Utils_tskAckOrFreeMsg(pMsg, SYSTEM_LINK_STATUS_SOK);
+				 break;
+			 case SYSTEM_CMD_LEFT_SIDE_VIEW:
+				 memcpy(&pObj->createArgs, Utils_msgGetPrm(pMsg), sizeof(AlgorithmLink_CreateParams));
+
+				 Vps_printf("CMD Call SYSTEM_CMD_REAR_SIDE_VIEW viewmode : %d, viewnt: %d\n", pObj->createArgs.sViewmode.viewmode, pObj->createArgs.sViewmode.viewnt);
+				 if( pObj->createArgs.sViewmode.viewmode != TOP_VIEW )
+				 {
+
+				 }
+
+				 pObj->createArgs.sViewmode.viewmode =  TOP_VIEW;
+				 pObj->createArgs.sViewmode.viewnt = LEFT_VIEW;
+
+				 pObj->createArgs.sViewmode.prvVient =  pObj->createArgs.sViewmode.viewnt = FRONT_VIEW;
+
+				 Utils_tskAckOrFreeMsg(pMsg, SYSTEM_LINK_STATUS_SOK);
+				 break;
+			 case SYSTEM_CMD_FULL_FRONT_VIEW:
+				 memcpy(&pObj->createArgs, Utils_msgGetPrm(pMsg), sizeof(AlgorithmLink_CreateParams));
+
+				 Vps_printf("CMD Call SYSTEM_CMD_REAR_SIDE_VIEW viewmode : %d, viewnt: %d\n", pObj->createArgs.sViewmode.viewmode, pObj->createArgs.sViewmode.viewnt);
+				 if( pObj->createArgs.sViewmode.viewmode != FULL_VIEW )
+				 {
+
+				 }
+
+				 pObj->createArgs.sViewmode.viewmode =  FULL_VIEW;
+				 pObj->createArgs.sViewmode.viewnt = FRONT_VIEW;
+
+				 pObj->createArgs.sViewmode.prvVient =  pObj->createArgs.sViewmode.viewnt = FRONT_VIEW;
+				 Utils_tskAckOrFreeMsg(pMsg, SYSTEM_LINK_STATUS_SOK);
+				 break;
+			 case SYSTEM_CMD_FULL_REAR_VIEW:
+				 memcpy(&pObj->createArgs, Utils_msgGetPrm(pMsg), sizeof(AlgorithmLink_CreateParams));
+
+				 Vps_printf("CMD Call SYSTEM_CMD_REAR_SIDE_VIEW viewmode : %d, viewnt: %d\n", pObj->createArgs.sViewmode.viewmode, pObj->createArgs.sViewmode.viewnt);
+				 if( pObj->createArgs.sViewmode.viewmode != FULL_VIEW )
+				 {
+
+				 }
+
+				 pObj->createArgs.sViewmode.viewmode =  FULL_VIEW;
+				 pObj->createArgs.sViewmode.viewnt = REAR_VIEW;
+
+				 pObj->createArgs.sViewmode.prvVient =  pObj->createArgs.sViewmode.viewnt = FRONT_VIEW;
+
+				 Utils_tskAckOrFreeMsg(pMsg, SYSTEM_LINK_STATUS_SOK);
+				 break;
+				 //ryuhs74@20151103 - Add AVM-E500 Draw Layout END*/
     }
     return;
 
@@ -530,5 +637,58 @@ Int32 AlgorithmLink_putEmptyBuffers(Void              *ptr,
     return status;
 }
 
+/*
+void E500_ViewMode_putCmd( uint8_t _cmd )
+{
+#if 1
+	AlgorithmLink_CreateParams E500;
+	Int32 status;
+	Vps_printf("In E500_ViewMode_putCmd, ");
 
+	if( _cmd == CMD_REQ_FRONT_VIEW ){
+		Vps_printf("CMD_REQ_FRONT_VIEW");
+
+		E500.sViewmode.viewmode =  TOP_VIEW;
+		E500.sViewmode.viewnt = FRONT_VIEW;
+		_cmd = SYSTEM_CMD_FRONT_SIDE_VIEW;
+	} else if( _cmd == CMD_REQ_REAR_VIEW ){
+		Vps_printf("CMD_REQ_REAR_VIEW");
+
+		E500.sViewmode.viewmode =  TOP_VIEW;
+		E500.sViewmode.viewnt = REAR_VIEW;
+		_cmd = SYSTEM_CMD_REAR_SIDE_VIEW;
+	} else if( _cmd == CMD_REQ_RIGHT_VIEW ){
+		Vps_printf("CMD_REQ_RIGHT_VIEW");
+
+		E500.sViewmode.viewmode =  TOP_VIEW;
+		E500.sViewmode.viewnt = RIGHT_VIEW;
+		_cmd = SYSTEM_CMD_RIGH_SIDE_VIEW;
+	} else if( _cmd == CMD_REQ_LEFT_VIEW ){
+		Vps_printf("CMD_REQ_LEFT_VIEW");
+
+		E500.sViewmode.viewmode =  TOP_VIEW;
+		E500.sViewmode.viewnt = LEFT_VIEW;
+		_cmd = SYSTEM_CMD_LEFT_SIDE_VIEW;
+	}else if( _cmd == CMD_REQ_FULL_FRONT_VIEW ){
+		Vps_printf("CMD_REQ_FULL_FRONT_VIEW");
+
+		E500.sViewmode.viewmode =  FULL_VIEW;
+		E500.sViewmode.viewnt = FRONT_VIEW;
+		_cmd = SYSTEM_CMD_FULL_FRONT_VIEW;
+	} else if( _cmd == CMD_REQ_FULL_REAR_VIEW ){
+		Vps_printf("CMD_REQ_FULL_REAR_VIEW");
+
+		E500.sViewmode.viewmode =  FULL_VIEW;
+		E500.sViewmode.viewnt = REAR_VIEW;
+		_cmd = SYSTEM_CMD_FULL_REAR_VIEW;
+	}
+
+	status = System_linkControl(gE500LUTLinkID, _cmd, &E500, sizeof(E500), TRUE); //gGrpxSrcLinkID °´Ã¼°¡ µÎ°³.
+
+	Vps_printf(" -- CMD Send %s gE500LUTLinkID\n", ( status == 0x0)?"Success":"Fail");
+
+
+#endif
+}
+*/
 /* Nothing beyond this point */

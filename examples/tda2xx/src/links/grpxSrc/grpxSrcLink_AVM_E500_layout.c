@@ -39,6 +39,29 @@
 
 #define AVME500_FRAME_THICKNESS  (10)
 
+#define CAR_START_X		200
+#define CAR_START_Y		200
+#define TOP_VIEW_TEXT_START_X	562
+#define TOP_VIEW_TEXT_START_Y	524
+#define FULL_VIEW_TEXT_START_X	16
+#define FULL_VIEW_TEXT_START_Y	568
+#define FRONT_ICON_START_X		554
+#define REAR_ICON_START_X		675
+#define LEFT_ICON_START_X		796
+#define RIGHT_ICON_START_X		917
+#define FULLVIEW_ICON_START_X	1039
+#define SETTING_ICON_START_X	1160
+#define ICON_START_Y			584
+
+#define TOP_FULLVIEW_START_XY	16
+#define SIDEVIEW_START_X		552
+#define TOP_VIEW_W				520
+#define TOP_VIEW_H				688
+#define SIDE_VIEW_W				712
+#define SIDE_VIEW_H				508
+#define FULL_VIEW_W				1248
+#define FULL_VIEW_H				558
+
 UInt32 gGrpxSrcLinkID;
 
 Int32 GrpxSrcLink_drawAVM_E500NorButton( GrpxSrcLink_Obj *pObj )
@@ -46,22 +69,22 @@ Int32 GrpxSrcLink_drawAVM_E500NorButton( GrpxSrcLink_Obj *pObj )
 	Draw2D_BmpPrm bmpPrm;
 
 	bmpPrm.bmpIdx = DRAW2D_BMP_IDX_FULL_VIEW_NONE;
-	Draw2D_drawBmp(pObj->draw2DHndl, 1054, 584, &bmpPrm);
+	Draw2D_drawBmp(pObj->draw2DHndl, FULLVIEW_ICON_START_X, ICON_START_Y, &bmpPrm);
 
 	bmpPrm.bmpIdx = DRAW2D_BMP_IDX_FRONT_VIEW_NOR;
-	Draw2D_drawBmp(pObj->draw2DHndl, 554, 584, &bmpPrm);
+	Draw2D_drawBmp(pObj->draw2DHndl, FRONT_ICON_START_X, ICON_START_Y, &bmpPrm);
 
 	bmpPrm.bmpIdx = DRAW2D_BMP_IDX_REAR_VIEW_NOR;
-	Draw2D_drawBmp(pObj->draw2DHndl, 679, 584, &bmpPrm);
+	Draw2D_drawBmp(pObj->draw2DHndl, REAR_ICON_START_X, ICON_START_Y, &bmpPrm);
 
 	bmpPrm.bmpIdx = DRAW2D_BMP_IDX_RIGHT_VIEW_NOR;
-	Draw2D_drawBmp(pObj->draw2DHndl, 929, 584, &bmpPrm);
+	Draw2D_drawBmp(pObj->draw2DHndl, RIGHT_ICON_START_X, ICON_START_Y, &bmpPrm);
 
 	bmpPrm.bmpIdx = DRAW2D_BMP_IDX_LEFT_VIEW_NOR;
-	Draw2D_drawBmp(pObj->draw2DHndl, 804, 584, &bmpPrm);
+	Draw2D_drawBmp(pObj->draw2DHndl, LEFT_ICON_START_X, ICON_START_Y, &bmpPrm);
 
 	bmpPrm.bmpIdx = DRAW2D_BMP_IDX_SETTING_VIEW_NOR;
-	Draw2D_drawBmp(pObj->draw2DHndl, 1179, 584, &bmpPrm);
+	Draw2D_drawBmp(pObj->draw2DHndl, SETTING_ICON_START_X, ICON_START_Y, &bmpPrm);
 
 	return SYSTEM_LINK_STATUS_SOK;
 }
@@ -74,49 +97,49 @@ Int32 GrpxSrcLink_drawAVM_E500Button(GrpxSrcLink_Obj *pObj) //GrpxSrcLink_Create
 	/* TOP VIEW */
 	if( pObj->createArgs.sViewmode.viewmode == TOP_VIEW){ //ryuhs74@20151103 - AVM Top View
 		bmpPrm.bmpIdx = DRAW2D_BMP_IDX_FULL_VIEW_NONE;
-		Draw2D_drawBmp(pObj->draw2DHndl, 1054, 584, &bmpPrm);
+		Draw2D_drawBmp(pObj->draw2DHndl, FULLVIEW_ICON_START_X, ICON_START_Y, &bmpPrm);
 
 		if( pObj->createArgs.sViewmode.prvVient == FRONT_VIEW ){ //Prv Front Sel Image, Draw Nor Image
 			bmpPrm.bmpIdx = DRAW2D_BMP_IDX_FRONT_VIEW_NOR;
-			Draw2D_drawBmp(pObj->draw2DHndl, 554, 584, &bmpPrm);
+			Draw2D_drawBmp(pObj->draw2DHndl, FRONT_ICON_START_X, ICON_START_Y, &bmpPrm);
 		} else if( pObj->createArgs.sViewmode.prvVient == REAR_VIEW ){ //Prv Rear Sel Image, Draw Nor Image
 			bmpPrm.bmpIdx = DRAW2D_BMP_IDX_REAR_VIEW_NOR;
-			Draw2D_drawBmp(pObj->draw2DHndl, 679, 584, &bmpPrm);
+			Draw2D_drawBmp(pObj->draw2DHndl, REAR_ICON_START_X, ICON_START_Y, &bmpPrm);
 		} else if( pObj->createArgs.sViewmode.prvVient == RIGHT_VIEW ){ //Prv Right Sel Image, Draw Nor Image
 			bmpPrm.bmpIdx = DRAW2D_BMP_IDX_RIGHT_VIEW_NOR;
-			Draw2D_drawBmp(pObj->draw2DHndl, 929, 584, &bmpPrm);
+			Draw2D_drawBmp(pObj->draw2DHndl, RIGHT_ICON_START_X, ICON_START_Y, &bmpPrm);
 		} if( pObj->createArgs.sViewmode.prvVient == LEFT_VIEW ){ //Prv Left Sel Image, Draw Nor Image
 			bmpPrm.bmpIdx = DRAW2D_BMP_IDX_LEFT_VIEW_NOR;
-			Draw2D_drawBmp(pObj->draw2DHndl, 804, 584, &bmpPrm);
+			Draw2D_drawBmp(pObj->draw2DHndl, LEFT_ICON_START_X, ICON_START_Y, &bmpPrm);
 		}
 
 		if( pObj->createArgs.sViewmode.viewnt == FRONT_VIEW ){ //Draw Front Sel
 			bmpPrm.bmpIdx = DRAW2D_BMP_IDX_FRONT_VIEW_SEL;
-			Draw2D_drawBmp(pObj->draw2DHndl, 554, 584, &bmpPrm);
+			Draw2D_drawBmp(pObj->draw2DHndl, FRONT_ICON_START_X, ICON_START_Y, &bmpPrm);
 		} else if( pObj->createArgs.sViewmode.viewnt == REAR_VIEW ){ //Draw Rear Sel
 			bmpPrm.bmpIdx = DRAW2D_BMP_IDX_REAR_VIEW_SEL;
-			Draw2D_drawBmp(pObj->draw2DHndl, 679, 584, &bmpPrm);
+			Draw2D_drawBmp(pObj->draw2DHndl, REAR_ICON_START_X, ICON_START_Y, &bmpPrm);
 		} else if( pObj->createArgs.sViewmode.viewnt == RIGHT_VIEW ){ //Draw Right Sel
 			bmpPrm.bmpIdx = DRAW2D_BMP_IDX_RIGHT_VIEW_SEL;
-			Draw2D_drawBmp(pObj->draw2DHndl, 929, 584, &bmpPrm);
+			Draw2D_drawBmp(pObj->draw2DHndl, RIGHT_ICON_START_X, ICON_START_Y, &bmpPrm);
 		} else if( pObj->createArgs.sViewmode.viewnt == LEFT_VIEW ){ //Draw Left Sel
 			bmpPrm.bmpIdx = DRAW2D_BMP_IDX_LEFT_VIEW_SEL;
-			Draw2D_drawBmp(pObj->draw2DHndl, 804, 584, &bmpPrm);
+			Draw2D_drawBmp(pObj->draw2DHndl, LEFT_ICON_START_X, ICON_START_Y, &bmpPrm);
 		}
 
 		bmpPrm.bmpIdx = DRAW2D_BMP_IDX_SETTING_VIEW_NOR;
-		Draw2D_drawBmp(pObj->draw2DHndl, 1179, 584, &bmpPrm);
+		Draw2D_drawBmp(pObj->draw2DHndl, SETTING_ICON_START_X, 584, &bmpPrm);
 	} else if( pObj->createArgs.sViewmode.viewmode == FULL_VIEW ){ //ryuhs74@20151103 - AVM Full View
 		if( pObj->createArgs.sViewmode.viewnt == FRONT_VIEW){ //ryuhs74@20151103 - AVM FRONT Full View
 			bmpPrm.bmpIdx = DRAW2D_BMP_IDX_FULL_VIEW_FRONT;
-			Draw2D_drawBmp(pObj->draw2DHndl, 1054, 584, &bmpPrm);
+			Draw2D_drawBmp(pObj->draw2DHndl, FULLVIEW_ICON_START_X, ICON_START_Y, &bmpPrm);
 		} else { //ryuhs74@20151103 - AVM Rear Full View
 			bmpPrm.bmpIdx = DRAW2D_BMP_IDX_FULL_VIEW_REAR;
-			Draw2D_drawBmp(pObj->draw2DHndl, 1054, 584, &bmpPrm);
+			Draw2D_drawBmp(pObj->draw2DHndl, FULLVIEW_ICON_START_X, ICON_START_Y, &bmpPrm);
 		}
 
 		bmpPrm.bmpIdx = DRAW2D_BMP_IDX_SETTING_VIEW_NOR;
-		Draw2D_drawBmp(pObj->draw2DHndl, 1179, 584, &bmpPrm);
+		Draw2D_drawBmp(pObj->draw2DHndl, SETTING_ICON_START_X, ICON_START_Y, &bmpPrm);
 	}
 
 	return SYSTEM_LINK_STATUS_SOK;
@@ -145,19 +168,19 @@ Int32 Draw2D_AVME500_TopView( GrpxSrcLink_Obj *pObj )
 
 	/* TOP( Surround ) View video Region */
 	region.color  = DRAW2D_TRANSPARENT_COLOR;
-	region.startX = 16;
-	region.startY = 16;
-	region.height = 520;
-	region.width  = 688;
+	region.startX = TOP_FULLVIEW_START_XY;
+	region.startY = TOP_FULLVIEW_START_XY;
+	region.height = TOP_VIEW_W;
+	region.width  = TOP_VIEW_H;
 
 	Draw2D_fillRegion(pObj->draw2DHndl,&region);
 
 	/* Side View Region */
 	region.color  = DRAW2D_TRANSPARENT_COLOR;
-	region.startX = 552;
-	region.startY = 16;
-	region.height = 712;
-	region.width  = 508;
+	region.startX = SIDEVIEW_START_X;
+	region.startY = TOP_FULLVIEW_START_XY;
+	region.height = SIDE_VIEW_W;
+	region.width  = SIDE_VIEW_H;
 
 	Draw2D_fillRegion(pObj->draw2DHndl,&region);
 
@@ -174,7 +197,7 @@ Int32 Draw2D_AVME500_TopView( GrpxSrcLink_Obj *pObj )
 	}
 
 	fontPrm.fontIdx = 5;
-	Draw2D_drawString(pObj->draw2DHndl, 554, 524,  "Warning! Please check around the vehicle directly", &fontPrm );
+	Draw2D_drawString(pObj->draw2DHndl, TOP_VIEW_TEXT_START_X, TOP_VIEW_TEXT_START_Y,  "Warning! Please check around the vehicle directly", &fontPrm );
 
 	return SYSTEM_LINK_STATUS_SOK;
 }
@@ -186,16 +209,16 @@ Int32 Draw2D_AVME500_FullView( GrpxSrcLink_Obj *pObj )
 
 	/* Full View Region */
 	region.color  = DRAW2D_TRANSPARENT_COLOR;
-	region.startX = 16;
-	region.startY = 16;
-	region.height = 1248;
-	region.width  = 558;
+	region.startX = TOP_FULLVIEW_START_XY;
+	region.startY = TOP_FULLVIEW_START_XY;
+	region.height = FULL_VIEW_W;
+	region.width  = FULL_VIEW_H;
 
 	Draw2D_fillRegion(pObj->draw2DHndl,&region);
 
 	fontPrm.fontIdx = 5;
-	Draw2D_drawString(pObj->draw2DHndl, 16, 568,  "Warning! Please check around", &fontPrm );
-	Draw2D_drawString(pObj->draw2DHndl, 50, 592,  "the vehicle directly", &fontPrm );
+	Draw2D_drawString(pObj->draw2DHndl, FULL_VIEW_TEXT_START_X, FULL_VIEW_TEXT_START_Y,  "Warning! Please check around", &fontPrm );
+	Draw2D_drawString(pObj->draw2DHndl, FULL_VIEW_TEXT_START_X+34, FULL_VIEW_TEXT_START_X,  "the vehicle directly", &fontPrm );
 
 	return SYSTEM_LINK_STATUS_SOK;
 }

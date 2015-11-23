@@ -14,6 +14,9 @@
 #include <examples/tda2xx/include/chains_common.h>
 
 
+#include "examples/tda2xx/src/usecases/lvds_vip_sv_standalone/chains_lvdsVipSurroundViewStandalone_priv.h"
+
+
 /*
  *******************************************************************************
  *
@@ -620,11 +623,25 @@ static Void ChainsCommon_SurroundView_SetDisplayPrm(
 
     if(pSvDisplay)
     {
+#ifdef CAMMSYS_LUT_AVME500
+
+    	pSvDisplay->rtParams.tarWidth         = (float)svOutWidth / displayWidthScale;
+		pSvDisplay->rtParams.tarHeight        = (float)svOutHeight / displayHeightScale;
+		pSvDisplay->rtParams.posX             = (float)svPosX / displayWidthScale;
+		pSvDisplay->rtParams.posY             = (float)svPosY / displayHeightScale;
+
+        pSvDisplay->rtParams.tarWidth         = displayWidth;
+        pSvDisplay->rtParams.tarHeight        = displayHeight;
+        pSvDisplay->rtParams.posX             = 0;
+        pSvDisplay->rtParams.posY             = 0;
+        pSvDisplay->displayId                 = DISPLAY_LINK_INST_DSS_VID1;
+#else
         pSvDisplay->rtParams.tarWidth         = (float)svOutWidth / displayWidthScale;
         pSvDisplay->rtParams.tarHeight        = (float)svOutHeight / displayHeightScale;
         pSvDisplay->rtParams.posX             = (float)svPosX / displayWidthScale;
         pSvDisplay->rtParams.posY             = (float)svPosY / displayHeightScale;
         pSvDisplay->displayId                 = DISPLAY_LINK_INST_DSS_VID1;
+#endif
     }
     if(pSvOrgDisplay)
     {
@@ -1205,6 +1222,28 @@ char ChainsCommon_SurroundView_MenuCalibration()
     return ch;
 }
 
+static Void chains_E500_SV_Display_SetSyncPrm(
+                    SyncLink_CreateParams *pPrm,
+                    UInt32 numLvdsCh
+                    )
+{
+    UInt16 chId;
+
+    pPrm->chParams.numCh = numLvdsCh;
+    pPrm->chParams.numActiveCh = pPrm->chParams.numCh;
+    for(chId = 0; chId < pPrm->chParams.numCh; chId++)
+    {
+        pPrm->chParams.channelSyncList[chId] = TRUE;
+    }
+
+    /*
+     * #define SYNC_DELTA_IN_MSEC              (16)
+	 * #define SYNC_DROP_THRESHOLD_IN_MSEC     (33)
+     */
+    pPrm->chParams.syncDelta = 16;//SYNC_DELTA_IN_MSEC;
+    pPrm->chParams.syncThreshold = 33;//SYNC_DROP_THRESHOLD_IN_MSEC;
+}
+
 Void ChainsCommon_SurroundView_SetParams(
                             CaptureLink_CreateParams *pVipCapture,
                             AvbRxLink_CreateParams *pAvbRxPrm,
@@ -1394,6 +1433,11 @@ Void ChainsCommon_SurroundView_SetParams(
     {
         ChainsCommon_SurroundView_SetSelectPrm(pCaptureSelect);
     }
+
+#ifdef CAMMSYS_LUT_AVME500
+    if( pSvSync )
+    	chains_E500_SV_Display_SetSyncPrm(pSvSync, numLvdsCh);
+#endif
 
     if(pAvbRxPrm)
     {

@@ -168,7 +168,7 @@ Void IpcInLink_tskMain(struct Utils_TskHndl * pTsk, Utils_MsgHndl * pMsg)
             break;
 
         case SYSTEM_CMD_NEW_DATA:
-
+//Vps_printf("IPCIn: tskMain SYSTEM_CMD_NEW_DATA LinkId: %d start !!!\n",pObj->linkId);
             Utils_tskAckOrFreeMsg(pMsg, status);
 
             flushCmds[0] = SYSTEM_CMD_NEW_DATA;
@@ -179,8 +179,8 @@ Void IpcInLink_tskMain(struct Utils_TskHndl * pTsk, Utils_MsgHndl * pMsg)
                 /* if STOP state then dont handle buffers */
                 status  = IpcInLink_drvProcessBuffers(pObj);
             }
+//Vps_printf("IPCIn: tskMain SYSTEM_CMD_NEW_DATA end !!!\n");
             break;
-
         case SYSTEM_CMD_STOP:
 
             if(pObj->state==SYSTEM_LINK_STATE_RUNNING)
