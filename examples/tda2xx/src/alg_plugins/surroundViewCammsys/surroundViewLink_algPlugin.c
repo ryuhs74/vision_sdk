@@ -24,6 +24,7 @@
  */
 #include "surroundViewLink_priv.h"
 #include "singleView.h"
+#include "blendView.h"
 /**
  *******************************************************************************
  *
@@ -836,33 +837,124 @@ Int32 AlgorithmLink_surroundViewMakeTopView(void * pObj,
 
     sideView.width = 712;
 	sideView.height = 508;
-    sideView.pitch = 1280;
-    sideView.startX = 550;
-    sideView.startY = 16;
+	sideView.pitch = 1280;
+	sideView.startX = 550;
+	sideView.startY = 16;
 
-    sideViewLut.width = 712;
-    sideViewLut.height = 508;
-    sideViewLut.pitch = 712;
-    sideViewLut.startX = 0;
-    sideViewLut.startY = 0;
+	sideViewLut.width = 712;
+	sideViewLut.height = 508;
+	sideViewLut.pitch = 712;
+	sideViewLut.startX = 0;
+	sideViewLut.startY = 0;
 
-	status =  makeSingleView(pInFrameCompositeBuffer->bufAddr[0][3],pOutFrameBuffer->bufAddr[0], pLayoutPrm->pLut1, &sideView, &sideViewLut);
-#if 0
-    sideView.width = 520;
+	status = makeSingleView(pInFrameCompositeBuffer->bufAddr[0][3],
+							pOutFrameBuffer->bufAddr[0],
+							pLayoutPrm->pLut1,
+							&sideView,
+							&sideViewLut);
+
+	sideView.width = 520;
 	sideView.height = 688;
-    sideView.pitch = 1280;
-    sideView.startX = 16;
-    sideView.startY = 16;
+	sideView.pitch = 1280;
+	sideView.startX = 16;
+	sideView.startY = 16;
 
-    sideViewLut.width = 712;
-    sideViewLut.height = 508;
-    sideViewLut.pitch = 712;
-    sideViewLut.startX = 0;
-    sideViewLut.startY = 0;
-	status =  makeSingleView(pInFrameCompositeBuffer->bufAddr[0][3],pOutFrameBuffer->bufAddr[0], pLayoutPrm->pLut5, &sideView, &sideViewLut);
-	status =  makeSingleView(pInFrameCompositeBuffer->bufAddr[0][3],pOutFrameBuffer->bufAddr[0], pLayoutPrm->pLut6, &sideView, &sideViewLut);
-	status =  makeSingleView(pInFrameCompositeBuffer->bufAddr[0][3],pOutFrameBuffer->bufAddr[0], pLayoutPrm->pLut7, &sideView, &sideViewLut);
-	status =  makeSingleView(pInFrameCompositeBuffer->bufAddr[0][3],pOutFrameBuffer->bufAddr[0], pLayoutPrm->pLut8, &sideView, &sideViewLut);
+	sideViewLut.width = 120;
+	sideViewLut.height = 200;
+	sideViewLut.pitch = 520;
+	sideViewLut.startX = 200;
+	sideViewLut.startY = 0;
+	status = makeSingleView(pInFrameCompositeBuffer->bufAddr[0][3],
+							pOutFrameBuffer->bufAddr[0],
+							pLayoutPrm->pLut5,
+							&sideView,
+							&sideViewLut);
+
+	sideViewLut.startY = 488;
+	status = makeSingleView(pInFrameCompositeBuffer->bufAddr[0][0],
+							pOutFrameBuffer->bufAddr[0],
+							pLayoutPrm->pLut6,
+							&sideView,
+							&sideViewLut);
+
+	sideViewLut.width = 200;
+	sideViewLut.height = 288;
+	sideViewLut.pitch = 520;
+	sideViewLut.startX = 0;
+	sideViewLut.startY = 200;
+	status = makeSingleView(pInFrameCompositeBuffer->bufAddr[0][1],
+							pOutFrameBuffer->bufAddr[0],
+							pLayoutPrm->pLut7,
+							&sideView,
+							&sideViewLut);
+
+	sideViewLut.startX = 320;
+	status = makeSingleView(pInFrameCompositeBuffer->bufAddr[0][2],
+							pOutFrameBuffer->bufAddr[0],
+							pLayoutPrm->pLut8,
+							&sideView,
+							&sideViewLut);
+
+#if 0
+	sideViewLut.width = 200;
+	sideViewLut.height = 200;
+	sideViewLut.pitch = 520;
+	sideViewLut.startX = 0;
+	sideViewLut.startY = 0;
+
+	makeBlendView(	pInFrameCompositeBuffer->bufAddr[0][1],
+					pInFrameCompositeBuffer->bufAddr[0][3],
+					(UInt32**)pOutFrameBuffer->bufAddr,
+					pLayoutPrm->pLut7,
+					pLayoutPrm->pLut5,
+					pLayoutPrm->cMask,
+					&sideView,
+					&sideViewLut);Alg_FullViewProcess
+
+	sideViewLut.width = 200;
+	sideViewLut.height = 200;
+	sideViewLut.pitch = 520;
+	sideViewLut.startX = 0;
+	sideViewLut.startY = 488;
+
+	makeBlendView(	pInFrameCompositeBuffer->bufAddr[0][1],
+					pInFrameCompositeBuffer->bufAddr[0][0],
+					(UInt32**)pOutFrameBuffer->bufAddr,
+					pLayoutPrm->pLut7,
+					pLayoutPrm->pLut6,
+					pLayoutPrm->cMask,
+					&sideView,
+					&sideViewLut);
+
+	sideViewLut.width = 200;
+	sideViewLut.height = 200;
+	sideViewLut.pitch = 520;
+	sideViewLut.startX = 320;
+	sideViewLut.startY = 0;
+
+	makeBlendView(	pInFrameCompositeBuffer->bufAddr[0][2],
+					pInFrameCompositeBuffer->bufAddr[0][3],
+					(UInt32**)pOutFrameBuffer->bufAddr,
+					pLayoutPrm->pLut8,
+					pLayoutPrm->pLut5,
+					pLayoutPrm->cMask,
+					&sideView,
+					&sideViewLut);
+
+	sideViewLut.width = 200;
+	sideViewLut.height = 200;
+	sideViewLut.pitch = 520;
+	sideViewLut.startX = 320;
+	sideViewLut.startY = 488;
+
+	makeBlendView(	pInFrameCompositeBuffer->bufAddr[0][2],
+					pInFrameCompositeBuffer->bufAddr[0][0],
+					(UInt32**)pOutFrameBuffer->bufAddr,
+					pLayoutPrm->pLut8,
+					pLayoutPrm->pLut6,
+					pLayoutPrm->cMask,
+					&sideView,
+					&sideViewLut);
 #endif
     return status;
 }
@@ -1132,7 +1224,7 @@ Int32 AlgorithmLink_surroundViewControl(void * pObj, void * pControlParams)
 /**
  *******************************************************************************
  *
- * \brief Implementation of Stop Plugin for this algorithm
+ * \brief Implementation of S Plugin for this algorithm
  *
  *        For this algorithm there is no locking of frames and hence no
  *        flushing of frames. Also there are no any other functionality to be

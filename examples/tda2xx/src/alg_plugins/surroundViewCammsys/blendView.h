@@ -15,7 +15,7 @@
 
 static inline Int32 makeBlendView720P(  UInt32       *RESTRICT inPtr_main,
 										UInt32       *RESTRICT inPtr_sub,
-										UInt32       *RESTRICT outPtr,
+										UInt32       *RESTRICT outPtr[],
 										UInt32		 *RESTRICT viewLUTPtr_main,
 										UInt32		 *RESTRICT viewLUTPtr_sub,
 										UInt32		 *RESTRICT carMask,
@@ -23,20 +23,12 @@ static inline Int32 makeBlendView720P(  UInt32       *RESTRICT inPtr_main,
 										ViewInfo	 *RESTRICT childViewInfoLUT
                           )
 {
-	UInt32 mallocSize = childViewInfoLUT->height * (childViewInfoLUT->pitch>>1);
+	//UInt32 mallocSize = childViewInfoLUT->height * (childViewInfoLUT->pitch>>1);
 
-	yuvHD720P* mainBuf = (yuvHD720P*)Utils_memAlloc(
-			UTILS_HEAPID_DDR_CACHED_SR,
-			mallocSize,
-			32
-	);
-	yuvHD720P* subBuf = (yuvHD720P*)Utils_memAlloc(
-			UTILS_HEAPID_DDR_CACHED_SR,
-			mallocSize,
-			32
-	);
+	yuvHD720P* mainBuf = (yuvHD720P*)outPtr[1];
+	yuvHD720P* subBuf =  (yuvHD720P*)outPtr[2];
 
-	yuvHD720P* oPtr = (yuvHD720P*)outPtr;
+	yuvHD720P* oPtr = (yuvHD720P*)outPtr[0];
 	UInt16 rowIdx;
     UInt16 colIdx;
 
@@ -72,23 +64,12 @@ static inline Int32 makeBlendView720P(  UInt32       *RESTRICT inPtr_main,
 		}
 	}
 
-
-	Utils_memFree(
-			UTILS_HEAPID_DDR_CACHED_SR,
-			mainBuf,
-			mallocSize
-	);
-	Utils_memFree(
-			UTILS_HEAPID_DDR_CACHED_SR,
-			subBuf,
-			mallocSize
-	);
     return SYSTEM_LINK_STATUS_SOK;
 }
 
 static inline Int32 makeBlendView1080P(  UInt32       *RESTRICT inPtr_main,
 											UInt32       *RESTRICT inPtr_sub,
-											UInt32       *RESTRICT outPtr,
+											UInt32       *RESTRICT outPtr[],
 											UInt32		 *RESTRICT viewLUTPtr_main,
 											UInt32		 *RESTRICT viewLUTPtr_sub,
 											UInt32		 *RESTRICT carMask,
@@ -163,7 +144,7 @@ static inline Int32 makeBlendView1080P(  UInt32       *RESTRICT inPtr_main,
 
 static inline Int32 makeBlendView(  UInt32       *RESTRICT inPtr_main,
 									UInt32       *RESTRICT inPtr_sub,
-									UInt32       *RESTRICT outPtr,
+									UInt32       *RESTRICT outPtr[RESTRICT],
 									UInt32		 *RESTRICT viewLUTPtr_main,
 									UInt32		 *RESTRICT viewLUTPtr_sub,
 									UInt32		 *RESTRICT carMask,

@@ -194,6 +194,7 @@ typedef struct
     UInt32* pLut6;
     UInt32* pLut7;
     UInt32* pLut8;
+    UInt32* cMask;
 
 } AlgorithmLink_SurroundViewLayoutParams;
 

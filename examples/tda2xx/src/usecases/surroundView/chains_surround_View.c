@@ -140,6 +140,7 @@ static Void chains_surround_View_SetAlgSurroundViewPrm(
     pPrm->initLayoutParams.pLut6 = LUTAlloc(Basic_rearNT);
     pPrm->initLayoutParams.pLut7 = LUTAlloc(Basic_leftNT);
     pPrm->initLayoutParams.pLut8 = LUTAlloc(Basic_rightNT);
+    pPrm->initLayoutParams.cMask = LUTAlloc(cmaskNT);
 #endif
     switch (numLvdsCh)
     {
