@@ -83,6 +83,7 @@ typedef struct {
  *
  *******************************************************************************
 */
+//#ifndef E500_SV_MULTICAM
 static Void chains_lvdsVipMultiCam_Display_SetVpePrm(
                     VpeLink_CreateParams *pPrm,
                     UInt32 numLvdsCh,
@@ -134,7 +135,7 @@ static Void chains_lvdsVipMultiCam_Display_SetVpePrm(
         pPrm->chParams[chId].outParams[0].numBufsPerCh = 4;
     }
 }
-
+//#endif
 /**
  *******************************************************************************
  *
@@ -335,11 +336,12 @@ Void chains_lvdsVipMultiCam_Display_tda2xx_SetAppPrms(chains_lvdsVipMultiCam_Dis
             portId,
             pObj->numLvdsCh
             );
-
+//#ifndef E500_SV_MULTICAM
     chains_lvdsVipMultiCam_Display_SetVpePrm(&pUcObj->VPEPrm,
                                                 pObj->numLvdsCh,
                                                 CAPTURE_SENSOR_WIDTH,
                                                 CAPTURE_SENSOR_HEIGHT);
+//#endif
     chains_lvdsVipMultiCam_Display_SetSyncPrm(
                 &pUcObj->SyncPrm,
                 pObj->numLvdsCh

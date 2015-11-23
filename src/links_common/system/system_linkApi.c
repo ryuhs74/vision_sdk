@@ -151,7 +151,7 @@ Int32 System_linkGetInfo(UInt32 linkId, System_LinkInfo * info)
 
     UTILS_assert(procId < SYSTEM_PROC_MAX);
 
-    if( linkId == 768 ) procId = 0; //ryuhs74
+    //if( linkId == 768 ) procId = 0; //ryuhs74
 
     if ((procId != System_getSelfProcId()) && (procId != SYSTEM_PROC_INVALID))
     {

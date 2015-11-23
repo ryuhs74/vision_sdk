@@ -19,6 +19,9 @@
 Void chains_lvdsVipMultiCam_Display_tda2xx_SetLinkId(chains_lvdsVipMultiCam_Display_tda2xxObj *pObj){
 #ifdef E500_SV_MULTICAM
 	pObj->CaptureLinkID                  = SYSTEM_LINK_ID_CAPTURE;
+
+	pObj->VPELinkID                      = SYSTEM_LINK_ID_VPE_0;
+
 	pObj->SyncLinkID                     = IPU1_0_LINK (SYSTEM_LINK_ID_SYNC_0);
 	pObj->DupLinkID                      = IPU1_0_LINK (SYSTEM_LINK_ID_DUP_0);
 
@@ -36,18 +39,48 @@ Void chains_lvdsVipMultiCam_Display_tda2xx_SetLinkId(chains_lvdsVipMultiCam_Disp
 	pObj->Display_GrpxLinkID             = SYSTEM_LINK_ID_DISPLAY_3;
 	//pObj->SaveLinkID					 = IPU1_1_LINK ( SYSTEM_LINT_SAVE_0 ); //ryuhs74@
 
+	Vps_printf("CaptureLinkID : %d\nVPELinkID : %d\nSyncLinkID : %d\nDupLinkID : %d\nIPCOut_IPU1_0_DSP1_0LinkID : %d\nIPCIn_DSP1_IPU1_0_0LinkID : %d\nAlg_DmaSwMsLinkID : %d\nIPCOut_DSP1_IPU1_0_0LinkID : %d\nIPCIn_IPU1_0_DSP1_0LinkID : %d\nDisplay_videoLinkID : %d\nGrpxSrcLinkID : %d\nDisplay_GrpxLinkID : %d\n"
+			, pObj->CaptureLinkID
+			, pObj->VPELinkID
+			, pObj->SyncLinkID
+			, pObj->DupLinkID
+			, pObj->IPCOut_IPU1_0_DSP1_0LinkID
+			, pObj->IPCIn_DSP1_IPU1_0_0LinkID
+			, pObj->Alg_DmaSwMsLinkID
+			, pObj->IPCOut_DSP1_IPU1_0_0LinkID
+			, pObj->IPCIn_IPU1_0_DSP1_0LinkID
+			, pObj->Display_videoLinkID
+			, pObj->GrpxSrcLinkID
+			, pObj->Display_GrpxLinkID);
+
 
 #else
        pObj->CaptureLinkID                  = SYSTEM_LINK_ID_CAPTURE;
        pObj->DupLinkID                      = IPU1_0_LINK (SYSTEM_LINK_ID_DUP_0);
        pObj->VPELinkID                      = SYSTEM_LINK_ID_VPE_0;
        pObj->SyncLinkID                     = IPU1_0_LINK (SYSTEM_LINK_ID_SYNC_0);
-       pObj->Alg_DmaSwMsLinkID              = IPU1_0_LINK (SYSTEM_LINK_ID_ALG_0);
+       //pObj->Alg_DmaSwMsLinkID              = IPU1_0_LINK (SYSTEM_LINK_ID_ALG_0);
        pObj->MergeLinkID                    = IPU1_0_LINK (SYSTEM_LINK_ID_MERGE_0);
        pObj->Display_videoLinkID            = SYSTEM_LINK_ID_DISPLAY_0;
        pObj->GrpxSrcLinkID                  = IPU1_0_LINK (SYSTEM_LINK_ID_GRPX_SRC_0);
        pObj->Display_GrpxLinkID             = SYSTEM_LINK_ID_DISPLAY_1;
 
+
+       pObj->IPCOut_IPU1_0_DSP1_0LinkID     = IPU1_0_LINK (SYSTEM_LINK_ID_IPC_OUT_0);	//IPU1_0 -> DSP1_0, in IPU1_0 Core
+       pObj->IPCIn_DSP1_IPU1_0_0LinkID      = DSP1_LINK (SYSTEM_LINK_ID_IPC_IN_0);		//IPU1_0 -> DSP1_0, in DSP1_0 Core
+       pObj->Alg_DmaSwMsLinkID              = DSP1_LINK (SYSTEM_LINK_ID_ALG_0);
+       pObj->IPCOut_DSP1_IPU1_0_0LinkID     = DSP1_LINK (SYSTEM_LINK_ID_IPC_OUT_0);	//DSP1_0 -> IPU1_0, in DSP1_0 Core
+       pObj->IPCIn_IPU1_0_DSP1_0LinkID      = IPU1_0_LINK (SYSTEM_LINK_ID_IPC_IN_0);	//DSP1_0 -> IPU1_0, in IPU1_0 Core
+
+       Vps_printf("CaptureLinkID : %d\nDupLinkID : %d\nVPELinkID : %d\nSyncLinkID : %d\nAlg_DmaSwMsLinkID : %d\nMergeLinkID : %d\nDisplay_videoLinkID : %d\nGrpxSrcLinkID : %d\nDisplay_GrpxLinkID : %d\n"
+       			, pObj->CaptureLinkID
+       			, pObj->DupLinkID
+       			, pObj->VPELinkID
+       			, pObj->SyncLinkID
+       			, pObj->Alg_DmaSwMsLinkID
+       			, pObj->Display_videoLinkID
+       			, pObj->GrpxSrcLinkID
+       			, pObj->Display_GrpxLinkID);
 
 #endif
 }
@@ -55,6 +88,9 @@ Void chains_lvdsVipMultiCam_Display_tda2xx_SetLinkId(chains_lvdsVipMultiCam_Disp
 Void chains_lvdsVipMultiCam_Display_tda2xx_ResetLinkPrms(chains_lvdsVipMultiCam_Display_tda2xxObj *pObj){
 #ifdef E500_SV_MULTICAM
 	CaptureLink_CreateParams_Init(&pObj->CapturePrm);
+
+	VpeLink_CreateParams_Init(&pObj->VPEPrm);
+
 	SyncLink_CreateParams_Init(&pObj->SyncPrm);
 	DupLink_CreateParams_Init(&pObj->DupPrm);
     //IpcLink_CreateParams_Init(&pObj->IPCOut_IPU1_0_IPU1_1Prm);	//IPU1_0 -> IPU1_1, For Save Link in IPU1_0 Core
@@ -75,7 +111,12 @@ Void chains_lvdsVipMultiCam_Display_tda2xx_ResetLinkPrms(chains_lvdsVipMultiCam_
        DupLink_CreateParams_Init(&pObj->DupPrm);
        VpeLink_CreateParams_Init(&pObj->VPEPrm);
        SyncLink_CreateParams_Init(&pObj->SyncPrm);
-       AlgorithmLink_DmaSwMsCreateParams_Init(&pObj->Alg_DmaSwMsPrm);
+       //AlgorithmLink_DmaSwMsCreateParams_Init(&pObj->Alg_DmaSwMsPrm);
+       IpcLink_CreateParams_Init(&pObj->IPCOut_IPU1_0_DSP1_0Prm);	//IPU1_0 -> DSP1_0, For Cammsys LUT Link in IPU1_0 Core
+	   IpcLink_CreateParams_Init(&pObj->IPCIn_DSP1_IPU1_0_0Prm);	//IPU1_0 -> DSP1_0, For Cammsys LUT Link in DSP1_0 Core
+	   AlgorithmLink_DmaSwMsCreateParams_Init_DSP(&pObj->Alg_DmaSwMsPrm);
+	   IpcLink_CreateParams_Init(&pObj->IPCOut_DSP1_IPU1_0_0Prm);	//DSP1_0 -> IPU1_0, For Cammsys LUT Link in DSP1_0 Core
+	   IpcLink_CreateParams_Init(&pObj->IPCIn_IPU1_0_DSP1_0Prm);	//DSP1_0 -> IPU1_0, For Cammsys LUT Link in IPU1_0 Core
        MergeLink_CreateParams_Init(&pObj->MergePrm);
        DisplayLink_CreateParams_Init(&pObj->Display_videoPrm);
        GrpxSrcLink_CreateParams_Init(&pObj->GrpxSrcPrm);
@@ -89,20 +130,32 @@ Void chains_lvdsVipMultiCam_Display_tda2xx_ResetLinkPrms(chains_lvdsVipMultiCam_
 Void chains_lvdsVipMultiCam_Display_tda2xx_SetPrms(chains_lvdsVipMultiCam_Display_tda2xxObj *pObj){
        (pObj->DupPrm).numOutQue = 2;
 #ifndef E500_SV_MULTICAM
-       (pObj->Alg_DmaSwMsPrm).baseClassCreate.size  = sizeof(AlgorithmLink_DmaSwMsCreateParams);
-       (pObj->Alg_DmaSwMsPrm).baseClassCreate.algId  = ALGORITHM_LINK_IPU_ALG_DMA_SWMS;
-#endif
+       //(pObj->Alg_DmaSwMsPrm).baseClassCreate.size  = sizeof(AlgorithmLink_DmaSwMsCreateParams);
+       //(pObj->Alg_DmaSwMsPrm).baseClassCreate.algId  = ALGORITHM_LINK_IPU_ALG_DMA_SWMS;
        (pObj->MergePrm).numInQue = 2;
+#endif
 }
 
 Void chains_lvdsVipMultiCam_Display_tda2xx_ConnectLinks(chains_lvdsVipMultiCam_Display_tda2xxObj *pObj){
 
 #ifdef E500_SV_MULTICAM
-	//Capture -> Sync_sv_org
+#if 1
+    //Capture -> Dup
+    pObj->CapturePrm.outQueParams.nextLink = pObj->VPELinkID;
+   	pObj->VPEPrm.inQueParams.prevLinkId = pObj->CaptureLinkID;
+   	pObj->VPEPrm.inQueParams.prevLinkQueId = 0;
+
+
+    //VPE -> Sync
+    pObj->VPEPrm.outQueParams[0].nextLink = pObj->SyncLinkID;
+    pObj->SyncPrm.inQueParams.prevLinkId = pObj->VPELinkID;
+    pObj->SyncPrm.inQueParams.prevLinkQueId = 0;
+#else
+    //Capture -> Sync_sv_org
     pObj->CapturePrm.outQueParams.nextLink = pObj->SyncLinkID;
     pObj->SyncPrm.inQueParams.prevLinkId = pObj->CaptureLinkID;
     pObj->SyncPrm.inQueParams.prevLinkQueId = 0;
-
+#endif
     //Sync_sv -> Dup_sv
     pObj->SyncPrm.outQueParams.nextLink = pObj->DupLinkID;
     pObj->DupPrm.inQueParams.prevLinkId = pObj->SyncLinkID;
@@ -185,6 +238,8 @@ Void chains_lvdsVipMultiCam_Display_tda2xx_ConnectLinks(chains_lvdsVipMultiCam_D
        pObj->VPEPrm.outQueParams[0].nextLink = pObj->SyncLinkID;
        pObj->SyncPrm.inQueParams.prevLinkId = pObj->VPELinkID;
        pObj->SyncPrm.inQueParams.prevLinkQueId = 0;
+#if 0
+
 
        //Sync -> Alg_DmaSwMs
        pObj->SyncPrm.outQueParams.nextLink = pObj->Alg_DmaSwMsLinkID;
@@ -195,7 +250,41 @@ Void chains_lvdsVipMultiCam_Display_tda2xx_ConnectLinks(chains_lvdsVipMultiCam_D
        pObj->Alg_DmaSwMsPrm.outQueParams.nextLink = pObj->MergeLinkID;
        pObj->MergePrm.inQueParams[0].prevLinkId = pObj->Alg_DmaSwMsLinkID;
        pObj->MergePrm.inQueParams[0].prevLinkQueId = 0;
+#else
+       //sysnc -> IPCOUT
+       pObj->SyncPrm.outQueParams.nextLink = pObj->IPCOut_IPU1_0_DSP1_0LinkID;
+       pObj->IPCOut_IPU1_0_DSP1_0Prm.inQueParams.prevLinkId = pObj->SyncLinkID;
+       pObj->IPCOut_IPU1_0_DSP1_0Prm.inQueParams.prevLinkQueId = 0;
 
+       //IPCOU->IPcIN
+       pObj->IPCOut_IPU1_0_DSP1_0Prm.outQueParams.nextLink = pObj->IPCIn_DSP1_IPU1_0_0LinkID;
+       pObj->IPCIn_DSP1_IPU1_0_0Prm.inQueParams.prevLinkId = pObj->IPCOut_IPU1_0_DSP1_0LinkID;
+       pObj->IPCIn_DSP1_IPU1_0_0Prm.inQueParams.prevLinkQueId = 0;
+
+       //IPCIN -> Alg
+       pObj->IPCIn_DSP1_IPU1_0_0Prm.outQueParams.nextLink = pObj->Alg_DmaSwMsLinkID;//CammsysLUTLinkID;
+       pObj->Alg_DmaSwMsPrm.inQueParams.prevLinkId = pObj->IPCIn_DSP1_IPU1_0_0LinkID;
+       pObj->Alg_DmaSwMsPrm.inQueParams.prevLinkQueId = 0;
+
+       //ALG->IPCOUT
+       pObj->Alg_DmaSwMsPrm.outQueParams.nextLink = pObj->IPCOut_DSP1_IPU1_0_0LinkID;
+       pObj->IPCOut_DSP1_IPU1_0_0Prm.inQueParams.prevLinkId = pObj->Alg_DmaSwMsLinkID;
+       pObj->IPCOut_DSP1_IPU1_0_0Prm.inQueParams.prevLinkQueId = 0;
+
+
+
+          //IPCOut_DSP1_IPU1_0_0 -> IPCIn_IPU1_0_DSP1_0
+          pObj->IPCOut_DSP1_IPU1_0_0Prm.outQueParams.nextLink = pObj->IPCIn_IPU1_0_DSP1_0LinkID;
+          pObj->IPCIn_IPU1_0_DSP1_0Prm.inQueParams.prevLinkId = pObj->IPCOut_DSP1_IPU1_0_0LinkID;
+          pObj->IPCIn_IPU1_0_DSP1_0Prm.inQueParams.prevLinkQueId = 0;
+
+          //IPCIn_IPU1_0_DSP1_0 -> Merhe
+          pObj->IPCIn_IPU1_0_DSP1_0Prm.outQueParams.nextLink = pObj->MergeLinkID;
+          pObj->MergePrm.inQueParams[0].prevLinkId = pObj->IPCIn_IPU1_0_DSP1_0LinkID;
+          pObj->MergePrm.inQueParams[0].prevLinkQueId = 0;
+       //IPCOUT -> IPCIN
+       //IPCIN -> Merge
+#endif
        //Merge -> Display_video
        pObj->MergePrm.outQueParams.nextLink = pObj->Display_videoLinkID;
        pObj->Display_videoPrm.inQueParams.prevLinkId = pObj->MergeLinkID;
@@ -223,6 +312,10 @@ Int32 chains_lvdsVipMultiCam_Display_tda2xx_Create(chains_lvdsVipMultiCam_Displa
        chains_lvdsVipMultiCam_Display_tda2xx_ConnectLinks(pObj);
 #ifdef E500_SV_MULTICAM
        status = System_linkCreate(pObj->CaptureLinkID, &pObj->CapturePrm, sizeof(pObj->CapturePrm));
+	   UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
+	   //test
+	   status = System_linkCreate(pObj->VPELinkID, &pObj->VPEPrm, sizeof(pObj->VPEPrm));
 	   UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
 	   status = System_linkCreate(pObj->SyncLinkID, &pObj->SyncPrm, sizeof(pObj->SyncPrm));
@@ -285,8 +378,28 @@ Int32 chains_lvdsVipMultiCam_Display_tda2xx_Create(chains_lvdsVipMultiCam_Displa
        status = System_linkCreate(pObj->SyncLinkID, &pObj->SyncPrm, sizeof(pObj->SyncPrm));
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
-       status = System_linkCreate(pObj->Alg_DmaSwMsLinkID, &pObj->Alg_DmaSwMsPrm, sizeof(pObj->Alg_DmaSwMsPrm));
-       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+       //IPU1_0 -> DSP1_0, For Cammsys LUT Link in IPU1_0 Core
+       	   status = System_linkCreate(pObj->IPCOut_IPU1_0_DSP1_0LinkID, &pObj->IPCOut_IPU1_0_DSP1_0Prm, sizeof(pObj->IPCOut_IPU1_0_DSP1_0Prm));
+       	   UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
+       	   //IPU1_0 -> DSP1_0, For Cammsys LUT Link in DSP1_0 Core
+       	   status = System_linkCreate(pObj->IPCIn_DSP1_IPU1_0_0LinkID, &pObj->IPCIn_DSP1_IPU1_0_0Prm, sizeof(pObj->IPCIn_DSP1_IPU1_0_0Prm));
+       	   UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
+       	   //Cammsys LUT Link Start
+       	   status = System_linkCreate(pObj->Alg_DmaSwMsLinkID/*CammsysLUT*/, &pObj->Alg_DmaSwMsPrm/*CammsysLUTPrm*/, sizeof(pObj->Alg_DmaSwMsPrm/*CammsysLUTPrm*/));
+       	   UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
+       	   //DSP1_0 -> IPU1_0, For Cammsys LUT Link in DSP1_0 Core
+       	   status = System_linkCreate(pObj->IPCOut_DSP1_IPU1_0_0LinkID, &pObj->IPCOut_DSP1_IPU1_0_0Prm, sizeof(pObj->IPCOut_DSP1_IPU1_0_0Prm));
+       	   UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
+       	   //DSP1_0 -> IPU1_0, For Cammsys LUT Link in IPU1_0 Core
+       	   status = System_linkCreate(pObj->IPCIn_IPU1_0_DSP1_0LinkID, &pObj->IPCIn_IPU1_0_DSP1_0Prm, sizeof(pObj->IPCIn_IPU1_0_DSP1_0Prm));
+       	   UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
+       //status = System_linkCreate(pObj->Alg_DmaSwMsLinkID, &pObj->Alg_DmaSwMsPrm, sizeof(pObj->Alg_DmaSwMsPrm));
+       //UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
        status = System_linkCreate(pObj->MergeLinkID, &pObj->MergePrm, sizeof(pObj->MergePrm));
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
@@ -347,6 +460,10 @@ Int32 chains_lvdsVipMultiCam_Display_tda2xx_Start(chains_lvdsVipMultiCam_Display
 	   status = System_linkStart(pObj->SyncLinkID);
 	   UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
+	   //test
+	   status = System_linkStart(pObj->VPELinkID);
+	          UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
 	   status = System_linkStart(pObj->CaptureLinkID);
 	   UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
@@ -380,8 +497,26 @@ Int32 chains_lvdsVipMultiCam_Display_tda2xx_Start(chains_lvdsVipMultiCam_Display
        status = System_linkStart(pObj->MergeLinkID);
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
-       status = System_linkStart(pObj->Alg_DmaSwMsLinkID);
-       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+       //status = System_linkStart(pObj->Alg_DmaSwMsLinkID);
+       //UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+       status = System_linkStart(pObj->IPCIn_IPU1_0_DSP1_0LinkID);
+       	   UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
+       	   //IPCOut_DSP1_IPU1_0_0Prm
+       	   status = System_linkStart(pObj->IPCOut_DSP1_IPU1_0_0LinkID);
+       	   UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
+
+       	   status = System_linkStart(pObj->Alg_DmaSwMsLinkID);
+       	   UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
+       	   status = System_linkStart(pObj->IPCIn_DSP1_IPU1_0_0LinkID);
+       	   UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
+       	   status = System_linkStart(pObj->IPCOut_IPU1_0_DSP1_0LinkID);
+       	   UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
+
 
        status = System_linkStart(pObj->SyncLinkID);
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
@@ -416,8 +551,10 @@ Int32 chains_lvdsVipMultiCam_Display_tda2xx_Stop(chains_lvdsVipMultiCam_Display_
        status = System_linkStop(pObj->Display_videoLinkID);
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
+#ifndef E500_SV_MULTICAM
        status = System_linkStop(pObj->MergeLinkID);
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+#endif
 
        status = System_linkStop(pObj->Alg_DmaSwMsLinkID);
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
@@ -425,8 +562,10 @@ Int32 chains_lvdsVipMultiCam_Display_tda2xx_Stop(chains_lvdsVipMultiCam_Display_
        status = System_linkStop(pObj->SyncLinkID);
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
+#ifndef E500_SV_MULTICAM
        status = System_linkStop(pObj->VPELinkID);
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+#endif
 
        status = System_linkStop(pObj->DupLinkID);
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
@@ -449,19 +588,19 @@ Int32 chains_lvdsVipMultiCam_Display_tda2xx_Delete(chains_lvdsVipMultiCam_Displa
 
        status = System_linkDelete(pObj->Display_videoLinkID);
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
-
+#ifndef E500_SV_MULTICAM
        status = System_linkDelete(pObj->MergeLinkID);
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
-
+#endif
        status = System_linkDelete(pObj->Alg_DmaSwMsLinkID);
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
        status = System_linkDelete(pObj->SyncLinkID);
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
-
+#ifndef E500_SV_MULTICAM
        status = System_linkDelete(pObj->VPELinkID);
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
-
+#endif
        status = System_linkDelete(pObj->DupLinkID);
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
@@ -474,10 +613,14 @@ Int32 chains_lvdsVipMultiCam_Display_tda2xx_Delete(chains_lvdsVipMultiCam_Displa
 Void chains_lvdsVipMultiCam_Display_tda2xx_printBufferStatistics(chains_lvdsVipMultiCam_Display_tda2xxObj *pObj){
        System_linkPrintBufferStatistics(pObj->CaptureLinkID);
        System_linkPrintBufferStatistics(pObj->DupLinkID);
+#ifndef E500_SV_MULTICAM
        System_linkPrintBufferStatistics(pObj->VPELinkID);
+#endif
        System_linkPrintBufferStatistics(pObj->SyncLinkID);
        System_linkPrintBufferStatistics(pObj->Alg_DmaSwMsLinkID);
+#ifndef E500_SV_MULTICAM
        System_linkPrintBufferStatistics(pObj->MergeLinkID);
+#endif
        System_linkPrintBufferStatistics(pObj->Display_videoLinkID);
        System_linkPrintBufferStatistics(pObj->GrpxSrcLinkID);
        System_linkPrintBufferStatistics(pObj->Display_GrpxLinkID);
@@ -487,10 +630,14 @@ Void chains_lvdsVipMultiCam_Display_tda2xx_printBufferStatistics(chains_lvdsVipM
 Void chains_lvdsVipMultiCam_Display_tda2xx_printStatistics(chains_lvdsVipMultiCam_Display_tda2xxObj *pObj){
        System_linkPrintStatistics(pObj->CaptureLinkID);
        System_linkPrintStatistics(pObj->DupLinkID);
+#ifndef E500_SV_MULTICAM
        System_linkPrintStatistics(pObj->VPELinkID);
+#endif
        System_linkPrintStatistics(pObj->SyncLinkID);
        System_linkPrintStatistics(pObj->Alg_DmaSwMsLinkID);
+#ifndef E500_SV_MULTICAM
        System_linkPrintStatistics(pObj->MergeLinkID);
+#endif
        System_linkPrintStatistics(pObj->Display_videoLinkID);
        System_linkPrintStatistics(pObj->GrpxSrcLinkID);
        System_linkPrintStatistics(pObj->Display_GrpxLinkID);

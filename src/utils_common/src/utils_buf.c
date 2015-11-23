@@ -436,10 +436,9 @@ Int32 Utils_bufPutFullBuffer(Utils_BufHndl * pHndl, System_Buffer * pBuf)
     status = Utils_quePut(&pHndl->fullQue, pBuf, BSP_OSAL_NO_WAIT);
     if (status != SYSTEM_LINK_STATUS_SOK)
     {
-#if 0
+#if 1
         Vps_printf
-            (" UTILS: BUF: ERROR: In Utils_bufPutFullBuffer(), Utils_quePut() failed !!!\n",
-             );
+            (" UTILS: BUF: ERROR: In Utils_bufPutFullBuffer(), Utils_quePut() failed !!!\n");
 #endif
     }
 
