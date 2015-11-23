@@ -48,6 +48,7 @@ include $(MODULE_SRC_BASE_PATH)/sparseopticalflow/SRC_FILES.MK
 include $(MODULE_SRC_BASE_PATH)/lanedetection/SRC_FILES.MK
 include $(MODULE_SRC_BASE_PATH)/subframecopy/SRC_FILES.MK
 include $(MODULE_SRC_BASE_PATH)/dmaSwMs/SRC_FILES.MK
+include $(MODULE_SRC_BASE_PATH)/surroundViewCammsys/SRC_FILES.MK
 ifeq ($(CRC_INCLUDE),yes)
 include $(MODULE_SRC_BASE_PATH)/crc/SRC_FILES.MK
 endif

@@ -344,15 +344,15 @@ endif
 #
 # Change below to include or exclude certain core's
 #
-PROC_DSP1_INCLUDE=yes
-PROC_DSP2_INCLUDE=yes
-PROC_EVE1_INCLUDE=yes
-PROC_EVE2_INCLUDE=yes
-PROC_EVE3_INCLUDE=yes
-PROC_EVE4_INCLUDE=yes
+PROC_DSP1_INCLUDE=no
+PROC_DSP2_INCLUDE=no
+PROC_EVE1_INCLUDE=no
+PROC_EVE2_INCLUDE=no
+PROC_EVE3_INCLUDE=no
+PROC_EVE4_INCLUDE=no
 PROC_A15_0_INCLUDE=yes
 PROC_IPU1_0_INCLUDE=yes
-PROC_IPU1_1_INCLUDE=yes
+PROC_IPU1_1_INCLUDE=no
 
 #
 # Change below to include or exclude certain HW module's

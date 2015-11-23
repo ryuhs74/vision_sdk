@@ -141,6 +141,8 @@ typedef enum
     ALGORITHM_LINK_DSP_ALG_FULLVIEW,
     /**< Alg to full view */
 
+	ALGORITHM_LINK_DSP_ALG_SURROUND_VIEW,
+
     ALGORITHM_LINK_DSP_ALG_MAXNUM,
     /**< Should be the last value of this enumeration.
      *   Will be used by Link/driver for validating the input parameters. */
@@ -239,6 +241,8 @@ typedef enum
     ALGORITHM_LINK_A15_ALG_FULLVIEW,
     /**< Alg to full view */
 
+	ALGORITHM_LINK_A15_ALG_SURROUND_VIEW,
+
     ALGORITHM_LINK_A15_ALG_MAXNUM,
     /**< Should be the last value of this enumeration.
      *   Will be used by Link/driver for validating the input parameters. */
@@ -258,7 +262,7 @@ typedef enum
  *          user/App while creating a specific algorithm link instance.
  *          Note that it is fine for more than one algorithm link instance
  *          to have the same algorithm Id.
- *******************************************************************************
+ *******************************************ALGORITHM_LINK_A15_ALG_SURROUND_VIEW************************************
 */
 typedef enum
 {
@@ -277,9 +281,12 @@ typedef enum
     ALGORITHM_LINK_IPU_ALG_HW_CRC,
     /**< CRC for checking Frame Freeze Detect on IPU1-0. Only valid for TDA3x */
 
+	ALGORITHM_LINK_IPU_ALG_SURROUND_VIEW,
+
     ALGORITHM_LINK_IPU_ALG_MAXNUM,
     /**< Should be the last value of this enumeration.
      *   Will be used by Link/driver for validating the input parameters. */
+
 
     ALGORITHM_LINK_IPU_ALG_FORCE32BITS = 0x7FFFFFFF
     /**< This should be the last value after the max enumeration value.

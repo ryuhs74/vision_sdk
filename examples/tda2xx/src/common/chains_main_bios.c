@@ -48,7 +48,7 @@
  */
 //#define CHAINS_DISABLE_GET_CHAR
 
-#define AVM_E500_SV		//ryuhs74@20151110 - Add Change Multi Cam or SV
+//#define AVM_E500_SV		//ryuhs74@20151110 - Add Change Multi Cam or SV
 Chains_Ctrl gChains_usecaseCfg;
 
 /**
