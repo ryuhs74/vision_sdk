@@ -64,9 +64,9 @@ typedef yuyv yuvHD1080P[HD1080P_WIDTH];
 	Int16 X =	lut->xFraction;\
 	Int16 Y =	lut->yFraction;\
 	Int16 R1,R2;\
-	R1 = LinearInterpolation(X,q[0].y,q[1].y,64,AVM_LUT_FRACTION_BITS);\
-	R2 = LinearInterpolation(X,q[pitch].y,q[pitch+1].y,64,AVM_LUT_FRACTION_BITS);\
-	Q = LinearInterpolation(Y,R1,R2,64,AVM_LUT_FRACTION_BITS);\
+	R1 = LinearInterpolation(X,q[0].y,q[1].y,63,AVM_LUT_FRACTION_BITS);\
+	R2 = LinearInterpolation(X,q[pitch].y,q[pitch+1].y,63,AVM_LUT_FRACTION_BITS);\
+	Q = LinearInterpolation(Y,R1,R2,63,AVM_LUT_FRACTION_BITS);\
 }
 ///https://en.wikipedia.org/wiki/Bilinear_interpolation
 #define BilinearInterpolationUV(q, lut, Q, pitch)\
@@ -74,9 +74,9 @@ typedef yuyv yuvHD1080P[HD1080P_WIDTH];
 	UInt16 X =	lut->xFraction;\
 	UInt16 Y =	lut->yFraction;\
 	UInt16 R1,R2;\
-	R1 = LinearInterpolation(X,q[0].uv,q[2].uv,64,AVM_LUT_FRACTION_BITS);\
-	R2 = LinearInterpolation(X,q[pitch].uv,q[pitch+2].uv,64,AVM_LUT_FRACTION_BITS);\
-	Q = LinearInterpolation(Y,R1,R2,64,AVM_LUT_FRACTION_BITS);\
+	R1 = LinearInterpolation(X,q[0].uv,q[2].uv,63,AVM_LUT_FRACTION_BITS);\
+	R2 = LinearInterpolation(X,q[pitch].uv,q[pitch+2].uv,63,AVM_LUT_FRACTION_BITS);\
+	Q = LinearInterpolation(Y,R1,R2,63,AVM_LUT_FRACTION_BITS);\
 }
 
 
@@ -108,7 +108,6 @@ static inline Int32 makeSingleView720P(  UInt32       *RESTRICT inPtr,
 #endif
     for(rowIdx = 0; rowIdx < height ; rowIdx++)
     {
-    	lut += childViewInfoLUT->pitch;
     	ViewLUT_Packed *lutbak;
 #ifdef BUILD_DSP
 #pragma UNROLL(4);
@@ -135,6 +134,7 @@ static inline Int32 makeSingleView720P(  UInt32       *RESTRICT inPtr,
         	BilinearInterpolationUV(q, lutbak, oPtr[rowIdx][colIdx+1].uv, HD720P_WIDTH);
         }
 #endif
+    	lut += childViewInfoLUT->pitch;
     }
     return SYSTEM_LINK_STATUS_SOK;
 }

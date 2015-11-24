@@ -53,7 +53,6 @@ static inline Int32 makeBlendView720P(  UInt32       *RESTRICT inPtr_main,
 	for(rowIdx = 0; rowIdx < childViewInfoLUT->height; rowIdx++)
 	{
 		MaskLUT_Packed *maskBak;
-		mask += childViewInfoLUT->pitch;
 
 #ifdef BUILD_DSP
 #pragma UNROLL(2);
@@ -65,9 +64,10 @@ static inline Int32 makeBlendView720P(  UInt32       *RESTRICT inPtr_main,
 			yuyv q2 = subBuf[rowIdx][colIdx+startX];
 			UInt16 X = maskBak->cr_r_overlay;
 
-			oPtr[rowIdx][colIdx+startX].y = LinearInterpolation(X,q2.y,q1.y,256,8);
-			oPtr[rowIdx][colIdx+startX].uv = LinearInterpolation(X,q2.uv,q1.uv,256,8);
+			oPtr[rowIdx][colIdx+startX].y = LinearInterpolation(X,q2.y,q1.y,255,8);
+			oPtr[rowIdx][colIdx+startX].uv = LinearInterpolation(X,q2.uv,q1.uv,255,8);
 		}
+		mask += childViewInfoLUT->pitch;
 	}
 
     return SYSTEM_LINK_STATUS_SOK;
