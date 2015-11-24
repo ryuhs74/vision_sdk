@@ -848,14 +848,13 @@ Int32 AlgorithmLink_surroundViewMakeTopView(void * pObj,
     pLayoutPrm = &pSurroundViewObj->curLayoutPrm;
 
 
-
+#if 1
 	///side View
     sideView.width = 712;
 	sideView.height = 508;
 	sideView.pitch = 1280;
 	sideView.startX = 550;
 	sideView.startY = 16;
-#if 1
 	sideViewLut.width = 712;
 	sideViewLut.height = 508;
 	sideViewLut.pitch = 712;
@@ -867,7 +866,7 @@ Int32 AlgorithmLink_surroundViewMakeTopView(void * pObj,
 							pLayoutPrm->pLut1,
 							&sideView,
 							&sideViewLut);
-
+#endif
 	///front
 	sideView.width = 520;
 	sideView.height = 688;
@@ -918,7 +917,6 @@ Int32 AlgorithmLink_surroundViewMakeTopView(void * pObj,
 							pLayoutPrm->pLut8,
 							&sideView,
 							&sideViewLut);
-#endif
 
 	//left, front
 	sideView.width = 520;
@@ -960,7 +958,7 @@ Int32 AlgorithmLink_surroundViewMakeTopView(void * pObj,
 					&sideView,
 					&sideViewLut);
 
-#if 1
+
 	///right, front
 	sideViewLut.startX = 332;
 	sideViewLut.startY = 0;
@@ -994,7 +992,7 @@ Int32 AlgorithmLink_surroundViewMakeTopView(void * pObj,
 					pLayoutPrm->cMask,
 					&sideView,
 					&sideViewLut);
-#endif
+
     return status;
 }
 

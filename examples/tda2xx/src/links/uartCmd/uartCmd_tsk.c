@@ -21,7 +21,7 @@
 UInt8 UartCmd_tskStack[1024*4];
 
 
-BspOsal_TaskHandle tsk;
+static BspOsal_TaskHandle tsk;
 static uint8_t RxBuf[DATA_MAX_LEN];
 static uint8_t TxBuf[DATA_MAX_LEN];
 static uint32_t RxBufPos = 0;
@@ -306,5 +306,6 @@ Int32 UartCmd_tsk_init()
 Int32 UartCmd_tsk_deInit()
  {
 
+	BspOsal_taskDelete(tsk);
     return 0;
  }

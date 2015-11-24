@@ -1784,6 +1784,8 @@ Void Chains_main(UArg arg0, UArg arg1)
     }
 
     ChainsCommon_DeInit();
+    UartCmd_tsk_deInit();
+    Error_Monitor_deInit();
 }
 
 void Start_AVM_E500() //ryuhs74@20151020 - Add HDMI On/Off Test

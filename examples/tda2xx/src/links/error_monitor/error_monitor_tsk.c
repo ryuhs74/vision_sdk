@@ -20,19 +20,19 @@
 
 #pragma DATA_ALIGN(Error_MonitorStack, 32)
 #pragma DATA_SECTION(Error_MonitorStack, ".bss:taskStackSection")
-UInt8 Error_MonitorStack[1024*4];
+static UInt8 Error_MonitorStack[1024*4];
 
-BspOsal_TaskHandle tsk;
+static BspOsal_TaskHandle tsk;
 
-int8_t des_status_lflt[5] = {0};
-int8_t des_status_lflt_bak[5] = {0};
-int8_t des_status_error[5] = {0};
-int8_t des_status_error_bak[5] = {0};
-int8_t des_status_lock[5] = {0};
-int8_t des_status_lock_bak[5] = {0};
+static int8_t des_status_lflt[5] = {0};
+static int8_t des_status_lflt_bak[5] = {0};
+static int8_t des_status_error[5] = {0};
+static int8_t des_status_error_bak[5] = {0};
+static int8_t des_status_lock[5] = {0};
+static int8_t des_status_lock_bak[5] = {0};
 
 
-Void Error_Monitor_main(UArg arg0, UArg arg1)
+static Void Error_Monitor_main(UArg arg0, UArg arg1)
 {
 
 	for(;;)
@@ -88,6 +88,6 @@ Int32 Error_Monitor_init()
 
 Int32 Error_Monitor_deInit()
  {
-
+	BspOsal_taskDelete(tsk);
     return 0;
  }
