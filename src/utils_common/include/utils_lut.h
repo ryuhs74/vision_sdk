@@ -71,6 +71,6 @@ typedef enum lut_index
 
 void* LUTAlloc(LUT_INDEX index );
 void LUTFree(LUT_INDEX index);
-void GetLutInfo(LUT_INFO_INDEX index,lut_Info* info);
+lut_Info* GetLutInfo(LUT_INFO_INDEX index);
 
 #endif /* EXAMPLES_TDA2XX_SRC_DEVICES_UTILS_LUT_H_ */

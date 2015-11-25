@@ -182,7 +182,7 @@ static Void chains_surround_View_SetAlgSurroundViewPrm(
 
     for(i=0; i<LUT_INFO_INDEX_MAX; i++)
     {
-    	GetLutInfo((LUT_INFO_INDEX)i, lutViewInfo);
+    	lutViewInfo = GetLutInfo((LUT_INFO_INDEX)i);
         pLutInfo[LUT_VIEW_INFO_TOP_A00+i].startX 		= lutViewInfo->startX;
         pLutInfo[LUT_VIEW_INFO_TOP_A00+i].startY 		= lutViewInfo->startY;
         pLutInfo[LUT_VIEW_INFO_TOP_A00+i].width 		= lutViewInfo->width;

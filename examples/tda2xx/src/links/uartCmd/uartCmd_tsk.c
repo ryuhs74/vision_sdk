@@ -25,6 +25,8 @@ static BspOsal_TaskHandle tsk;
 static uint8_t RxBuf[DATA_MAX_LEN];
 static uint8_t TxBuf[DATA_MAX_LEN];
 static uint32_t RxBufPos = 0;
+#pragma DATA_ALIGN(RxBuf, 128);
+#pragma DATA_ALIGN(TxBuf, 128);
 
 //ryuhs74@20151104 - Add Put CMD To GrpxSrcLink
 void GrpxSrcLink_putCmd( uint8_t _cmd );
