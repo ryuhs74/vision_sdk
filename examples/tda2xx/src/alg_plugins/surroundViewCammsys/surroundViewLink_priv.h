@@ -148,6 +148,7 @@ typedef  struct
      */
     UInt32* buf1;
     UInt32* buf2;
+
 } AlgorithmLink_SurroundViewObj;
 
 /*******************************************************************************

@@ -24,7 +24,7 @@ typedef struct
 	UInt8 y;
 	UInt8 uv;
 }yuyv;
-
+#if 0
 typedef struct
 {
 	UInt16 width;
@@ -33,6 +33,7 @@ typedef struct
 	UInt16 startY;
 	UInt16 pitch;
 }ViewInfo;
+#endif
 
 typedef struct {
 	unsigned short xFraction:AVM_LUT_FRACTION_BITS;
@@ -83,8 +84,8 @@ typedef yuyv yuvHD1080P[HD1080P_WIDTH];
 static inline Int32 makeSingleView720P(  UInt32       *RESTRICT inPtr,
                            	   UInt32           *RESTRICT outPtr,
 							   UInt32			*RESTRICT viewLUTPtr,
-							   ViewInfo			*RESTRICT viewInfo,
-							   ViewInfo			*RESTRICT childViewInfoLUT
+							   AlgorithmLink_SurroundViewLutInfo			*RESTRICT viewInfo,
+							   AlgorithmLink_SurroundViewLutInfo			*RESTRICT childViewInfoLUT
                           )
 {
 	UInt16 rowIdx;
@@ -142,8 +143,8 @@ static inline Int32 makeSingleView720P(  UInt32       *RESTRICT inPtr,
 static inline Int32 makeSingleView1080P(  UInt32       *RESTRICT inPtr,
                            	   UInt32           *RESTRICT outPtr,
 							   UInt32			*RESTRICT viewLUTPtr,
-							   ViewInfo			*RESTRICT viewInfo,
-							   ViewInfo			*RESTRICT childViewInfoLUT
+							   AlgorithmLink_SurroundViewLutInfo			*RESTRICT viewInfo,
+							   AlgorithmLink_SurroundViewLutInfo			*RESTRICT childViewInfoLUT
                           )
 {
 	UInt16 rowIdx;
@@ -200,8 +201,8 @@ static inline Int32 makeSingleView1080P(  UInt32       *RESTRICT inPtr,
 static inline Int32 makeSingleView(  UInt32       	*RESTRICT inPtr,
                            	   UInt32           *RESTRICT outPtr,
 							   UInt32			*RESTRICT viewLUTPtr,
-							   ViewInfo			*RESTRICT viewInfo,
-							   ViewInfo			*RESTRICT childViewInfoLUT
+							   AlgorithmLink_SurroundViewLutInfo			*RESTRICT viewInfo,
+							   AlgorithmLink_SurroundViewLutInfo			*RESTRICT childViewInfoLUT
                           )
 {
 /*

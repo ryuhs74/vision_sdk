@@ -118,6 +118,24 @@ extern "C" {
  *******************************************************************************
  */
 
+typedef enum
+{
+	LUT_VIEW_INFO_FULL_VIEW,
+	LUT_VIEW_INFO_FULL_VIEW_LUT,
+	LUT_VIEW_INFO_SIDE_VIEW,
+	LUT_VIEW_INFO_SIDE_VIEW_LUT,
+	LUT_VIEW_INFO_TOP_VIEW,
+	LUT_VIEW_INFO_TOP_A00,
+	LUT_VIEW_INFO_TOP_A01,
+	LUT_VIEW_INFO_TOP_A02,
+	LUT_VIEW_INFO_TOP_A03,
+	LUT_VIEW_INFO_TOP_A04,
+	LUT_VIEW_INFO_TOP_A05,
+	LUT_VIEW_INFO_TOP_A06,
+	LUT_VIEW_INFO_TOP_A07,
+	LUT_VIEW_INFO_MAX
+}LUT_VIEW_INFO;
+
 /*******************************************************************************
  *  Data structures
  *******************************************************************************
@@ -132,24 +150,11 @@ extern "C" {
 */
 typedef struct
 {
-    UInt32 chId;
-    /**< Channel associated with this window
-     *
-     *   If chId is \ref ALGORITHM_LINK_SURROUND_VIEW_INVALID_CH_ID blank data
-     *   is copied into the window
-     */
-
-    UInt32 inStartX;
+    UInt32 startX;
     /**< X-position in input frame from where to copy */
 
-    UInt32 inStartY;
+    UInt32 startY;
     /**< Y-position in input frame from where to copy */
-
-    UInt32 outStartX;
-    /**< X-position in output frame to where to copy */
-
-    UInt32 outStartY;
-    /**< Y-position in output frame to where to copy */
 
     UInt32 width;
     /**< Window width,
@@ -162,8 +167,10 @@ typedef struct
      *   if window height < input height, cropped input is copied
      *   if window height > input height, rest of window is filled with blank data
      */
+    UInt32 pitch;
 
-} AlgorithmLink_SurroundViewLayoutWinInfo;
+
+} AlgorithmLink_SurroundViewLutInfo;
 
 /**
  *******************************************************************************
@@ -180,8 +187,8 @@ typedef struct
     UInt32 numWin;
     /**< Number of windows in the SW Mosaic */
 
-    AlgorithmLink_SurroundViewLayoutWinInfo winInfo
-                [ALGORITHM_LINK_SURROUND_VIEW_MAX_WINDOWS];
+    AlgorithmLink_SurroundViewLutInfo lutViewInfo
+                [LUT_VIEW_INFO_MAX];
     /**< Information of individual window's in the output */
 
     UInt32 outBufWidth;
@@ -189,12 +196,23 @@ typedef struct
 
     UInt32 outBufHeight;
     /**< MUST be <= AlgorithmLink_SurroundViewCreateParams.maxOutBufHeight */
-    UInt32* pLut1;
-    UInt32* pLut5;
-    UInt32* pLut6;
-    UInt32* pLut7;
-    UInt32* pLut8;
-    UInt32* cMask;
+
+	UInt32* Basic_frontView;
+	UInt32* Basic_rearView;
+	UInt32* Basic_leftSideView;
+	UInt32* Basic_rightSideView;
+	UInt32* Basic_frontNT;
+	UInt32* Basic_rearNT;
+	UInt32* Basic_leftNT;
+	UInt32* Basic_rightNT;
+	UInt32* cmaskNT;
+	UInt32* Basic_frontFullView;
+	UInt32* Basic_rearFullView;
+
+    UInt32* psingleViewLUT;
+    UInt32 singleViewInputChannel;
+    AlgorithmLink_SurroundViewLutInfo* psingleViewLUTInfo;
+    AlgorithmLink_SurroundViewLutInfo* psingleViewInfo;
 
 } AlgorithmLink_SurroundViewLayoutParams;
 

@@ -198,6 +198,8 @@ static inline Int32 makeSingleView(  UInt32       	*RESTRICT inPtr,
 //	viewInfo->width = viewInfo->width < childViewInfoLUT->width + childViewInfoLUT->startX ? viewInfo->width : childViewInfoLUT->width + childViewInfoLUT->startX;
 //	viewInfo->height = viewInfo->height < childViewInfoLUT->height + childViewInfoLUT->startY ? viewInfo->height : childViewInfoLUT->height+ childViewInfoLUT->startY;
 
+	makeSingleView720P(inPtr, outPtr, viewLUTPtr, viewInfo, childViewInfoLUT);
+#if 0
 	if(viewInfo->pitch == HD720P_WIDTH)
 	{
 		makeSingleView720P(inPtr, outPtr, viewLUTPtr, viewInfo, childViewInfoLUT);
@@ -208,7 +210,7 @@ static inline Int32 makeSingleView(  UInt32       	*RESTRICT inPtr,
 	{
 		return SYSTEM_LINK_STATUS_EINVALID_PARAMS;
 	}
-
+#endif
     return SYSTEM_LINK_STATUS_SOK;
 }
 

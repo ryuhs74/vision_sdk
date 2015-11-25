@@ -9,9 +9,9 @@
 #define EXAMPLES_TDA2XX_SRC_ALG_PLUGINS_FULLVIEW_BLENDVIEW_H_
 
 
-#include "singleView.h"
 #include <include/link_api/system_common.h>
 #include <src/utils_common/include/utils_mem.h>
+#include "singleView.h"
 
 static inline Int32 makeBlendView720P(  UInt32       *RESTRICT inPtr_main,
 										UInt32       *RESTRICT inPtr_sub,
@@ -21,8 +21,8 @@ static inline Int32 makeBlendView720P(  UInt32       *RESTRICT inPtr_main,
 										UInt32		 *RESTRICT viewLUTPtr_main,
 										UInt32		 *RESTRICT viewLUTPtr_sub,
 										UInt32		 *RESTRICT carMask,
-										ViewInfo	 *RESTRICT viewInfo,
-										ViewInfo	 *RESTRICT childViewInfoLUT
+										AlgorithmLink_SurroundViewLutInfo	 *RESTRICT viewInfo,
+										AlgorithmLink_SurroundViewLutInfo	 *RESTRICT childViewInfoLUT
                           )
 {
 //	UInt32 mallocSize = childViewInfoLUT->height * (childViewInfoLUT->pitch>>1);
@@ -79,8 +79,8 @@ static inline Int32 makeBlendView1080P(  UInt32       *RESTRICT inPtr_main,
 											UInt32		 *RESTRICT viewLUTPtr_main,
 											UInt32		 *RESTRICT viewLUTPtr_sub,
 											UInt32		 *RESTRICT carMask,
-											ViewInfo	 *RESTRICT viewInfo,
-											ViewInfo	 *RESTRICT childViewInfoLUT
+											AlgorithmLink_SurroundViewLutInfo	 *RESTRICT viewInfo,
+											AlgorithmLink_SurroundViewLutInfo	 *RESTRICT childViewInfoLUT
 	                          )
 {
 	UInt32 mallocSize = childViewInfoLUT->height * (childViewInfoLUT->pitch>>1);
@@ -156,13 +156,14 @@ static inline Int32 makeBlendView(  UInt32       *RESTRICT inPtr_main,
 									UInt32		 *RESTRICT viewLUTPtr_main,
 									UInt32		 *RESTRICT viewLUTPtr_sub,
 									UInt32		 *RESTRICT carMask,
-									ViewInfo	 *RESTRICT viewInfo,
-									ViewInfo	 *RESTRICT childViewInfoLUT
+									AlgorithmLink_SurroundViewLutInfo	 *RESTRICT viewInfo,
+									AlgorithmLink_SurroundViewLutInfo	 *RESTRICT childViewInfoLUT
                       )
 {
 	viewInfo->width = viewInfo->width < childViewInfoLUT->width + childViewInfoLUT->startX ? viewInfo->width : childViewInfoLUT->width + childViewInfoLUT->startX;
 	viewInfo->height = viewInfo->height < childViewInfoLUT->height + childViewInfoLUT->startY ? viewInfo->height : childViewInfoLUT->height+ childViewInfoLUT->startY;
-
+	makeBlendView720P(inPtr_main, inPtr_sub, buf1, buf2, outPtr, viewLUTPtr_main, viewLUTPtr_sub, carMask, viewInfo, childViewInfoLUT);
+#if 0
 	if(viewInfo->pitch == HD720P_WIDTH)
 	{
 		makeBlendView720P(inPtr_main, inPtr_sub, buf1, buf2, outPtr, viewLUTPtr_main, viewLUTPtr_sub, carMask, viewInfo, childViewInfoLUT);
@@ -173,6 +174,7 @@ static inline Int32 makeBlendView(  UInt32       *RESTRICT inPtr_main,
 	{
 		return SYSTEM_LINK_STATUS_EINVALID_PARAMS;
 	}
+#endif
 
     return SYSTEM_LINK_STATUS_SOK;
 }

@@ -52,3 +52,12 @@ void LUTFree(LUT_INDEX index)
 	memInfo[index].size = 0;
 }
 
+void GetLutInfo(LUT_INFO_INDEX index,lut_Info* info)
+{
+	lut_Info* lutInfo = (lut_Info*)LUTAlloc(Basic_lutInfo);
+
+	info->height = lutInfo[index].height;
+	info->width = lutInfo[index].width;
+	info->startX = lutInfo[index].startX;
+	info->startY = lutInfo[index].startY;
+}
