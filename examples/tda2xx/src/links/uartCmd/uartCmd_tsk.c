@@ -144,20 +144,29 @@ static int UART_ParseCmd(uint8_t *rxBuf)
 	case CMD_REQ_MICOM_VER:		// Recv version of AVM MICOM
 		break;
 	case CMD_SEND_IRDA_KEY:		// Recv IrDA command with Key value
-		switch (GET_ARG2(rxBuf))
+		switch (GET_ARG1(rxBuf))
 		//ryuhs74@20151020 - Add HDMI On/Off Test Start
 		{
-		case 0x09: //File Save - IRDA_KEY_PWR = (0x09)
-			gisCapture = 1;
+		/*
+		 #define IRDA_KEY_PWR	(0x09)
+		#define IRDA_KEY_FULL	(0x05)
+		#define IRDA_KEY_LOCK	(0x5C)
+		#define IRDA_KEY_UP		(0x0F)
+		#define IRDA_KEY_DOWN	(0x0E)
+		#define IRDA_KEY_LEFT	(0x0B)
+		#define IRDA_KEY_RIGHT	(0x0A)
+		 */
+		case IRDA_KEY_PWR: //File Save - IRDA_KEY_PWR = (0x09)
+			//gisCapture = 1;
 			Vps_printf(	"**********************************gisCapture : %d\n",
 						gisCapture);
 			break;
-		case 0x0F : //Front - IRDA_KEY_UP = (0x0F)
-		case 0x0E : //Rear - IRDA_KEY_DOWN = (0x0E)
-		case 0x0B : //LFET - IRDA_KEY_LEFT = (0x0B)
-		case 0x0A : //RIGHT - IRDA_KEY_RIGHT = (0x0A)
-		case 0x05 : //Full - IRDA_KEY_FULL = (0x05),
-			GrpxSrcLink_putCmd( GET_ARG2(rxBuf) );
+		case IRDA_KEY_UP : //Front - IRDA_KEY_UP = (0x0F)
+		case IRDA_KEY_DOWN : //Rear - IRDA_KEY_DOWN = (0x0E)
+		case IRDA_KEY_LEFT : //LFET - IRDA_KEY_LEFT = (0x0B)
+		case IRDA_KEY_RIGHT : //RIGHT - IRDA_KEY_RIGHT = (0x0A)
+		case IRDA_KEY_FULL : //Full - IRDA_KEY_FULL = (0x05),
+			GrpxSrcLink_putCmd( GET_ARG1(rxBuf) );
 			//E500_ViewMode_putCmd( GET_ARG2(rxBuf) );
 			break;
 		} //ryuhs74@20151020 - Add HDMI On/Off Test End
@@ -185,6 +194,7 @@ static int UART_ParseCmd(uint8_t *rxBuf)
 
 	case CMD_REQ_HDMI_ONOFF:
 	{
+		/*
 		extern void vpshal_HdmiWpVideoStart(UInt32 start)	;
 
 		buf[0] = CMD_REQ_HDMI_ONOFF;
@@ -206,11 +216,12 @@ static int UART_ParseCmd(uint8_t *rxBuf)
 		buf[0] = CMD_SEND_HDMI_ON_OFF;
 		buf[1] = GET_ARG1(rxBuf);
 		UART_SendCmd(DEV_ID_AVM_MICOM, DEV_ID_AVM_DSP, buf, 2);
-
+		*/
 		break;
 	}
 	case CMD_REQ_ETHERNET_ONOFF:
 	{
+		/*
 		extern void PlatformRGMII1SetPinDeMux(void);
 		extern void PlatformRGMII1SetPinMux(void);
 
@@ -229,6 +240,7 @@ static int UART_ParseCmd(uint8_t *rxBuf)
 			PlatformRGMII1SetPinMux();
 		}
 		UART_SendCmd(DEV_ID_AVM_MICOM, DEV_ID_AVM_DSP, buf, 2);
+		*/
 		break;
 	}
 	default:

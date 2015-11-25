@@ -1872,6 +1872,7 @@ Void ChainsCommon_SetGrpxSrcPrms(
     pPrm->sViewmode.viewnt = FRONT_VIEW;
     pPrm->sViewmode.prvVient = FRONT_VIEW;
     pPrm->avm_e500LayoutEnable = TRUE;
+    pPrm->statsDisplayEnable = TRUE;
 }
 
 /**

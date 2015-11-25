@@ -16,6 +16,7 @@
 *******************************************************************************
 */
 #include "chains_surround_View_priv.h"
+extern UInt32 gGrpxSrcLinkID;
 Void chains_surround_View_SetLinkId(chains_surround_ViewObj *pObj){
        pObj->CaptureLinkID                  = SYSTEM_LINK_ID_CAPTURE;
        pObj->DupLinkID                      = IPU1_0_LINK (SYSTEM_LINK_ID_DUP_0);
@@ -32,6 +33,7 @@ Void chains_surround_View_SetLinkId(chains_surround_ViewObj *pObj){
 
 
        //pObj->Save_SaveLinkID                = IPU1_0_LINK (SYSTEM_LINT_SAVE_0); //ryuhs74@20151027 - Add Save Link
+       gGrpxSrcLinkID = pObj->GrpxSrcLinkID;
 }
 
 Void chains_surround_View_ResetLinkPrms(chains_surround_ViewObj *pObj){
@@ -49,7 +51,7 @@ Void chains_surround_View_ResetLinkPrms(chains_surround_ViewObj *pObj){
        DisplayLink_CreateParams_Init(&pObj->Display_GrpxPrm);
 
        //ryuhs74@20151027 - Add Save Link
-       SaveLink_CreateParams_Init(&pObj->Save_Prm);
+       //SaveLink_CreateParams_Init(&pObj->Save_Prm);
 
 }
 
