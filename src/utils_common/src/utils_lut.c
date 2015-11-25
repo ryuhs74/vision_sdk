@@ -19,11 +19,15 @@ typedef struct
 	UInt32 size;
 }lut_memInfo;
 
-lut_memInfo memInfo[MAX_LUT_INDEX];
+static lut_memInfo memInfo[MAX_LUT_INDEX] = {0};
 
 void* LUTAlloc(LUT_INDEX index )
 {
 	UInt32 size = 0;
+
+	if(memInfo[index].address!=NULL)
+		return (void*)memInfo[index].address;
+
 	Ptr lut = (Ptr)GetLUT((LUT_NOR_INDEX)index, (uint32_t*)&size);
 
 	Ptr lut_ddr = Utils_memAlloc(
