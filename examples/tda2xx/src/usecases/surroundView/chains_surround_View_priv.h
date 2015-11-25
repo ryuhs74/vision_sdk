@@ -60,7 +60,7 @@ typedef struct {
        DisplayLink_CreateParams                Display_GrpxPrm;
 
        //Uint32 Save_SaveLinkID;				//ryuhs74220151027 - Add Save Link
-       SaveLink_CreateParams				Save_Prm;//ryuhs74220151027 - Add Save Link
+       //SaveLink_CreateParams				Save_Prm;//ryuhs74220151027 - Add Save Link
 } chains_surround_ViewObj;
 
 Void chains_surround_View_SetLinkId(chains_surround_ViewObj *pObj);
