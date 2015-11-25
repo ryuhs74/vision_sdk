@@ -45,6 +45,7 @@ typedef enum lut_index
 	cmaskNT,
 	Basic_frontFullView,
 	Basit_rearFullView,
+	Basic_litInfo,
 	MAX_LUT_INDEX
 }LUT_INDEX;
 
