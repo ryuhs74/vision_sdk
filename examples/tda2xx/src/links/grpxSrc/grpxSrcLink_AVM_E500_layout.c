@@ -63,6 +63,7 @@
 #define FULL_VIEW_H				558
 
 UInt32 gGrpxSrcLinkID;
+UInt32 gFullFront = 0;
 
 Int32 GrpxSrcLink_drawAVM_E500NorButton( GrpxSrcLink_Obj *pObj )
 {
@@ -162,11 +163,12 @@ Int32 Draw2D_FillBacgroundColor( GrpxSrcLink_Obj *pObj )
 
 Int32 Draw2D_AVME500_TopView( GrpxSrcLink_Obj *pObj )
 {
-	Draw2D_RegionPrm region;
+	//Draw2D_RegionPrm region;
 	Draw2D_FontPrm fontPrm;
-	//Draw2D_BmpPrm bmpPrm;
+	//Draw2D_BmpPrm bmpPrm; //For Car Imag Draw
 
-	/* TOP( Surround ) View video Region */
+	// TOP( Surround ) View video Region
+	/*
 	region.color  = DRAW2D_TRANSPARENT_COLOR;
 	region.startX = TOP_FULLVIEW_START_XY;
 	region.startY = TOP_FULLVIEW_START_XY;
@@ -175,7 +177,7 @@ Int32 Draw2D_AVME500_TopView( GrpxSrcLink_Obj *pObj )
 
 	Draw2D_fillRegion(pObj->draw2DHndl,&region);
 
-	/* Side View Region */
+	// Side View Region
 	region.color  = DRAW2D_TRANSPARENT_COLOR;
 	region.startX = SIDEVIEW_START_X;
 	region.startY = TOP_FULLVIEW_START_XY;
@@ -183,6 +185,7 @@ Int32 Draw2D_AVME500_TopView( GrpxSrcLink_Obj *pObj )
 	region.width  = SIDE_VIEW_H;
 
 	Draw2D_fillRegion(pObj->draw2DHndl,&region);
+	*/
 
 	if (pObj->createArgs.enableJeepOverlay == TRUE)
 	{
@@ -204,10 +207,11 @@ Int32 Draw2D_AVME500_TopView( GrpxSrcLink_Obj *pObj )
 
 Int32 Draw2D_AVME500_FullView( GrpxSrcLink_Obj *pObj )
 {
-	Draw2D_RegionPrm region;
+	//Draw2D_RegionPrm region;
 	Draw2D_FontPrm fontPrm;
 
-	/* Full View Region */
+	///Full View Region
+	/*
 	region.color  = DRAW2D_TRANSPARENT_COLOR;
 	region.startX = TOP_FULLVIEW_START_XY;
 	region.startY = TOP_FULLVIEW_START_XY;
@@ -215,22 +219,19 @@ Int32 Draw2D_AVME500_FullView( GrpxSrcLink_Obj *pObj )
 	region.width  = FULL_VIEW_H;
 
 	Draw2D_fillRegion(pObj->draw2DHndl,&region);
+	*/
 
 	fontPrm.fontIdx = 5;
 	Draw2D_drawString(pObj->draw2DHndl, FULL_VIEW_TEXT_START_X, FULL_VIEW_TEXT_START_Y,  "Warning! Please check around", &fontPrm );
-	Draw2D_drawString(pObj->draw2DHndl, FULL_VIEW_TEXT_START_X+34, FULL_VIEW_TEXT_START_X,  "the vehicle directly", &fontPrm );
+	Draw2D_drawString(pObj->draw2DHndl, FULL_VIEW_TEXT_START_X+34, FULL_VIEW_TEXT_START_X+24,  "the vehicle directly", &fontPrm );
 
 	return SYSTEM_LINK_STATUS_SOK;
 }
 
 Int32 GrpxSrcLink_drawAVM_E500Layout(GrpxSrcLink_Obj *pObj) // 이 함수를 TOP / FULL 그리는 함수를 다시 나눈다.
 {
-    //Draw2D_RegionPrm region;
-    //Draw2D_FontPrm fontPrm;
-    //Draw2D_BmpPrm bmpPrm;
-
     /* fill full buffer with background color */
-    Draw2D_FillBacgroundColor( pObj );
+    //Draw2D_FillBacgroundColor( pObj );
 
     /*
 	 * fill transprenecy color in portions where video should be visible
@@ -251,52 +252,68 @@ Int32 GrpxSrcLink_drawAVM_E500Layout(GrpxSrcLink_Obj *pObj) // 이 함수를 TOP / F
 void GrpxSrcLink_putCmd( uint8_t _cmd )
 {
 	/*
-	 * case 0x0F : //Front - IRDA_KEY_UP = (0x0F)
-		case 0x0E : //Rear - IRDA_KEY_DOWN = (0x0E)
-		case 0x0B : //LFET - IRDA_KEY_LEFT = (0x0B)
-		case 0x0A : //RIGHT - IRDA_KEY_RIGHT = (0x0A)
-		case 0x05 : //Full - IRDA_KEY_FULL = (0x05),
+	#define IRDA_KEY_PWR	(0x09)
+		#define IRDA_KEY_FULL	(0x05)
+		#define IRDA_KEY_LOCK	(0x5C)
+		#define IRDA_KEY_UP		(0x0F)
+		#define IRDA_KEY_DOWN	(0x0E)
+		#define IRDA_KEY_LEFT	(0x0B)
+		#define IRDA_KEY_RIGHT	(0x0A)
 	 */
 #if 1
 	GrpxSrcLink_CreateParams viewmodeprm;
 	Int32 status;
 
-	if( _cmd == CMD_REQ_FRONT_VIEW ){
+	if( _cmd == IRDA_KEY_UP ){
 		Vps_printf("In GrpxSrcLink_putCmd, CMD_REQ_FRONT_VIEW");
 
 		viewmodeprm.sViewmode.viewmode =  TOP_VIEW;
 		viewmodeprm.sViewmode.viewnt = FRONT_VIEW;
 		_cmd = SYSTEM_CMD_FRONT_SIDE_VIEW;
-	} else if( _cmd == CMD_REQ_REAR_VIEW ){
+	} else if( _cmd == IRDA_KEY_DOWN ){
 		Vps_printf("In GrpxSrcLink_putCmd, CMD_REQ_REAR_VIEW");
 
 		viewmodeprm.sViewmode.viewmode =  TOP_VIEW;
 		viewmodeprm.sViewmode.viewnt = REAR_VIEW;
 		_cmd = SYSTEM_CMD_REAR_SIDE_VIEW;
-	} else if( _cmd == CMD_REQ_RIGHT_VIEW ){
+	} else if( _cmd == IRDA_KEY_RIGHT ){
 		Vps_printf("In GrpxSrcLink_putCmd, CMD_REQ_RIGHT_VIEW");
 
 		viewmodeprm.sViewmode.viewmode =  TOP_VIEW;
 		viewmodeprm.sViewmode.viewnt = RIGHT_VIEW;
 		_cmd = SYSTEM_CMD_RIGH_SIDE_VIEW;
-	} else if( _cmd == CMD_REQ_LEFT_VIEW ){
+	} else if( _cmd == IRDA_KEY_LEFT ){
 		Vps_printf("In GrpxSrcLink_putCmd, CMD_REQ_LEFT_VIEW");
 
 		viewmodeprm.sViewmode.viewmode =  TOP_VIEW;
 		viewmodeprm.sViewmode.viewnt = LEFT_VIEW;
 		_cmd = SYSTEM_CMD_LEFT_SIDE_VIEW;
-	}else if( _cmd == CMD_REQ_FULL_FRONT_VIEW ){
-		Vps_printf("In GrpxSrcLink_putCmd, CMD_REQ_FULL_FRONT_VIEW");
-
-		viewmodeprm.sViewmode.viewmode =  FULL_VIEW;
-		viewmodeprm.sViewmode.viewnt = FRONT_VIEW;
-		_cmd = SYSTEM_CMD_FULL_FRONT_VIEW;
-	} else if( _cmd == CMD_REQ_FULL_REAR_VIEW ){
-		Vps_printf("In GrpxSrcLink_putCmd, CMD_REQ_FULL_REAR_VIEW");
-
-		viewmodeprm.sViewmode.viewmode =  FULL_VIEW;
-		viewmodeprm.sViewmode.viewnt = REAR_VIEW;
-		_cmd = SYSTEM_CMD_FULL_REAR_VIEW;
+	}else if( _cmd == IRDA_KEY_FULL ){
+		if( gFullFront == 0 )//Front Full View
+		{
+			Vps_printf("In GrpxSrcLink_putCmd, IRDA_KEY_FULL, Front");
+			viewmodeprm.sViewmode.viewmode =  FULL_VIEW;
+			viewmodeprm.sViewmode.viewnt = FRONT_VIEW;
+			_cmd = SYSTEM_CMD_FULL_FRONT_VIEW;
+			gFullFront = 1;
+		} else {
+			Vps_printf("In GrpxSrcLink_putCmd, IRDA_KEY_FULL, Rear");
+			viewmodeprm.sViewmode.viewmode =  FULL_VIEW;
+			viewmodeprm.sViewmode.viewnt = REAR_VIEW;
+			_cmd = SYSTEM_CMD_FULL_REAR_VIEW;
+			gFullFront = 0;
+		}
+	} else if( _cmd == IRDA_KEY_PWR ){
+		/*
+		if( gisFileSave_TEST == 0 )
+		{
+			//_cmd = SYSTEM_CMD_FILE_SAVE;
+			//gisFileSave_TEST = 1;
+		} else if( gisFileSave_TEST == 1) {
+			//_cmd = SYSTEM_CMD_FILE_SAVE_DONE;
+			//gisFileSave_TEST = 0;
+		}
+		*/
 	}
 
 	status = System_linkControl(gGrpxSrcLinkID, _cmd, &viewmodeprm, sizeof(viewmodeprm), TRUE); //gGrpxSrcLinkID 객체가 두개.
