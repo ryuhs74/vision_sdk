@@ -83,18 +83,6 @@ extern "C" {
 */
 typedef  struct
 {
-    Utils_DmaChObj   dmaChObj;
-    /**< Handle to DMA channel */
-
-    Utils_DmaChCreateParams dmaCreateArgs;
-    /**< DMA create args */
-
-    Utils_DmaCopyFill2D dmaCopyPrms[ALGORITHM_LINK_SURROUND_VIEW_MAX_WINDOWS];
-    /**< DMA copy params */
-
-    Utils_DmaCopyFill2D dmaFillPrms;
-    /**< DMA fill params    */
-
     AlgorithmLink_SurroundViewCreateParams   createArgs;
     /**< Create time arguments */
 
@@ -115,12 +103,6 @@ typedef  struct
 
     UInt32 outBufSize;
     /**< Size of output buffer in bytes */
-
-    Ptr *dmaFillLineAddr[UTILS_DMA_MAX_PLANES];
-    /**< Address of fill data line */
-
-    UInt32 dmaFillLineSize;
-    /**< Size of fill data line in bytes */
 
     AlgorithmLink_SurroundViewLayoutParams   curLayoutPrm;
     /**< Current layout parameters */

@@ -63,7 +63,7 @@ extern "C" {
  *
  *******************************************************************************
  */
-#define ALGORITHM_LINK_SURROUND_VIEW_MAX_WINDOWS    (8)
+#define ALGORITHM_LINK_SURROUND_VIEW_MAX_WINDOWS    (4)
 
 /**
  *******************************************************************************

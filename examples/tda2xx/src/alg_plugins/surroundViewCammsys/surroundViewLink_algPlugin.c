@@ -11,7 +11,7 @@
  *******************************************************************************
  * \file surroundViewLink_algPlugin.c
  *
- * \brief  This file contains plug in functions for DMA based SW Mosaic
+ * \brief  This file contains plug in functions for  Surround View
  *
  * \version 0.0 (Sept 2013) : [KC] First version
  *
@@ -323,139 +323,6 @@ Void AlgorithmLink_surroundViewAllocAndQueueOutBuf(void * pObj,
     }
 }
 
-/**
- *******************************************************************************
- *
- * \brief Alloc line buffer used to fill output buffer when no input
- *        is available
- *
- * \param  pObj              [IN] Algorithm link object handle
- *
- * \return  SYSTEM_LINK_STATUS_SOK on success
- *
- *******************************************************************************
- */
-Void AlgorithmLink_surroundViewAllocFillBufLine(void * pObj,
-                    AlgorithmLink_SurroundViewObj *pSurroundViewObj)
-{
-    pSurroundViewObj->dmaFillLineSize = pSurroundViewObj->outPitch[0] * 2;
-
-    pSurroundViewObj->dmaFillLineAddr[0] =
-                        Utils_memAlloc(
-                                UTILS_HEAPID_DDR_CACHED_SR,
-                                ( pSurroundViewObj->dmaFillLineSize ),
-                                ALGORITHMLINK_FRAME_ALIGN
-                            );
-    pSurroundViewObj->dmaFillLineAddr[1] =
-        (Ptr)((UInt32)pSurroundViewObj->dmaFillLineAddr[0]
-            + pSurroundViewObj->dmaFillLineSize)
-            ;
-
-    memset(pSurroundViewObj->dmaFillLineAddr[0], 0x80, pSurroundViewObj->dmaFillLineSize);
-
-    Cache_wbInv(pSurroundViewObj->dmaFillLineAddr[0],
-                pSurroundViewObj->dmaFillLineSize,
-                Cache_Type_ALL,
-                TRUE);
-}
-
-/**
- *******************************************************************************
- *
- * \brief Create DMA channel
- *
- * \param  pObj              [IN] Algorithm link object handle
- *
- * \return  SYSTEM_LINK_STATUS_SOK on success
- *
- *******************************************************************************
- */
-Void AlgorithmLink_surroundViewCreateDmaCh(void * pObj,
-                    AlgorithmLink_SurroundViewObj *pSurroundViewObj)
-{
-    Int32 status;
-    UInt32 winId;
-    Utils_DmaCopyFill2D *pDmaPrm;
-
-    Utils_DmaChCreateParams_Init(&pSurroundViewObj->dmaCreateArgs);
-
-    pSurroundViewObj->dmaCreateArgs.maxTransfers
-        = ALGORITHM_LINK_SURROUND_VIEW_MAX_WINDOWS;
-
-    if(System_getSelfProcId()==SYSTEM_PROC_DSP1
-        ||
-        System_getSelfProcId()==SYSTEM_PROC_DSP2
-        )
-    {
-        if(pSurroundViewObj->createArgs.useLocalEdma)
-        {
-            pSurroundViewObj->dmaCreateArgs.edmaInstId
-                = UTILS_DMA_LOCAL_EDMA_INST_ID;
-        }
-    }
-
-    status = Utils_dmaCreateCh(
-                &pSurroundViewObj->dmaChObj,
-                &pSurroundViewObj->dmaCreateArgs
-                );
-
-    UTILS_assert(status==SYSTEM_LINK_STATUS_SOK);
-
-    /* set constant DMA copy/fill params */
-    for( winId = 0; winId<ALGORITHM_LINK_SURROUND_VIEW_MAX_WINDOWS; winId++)
-    {
-        pDmaPrm = &pSurroundViewObj->dmaCopyPrms[winId];
-
-        if(pSurroundViewObj->dataFormat==SYSTEM_DF_YUV422I_UYVY
-            ||
-            pSurroundViewObj->dataFormat==SYSTEM_DF_YUV422I_YUYV
-        )
-        {
-            pDmaPrm->dataFormat    = SYSTEM_DF_RAW16;
-        }
-        else
-        if(pSurroundViewObj->dataFormat==SYSTEM_DF_YUV420SP_UV
-            ||
-            pSurroundViewObj->dataFormat==SYSTEM_DF_YUV420SP_VU
-        )
-        {
-            pDmaPrm->dataFormat    = SYSTEM_DF_YUV420SP_UV;
-        }
-
-        pDmaPrm->destAddr[0]   = NULL;
-        pDmaPrm->destAddr[1]   = NULL;
-        pDmaPrm->destPitch[0]  = pSurroundViewObj->outPitch[0];
-        pDmaPrm->destPitch[1]  = pSurroundViewObj->outPitch[1];
-        pDmaPrm->destStartX    = 0;
-        pDmaPrm->destStartY    = 0;
-        pDmaPrm->width         = 0;
-        pDmaPrm->height        = 0;
-        pDmaPrm->srcAddr[0]    = NULL;
-        pDmaPrm->srcAddr[1]    = NULL;
-        pDmaPrm->srcPitch[0]   = 0;
-        pDmaPrm->srcPitch[1]   = 0;
-        pDmaPrm->srcStartX     = 0;
-        pDmaPrm->srcStartY     = 0;
-    }
-
-    pDmaPrm = &pSurroundViewObj->dmaFillPrms;
-
-    pDmaPrm->dataFormat    = pSurroundViewObj->dmaCopyPrms[0].dataFormat;
-    pDmaPrm->destAddr[0]   = NULL;
-    pDmaPrm->destAddr[1]   = NULL;
-    pDmaPrm->destPitch[0]  = pSurroundViewObj->outPitch[0];
-    pDmaPrm->destPitch[1]  = pSurroundViewObj->outPitch[1];
-    pDmaPrm->destStartX    = 0;
-    pDmaPrm->destStartY    = 0;
-    pDmaPrm->width         = 0;
-    pDmaPrm->height        = 0;
-    pDmaPrm->srcAddr[0]    = pSurroundViewObj->dmaFillLineAddr[0];
-    pDmaPrm->srcAddr[1]    = pSurroundViewObj->dmaFillLineAddr[1];
-    pDmaPrm->srcPitch[0]   = pSurroundViewObj->dmaFillLineSize;
-    pDmaPrm->srcPitch[1]   = pSurroundViewObj->dmaFillLineSize;
-    pDmaPrm->srcStartX     = 0;
-    pDmaPrm->srcStartY     = 0;
-}
 
 /**
  *******************************************************************************
@@ -526,14 +393,12 @@ Int32 AlgorithmLink_surroundViewCreate(void * pObj, void * pCreateParams)
                     &pSurroundViewObj->curLayoutPrm)
         )
     {
-        Vps_printf(" SURROUND_VIEW: Invalid SW Mosaic parameters !!!\n");
+        Vps_printf(" SURROUND_VIEW: Invalid Surround View parameters !!!\n");
         UTILS_assert(0);
     }
 
     AlgorithmLink_surroundViewInitQueueInfo(pObj, pSurroundViewObj);
     AlgorithmLink_surroundViewAllocAndQueueOutBuf(pObj, pSurroundViewObj);
-    AlgorithmLink_surroundViewAllocFillBufLine(pObj, pSurroundViewObj);
-    AlgorithmLink_surroundViewCreateDmaCh(pObj, pSurroundViewObj);
 
     pSurroundViewObj->linkStatsInfo = Utils_linkStatsCollectorAllocInst(
         AlgorithmLink_getLinkId(pObj), "ALG_SURROUND_VIEW");
@@ -602,65 +467,6 @@ Bool AlgorithmLink_surroundViewIsInputBufValid(void * pObj,
 /**
  *******************************************************************************
  *
- * \brief Check and fill output buffer with bank color is required
- *
- * \param  pObj                     [IN] Algorithm link object handle
- * \param  pSurroundViewObj              [IN] SURROUND VIEW object handle
- * \param  pOutFrameBuffer          [IN] Output frame buffer
- *
- * \return  SYSTEM_LINK_STATUS_SOK on success
- *
- *******************************************************************************
- */
-Int32 AlgorithmLink_surroundViewDoDmaFill(void * pObj,
-                    AlgorithmLink_SurroundViewObj *pSurroundViewObj,
-                    System_VideoFrameBuffer *pOutFrameBuffer
-                    )
-{
-    Int32 status    = SYSTEM_LINK_STATUS_SOK;
-    AlgorithmLink_SurroundViewLayoutParams *pLayoutPrm;
-    Utils_DmaCopyFill2D *pDmaPrm;
-
-    pLayoutPrm = &pSurroundViewObj->curLayoutPrm;
-
-    if(pSurroundViewObj->isLayoutSwitch)
-    {
-        /* Layout switch occured, there could be regions in the output buffer
-         * where no input is present, hence clear the full output
-         * buffer before copying input from output.
-         * This needs to be done only pSurroundViewObj->createArgs.numOutBuf
-         * times
-         */
-        pSurroundViewObj->isLayoutSwitch = FALSE;
-        pSurroundViewObj->doFillBuf = pSurroundViewObj->createArgs.numOutBuf;
-    }
-
-    if(pSurroundViewObj->doFillBuf)
-    {
-        pSurroundViewObj->doFillBuf--;
-
-        /* fill complete output buffer with blank color */
-        pDmaPrm = &pSurroundViewObj->dmaFillPrms;
-
-        pDmaPrm->destAddr[0]   = pOutFrameBuffer->bufAddr[0];
-        pDmaPrm->destAddr[1]   = pOutFrameBuffer->bufAddr[1];
-        pDmaPrm->width         = pLayoutPrm->outBufWidth;
-        pDmaPrm->height        = pLayoutPrm->outBufHeight;
-
-        status = Utils_dmaFill2D(
-                &pSurroundViewObj->dmaChObj,
-                &pSurroundViewObj->dmaFillPrms,
-                1
-                );
-        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
-    }
-
-    return status;
-}
-
-/**
- *******************************************************************************
- *
  * \brief Copy data from input into output based on layout parameters
  *
  * \param  pObj                     [IN] Algorithm link object handle
@@ -689,7 +495,7 @@ Int32 AlgorithmLink_surroundViewMakeTopView(void * pObj,
     pLutViewInfo = pLayoutPrm->lutViewInfo;
 
 
-
+    ///side
 	status = makeSingleView(pInFrameCompositeBuffer->bufAddr[0][pLayoutPrm->singleViewInputChannel],
 							pOutFrameBuffer->bufAddr[0],
 							pLayoutPrm->psingleViewLUT,
@@ -1019,7 +825,7 @@ Int32 AlgorithmLink_surroundViewControl(void * pObj, void * pControlParams)
                     )
                 {
                     status = SYSTEM_LINK_STATUS_EINVALID_PARAMS;
-                    Vps_printf(" SURROUND_VIEW: Invalid SW Mosaic parameters !!!\n");
+                    Vps_printf(" SURROUND_VIEW: Invalid Surround View parameters !!!\n");
                 }
                 else
                 {
@@ -1105,8 +911,7 @@ Int32 AlgorithmLink_surroundViewDelete(void * pObj)
     status = Utils_linkStatsCollectorDeAllocInst(pSurroundViewObj->linkStatsInfo);
     UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
-    /* free DMA channel */
-    status = Utils_dmaDeleteCh(&pSurroundViewObj->dmaChObj);
+
     UTILS_assert(status==SYSTEM_LINK_STATUS_SOK);
 
     /* free memory */
@@ -1130,11 +935,6 @@ Int32 AlgorithmLink_surroundViewDelete(void * pObj)
 					pSurroundViewObj->buf2,
 					pSurroundViewObj->outBufSize);
 
-    status = Utils_memFree(
-                UTILS_HEAPID_DDR_CACHED_SR,
-                pSurroundViewObj->dmaFillLineAddr[0],
-                pSurroundViewObj->dmaFillLineSize
-                  );
     UTILS_assert(status==SYSTEM_LINK_STATUS_SOK);
 
     free(pSurroundViewObj);
