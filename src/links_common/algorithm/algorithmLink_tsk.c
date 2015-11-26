@@ -33,10 +33,10 @@
 #include <src/utils_common/include/utils_idle.h>
 #endif
 
-#include <src/utils_common/include/utils_lut.h> //ryuhs74@20151112 - Add
-#include <examples/tda2xx/src/links/uartCmd/uartCmd_priv.h> //ryuhs74@20151105 - Test UI CMD
-UInt32 gE500LUTLinkID; //ryuhs74@20151112 - Add
+//#include <src/utils_common/include/utils_lut.h> //ryuhs74@20151112 - Add
+//#include <examples/tda2xx/src/links/uartCmd/uartCmd_priv.h> //ryuhs74@20151105 - Test UI CMD
 
+void AlgorithmLink_surroundViewSetViewMode(void *pObj, void* pCreateParams );
 /**
  *******************************************************************************
  *
@@ -201,6 +201,17 @@ Void AlgorithmLink_tskMain(struct Utils_TskHndl *pTsk, Utils_MsgHndl *pMsg)
             }
             Utils_tskAckOrFreeMsg(pMsg, status);
             break;
+        //ryuhs74@20151126- Add View Mode Cmd START
+        case SYSTEM_CMD_FRONT_SIDE_VIEW:
+        case SYSTEM_CMD_REAR_SIDE_VIEW:
+        case SYSTEM_CMD_RIGH_SIDE_VIEW:
+        case SYSTEM_CMD_LEFT_SIDE_VIEW:
+        case SYSTEM_CMD_FULL_FRONT_VIEW:
+        case SYSTEM_CMD_FULL_REAR_VIEW:
+        	AlgorithmLink_surroundViewSetViewMode(pObj, (void*)(Utils_msgGetPrm(pMsg)));
+        	Utils_tskAckOrFreeMsg(pMsg, SYSTEM_LINK_STATUS_SOK);
+        	break;
+        //ryuhs74@20151126- Add View Mode Cmd END
         case SYSTEM_CMD_NEW_DATA:
 //Vps_printf("Alg: tskMain SYSTEM_CMD_NEW_DATA LinkId: %d start !!!\n",pObj->linkId);
           Utils_tskAckOrFreeMsg(pMsg, 0);
@@ -636,59 +647,4 @@ Int32 AlgorithmLink_putEmptyBuffers(Void              *ptr,
 
     return status;
 }
-
-/*
-void E500_ViewMode_putCmd( uint8_t _cmd )
-{
-#if 1
-	AlgorithmLink_CreateParams E500;
-	Int32 status;
-	Vps_printf("In E500_ViewMode_putCmd, ");
-
-	if( _cmd == CMD_REQ_FRONT_VIEW ){
-		Vps_printf("CMD_REQ_FRONT_VIEW");
-
-		E500.sViewmode.viewmode =  TOP_VIEW;
-		E500.sViewmode.viewnt = FRONT_VIEW;
-		_cmd = SYSTEM_CMD_FRONT_SIDE_VIEW;
-	} else if( _cmd == CMD_REQ_REAR_VIEW ){
-		Vps_printf("CMD_REQ_REAR_VIEW");
-
-		E500.sViewmode.viewmode =  TOP_VIEW;
-		E500.sViewmode.viewnt = REAR_VIEW;
-		_cmd = SYSTEM_CMD_REAR_SIDE_VIEW;
-	} else if( _cmd == CMD_REQ_RIGHT_VIEW ){
-		Vps_printf("CMD_REQ_RIGHT_VIEW");
-
-		E500.sViewmode.viewmode =  TOP_VIEW;
-		E500.sViewmode.viewnt = RIGHT_VIEW;
-		_cmd = SYSTEM_CMD_RIGH_SIDE_VIEW;
-	} else if( _cmd == CMD_REQ_LEFT_VIEW ){
-		Vps_printf("CMD_REQ_LEFT_VIEW");
-
-		E500.sViewmode.viewmode =  TOP_VIEW;
-		E500.sViewmode.viewnt = LEFT_VIEW;
-		_cmd = SYSTEM_CMD_LEFT_SIDE_VIEW;
-	}else if( _cmd == CMD_REQ_FULL_FRONT_VIEW ){
-		Vps_printf("CMD_REQ_FULL_FRONT_VIEW");
-
-		E500.sViewmode.viewmode =  FULL_VIEW;
-		E500.sViewmode.viewnt = FRONT_VIEW;
-		_cmd = SYSTEM_CMD_FULL_FRONT_VIEW;
-	} else if( _cmd == CMD_REQ_FULL_REAR_VIEW ){
-		Vps_printf("CMD_REQ_FULL_REAR_VIEW");
-
-		E500.sViewmode.viewmode =  FULL_VIEW;
-		E500.sViewmode.viewnt = REAR_VIEW;
-		_cmd = SYSTEM_CMD_FULL_REAR_VIEW;
-	}
-
-	status = System_linkControl(gE500LUTLinkID, _cmd, &E500, sizeof(E500), TRUE); //gGrpxSrcLinkID °´Ã¼°¡ µÎ°³.
-
-	Vps_printf(" -- CMD Send %s gE500LUTLinkID\n", ( status == 0x0)?"Success":"Fail");
-
-
-#endif
-}
-*/
 /* Nothing beyond this point */

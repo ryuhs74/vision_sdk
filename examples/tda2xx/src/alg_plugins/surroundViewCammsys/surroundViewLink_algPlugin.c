@@ -1142,6 +1142,14 @@ Int32 AlgorithmLink_surroundViewDelete(void * pObj)
     return status;
 }
 
+void AlgorithmLink_surroundViewSetViewMode(void *pObj, void* pCreateParams ){
+
+	AlgorithmLink_SurroundViewObj  *pSurroundViewObj = (AlgorithmLink_SurroundViewObj *)AlgorithmLink_getAlgorithmParamsObj(pObj);
+	AlgorithmLink_SurroundViewCreateParams* pCreateParms = (AlgorithmLink_SurroundViewCreateParams *)pCreateParams;
+	pSurroundViewObj->createArgs.sViewmode.viewmode = pCreateParms->sViewmode.viewmode; //TOP_VIEW / FULL_VIEW
+	pSurroundViewObj->createArgs.sViewmode.viewnt = pCreateParms->sViewmode.viewnt; //FRONT / REAR / RIGHT / LEFT
+}
+
 /**
  *******************************************************************************
  *

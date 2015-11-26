@@ -16,7 +16,15 @@
 *******************************************************************************
 */
 #include "chains_surround_View_priv.h"
+
+#include <src/utils_common/include/utils_lut.h> //ryuhs74@20151112 - Add
+#include <examples/tda2xx/src/links/uartCmd/uartCmd_priv.h> //ryuhs74@20151105 - Test UI CMD
+#include <include/link_api/system_common.h>
+
 extern UInt32 gGrpxSrcLinkID;
+UInt32 gE500LUTLinkID; //ryuhs74@20151112 - Add
+extern UInt32 gFullFront;
+
 Void chains_surround_View_SetLinkId(chains_surround_ViewObj *pObj){
        pObj->CaptureLinkID                  = SYSTEM_LINK_ID_CAPTURE;
        pObj->DupLinkID                      = IPU1_0_LINK (SYSTEM_LINK_ID_DUP_0);
@@ -34,6 +42,7 @@ Void chains_surround_View_SetLinkId(chains_surround_ViewObj *pObj){
 
        //pObj->Save_SaveLinkID                = IPU1_0_LINK (SYSTEM_LINT_SAVE_0); //ryuhs74@20151027 - Add Save Link
        gGrpxSrcLinkID = pObj->GrpxSrcLinkID;
+       gE500LUTLinkID = pObj->Alg_SurroundViewLinkID;
 }
 
 Void chains_surround_View_ResetLinkPrms(chains_surround_ViewObj *pObj){
@@ -351,5 +360,64 @@ Void chains_surround_View_printStatistics(chains_surround_ViewObj *pObj){
        System_linkPrintStatistics(pObj->GrpxSrcLinkID);
        System_linkPrintStatistics(pObj->Display_GrpxLinkID);
        Task_sleep(500);
+}
+
+void E500ViewMode_putCmd( uint8_t _cmd )
+{
+	/*
+	#define IRDA_KEY_PWR	(0x09)
+		#define IRDA_KEY_FULL	(0x05)
+		#define IRDA_KEY_LOCK	(0x5C)
+		#define IRDA_KEY_UP		(0x0F)
+		#define IRDA_KEY_DOWN	(0x0E)
+		#define IRDA_KEY_LEFT	(0x0B)
+		#define IRDA_KEY_RIGHT	(0x0A)
+	 */
+#if 1
+	AlgorithmLink_SurroundViewCreateParams       Alg_SurroundViewPrm;
+	Int32 status;
+
+	if( _cmd == IRDA_KEY_UP ){
+		Vps_printf("In E500ViewMode_putCmd, IRDA_KEY_UP");
+
+		Alg_SurroundViewPrm.sViewmode.viewmode =  TOP_VIEW;
+		Alg_SurroundViewPrm.sViewmode.viewnt = FRONT_VIEW;
+		_cmd = SYSTEM_CMD_FRONT_SIDE_VIEW;
+	} else if( _cmd == IRDA_KEY_DOWN ){
+		Vps_printf("In E500ViewMode_putCmd, IRDA_KEY_DOWN");
+
+		Alg_SurroundViewPrm.sViewmode.viewmode =  TOP_VIEW;
+		Alg_SurroundViewPrm.sViewmode.viewnt = REAR_VIEW;
+		_cmd = SYSTEM_CMD_REAR_SIDE_VIEW;
+	} else if( _cmd == IRDA_KEY_RIGHT ){
+		Vps_printf("In E500ViewMode_putCmd, IRDA_KEY_RIGHT");
+
+		Alg_SurroundViewPrm.sViewmode.viewmode =  TOP_VIEW;
+		Alg_SurroundViewPrm.sViewmode.viewnt = RIGHT_VIEW;
+		_cmd = SYSTEM_CMD_RIGH_SIDE_VIEW;
+	} else if( _cmd == IRDA_KEY_LEFT ){
+		Vps_printf("In E500ViewMode_putCmd, IRDA_KEY_LEFT");
+
+		Alg_SurroundViewPrm.sViewmode.viewmode =  TOP_VIEW;
+		Alg_SurroundViewPrm.sViewmode.viewnt = LEFT_VIEW;
+		_cmd = SYSTEM_CMD_LEFT_SIDE_VIEW;
+	}else if( _cmd == IRDA_KEY_FULL ){
+		if( gFullFront == 0 )//Front Full View
+		{
+			Vps_printf("In E500ViewMode_putCmd, IRDA_KEY_FULL");
+			Alg_SurroundViewPrm.sViewmode.viewmode =  FULL_VIEW;
+			Alg_SurroundViewPrm.sViewmode.viewnt = FRONT_VIEW;
+			_cmd = SYSTEM_CMD_FULL_FRONT_VIEW;
+		} else {
+			Vps_printf("In E500ViewMode_putCmd, IRDA_KEY_FULL");
+			Alg_SurroundViewPrm.sViewmode.viewmode =  FULL_VIEW;
+			Alg_SurroundViewPrm.sViewmode.viewnt = REAR_VIEW;
+			_cmd = SYSTEM_CMD_FULL_REAR_VIEW;
+		}
+	}
+
+	status = System_linkControl(gE500LUTLinkID, _cmd, &Alg_SurroundViewPrm, sizeof(AlgorithmLink_SurroundViewCreateParams), TRUE); //gGrpxSrcLinkID °´Ã¼°¡ µÎ°³.
+	Vps_printf("   CMD Send %s E500ViewMode_putCmd\n", ( status == 0x0)?"Success":"Fail");
+#endif
 }
 
