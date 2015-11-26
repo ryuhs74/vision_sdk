@@ -59,25 +59,23 @@ typedef yuyv yuvHD1080P[HD1080P_WIDTH];
 #define LinearInterpolation(x,q1,q2,perFraction,fractionBits)\
 	((perFraction-x)*q1 + x*q2)>>fractionBits
 
+#define _X	lut->xFraction
+#define _Y lut->yFraction
 ///https://en.wikipedia.org/wiki/Bilinear_interpolation
 #define BilinearInterpolation(q, lut, Q,  pitch)\
 {\
-	Int16 X =	lut->xFraction;\
-	Int16 Y =	lut->yFraction;\
-	Int16 R1,R2;\
-	R1 = LinearInterpolation(X,q[0].y,q[1].y,63,AVM_LUT_FRACTION_BITS);\
-	R2 = LinearInterpolation(X,q[pitch].y,q[pitch+1].y,63,AVM_LUT_FRACTION_BITS);\
-	Q = LinearInterpolation(Y,R1,R2,63,AVM_LUT_FRACTION_BITS);\
+	UInt16 R1,R2;\
+	R1 = LinearInterpolation(_X,q[0].y,q[1].y,63,AVM_LUT_FRACTION_BITS);\
+	R2 = LinearInterpolation(_X,q[pitch].y,q[pitch+1].y,63,AVM_LUT_FRACTION_BITS);\
+	Q = LinearInterpolation(_Y,R1,R2,63,AVM_LUT_FRACTION_BITS);\
 }
 ///https://en.wikipedia.org/wiki/Bilinear_interpolation
 #define BilinearInterpolationUV(q, lut, Q, pitch)\
 {\
-	UInt16 X =	lut->xFraction;\
-	UInt16 Y =	lut->yFraction;\
 	UInt16 R1,R2;\
-	R1 = LinearInterpolation(X,q[0].uv,q[2].uv,63,AVM_LUT_FRACTION_BITS);\
-	R2 = LinearInterpolation(X,q[pitch].uv,q[pitch+2].uv,63,AVM_LUT_FRACTION_BITS);\
-	Q = LinearInterpolation(Y,R1,R2,63,AVM_LUT_FRACTION_BITS);\
+	R1 = LinearInterpolation(_X,q[0].uv,q[2].uv,63,AVM_LUT_FRACTION_BITS);\
+	R2 = LinearInterpolation(_X,q[pitch].uv,q[pitch+2].uv,63,AVM_LUT_FRACTION_BITS);\
+	Q = LinearInterpolation(_Y,R1,R2,63,AVM_LUT_FRACTION_BITS);\
 }
 
 
@@ -210,6 +208,8 @@ static inline Int32 makeSingleView(  UInt32       	*RESTRICT inPtr,
 	viewInfo->height = viewInfo->height < childViewInfoLUT->height + childViewInfoLUT->startY ? viewInfo->height : childViewInfoLUT->height+ childViewInfoLUT->startY;
 */
 
+	makeSingleView720P(inPtr, outPtr, viewLUTPtr, viewInfo, childViewInfoLUT);
+#if 0
 	if(viewInfo->pitch == HD720P_WIDTH)
 	{
 		makeSingleView720P(inPtr, outPtr, viewLUTPtr, viewInfo, childViewInfoLUT);
@@ -220,7 +220,7 @@ static inline Int32 makeSingleView(  UInt32       	*RESTRICT inPtr,
 	{
 		return SYSTEM_LINK_STATUS_EINVALID_PARAMS;
 	}
-
+#endif
     return SYSTEM_LINK_STATUS_SOK;
 }
 
