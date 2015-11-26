@@ -236,7 +236,7 @@ Int32 UtillUartRead(Utils_UART_Channel channel, uint8_t* rdBuf, size_t* nLen)
     nStatus = GIO_read(uartRxHandle[channel], rdBuf, nLen);
     if (IOM_COMPLETED != nStatus)
     {
-    	printf(" SYSTEM: UART: ERROR: GIO_read failed (status = %d) !!! \n",nStatus);
+    	printf(" SYSTEM: UART: ERROR: GIO_read failed (status = %d)( channel = %d) !!! \n",nStatus,channel);
     }
 
     return nStatus;
@@ -254,7 +254,7 @@ Int32 UtillUartWrite(Utils_UART_Channel channel, uint8_t* wrBuf, size_t* nLen)
     nStatus = GIO_write(uartTxHandle[channel], wrBuf, nLen);
     if (IOM_COMPLETED != nStatus)
     {
-    	printf(" SYSTEM: UART: ERROR: GIO_read failed (status = %d) !!! \n",nStatus);
+    	printf(" SYSTEM: UART: ERROR: GIO_write failed (status = %d)( channel = %d) !!! \n",nStatus,channel);
     }
 
     return nStatus;
