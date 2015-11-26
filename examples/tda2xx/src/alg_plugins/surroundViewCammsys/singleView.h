@@ -24,7 +24,7 @@ typedef struct
 	UInt8 y;
 	UInt8 uv;
 }yuyv;
-
+#if 0
 typedef struct
 {
 	UInt16 width;
@@ -33,6 +33,7 @@ typedef struct
 	UInt16 startY;
 	UInt16 pitch;
 }ViewInfo;
+#endif
 
 typedef struct {
 	unsigned short xFraction:AVM_LUT_FRACTION_BITS;
@@ -64,9 +65,9 @@ typedef yuyv yuvHD1080P[HD1080P_WIDTH];
 	Int16 X =	lut->xFraction;\
 	Int16 Y =	lut->yFraction;\
 	Int16 R1,R2;\
-	R1 = LinearInterpolation(X,q[0].y,q[1].y,64,AVM_LUT_FRACTION_BITS);\
-	R2 = LinearInterpolation(X,q[pitch].y,q[pitch+1].y,64,AVM_LUT_FRACTION_BITS);\
-	Q = LinearInterpolation(Y,R1,R2,64,AVM_LUT_FRACTION_BITS);\
+	R1 = LinearInterpolation(X,q[0].y,q[1].y,63,AVM_LUT_FRACTION_BITS);\
+	R2 = LinearInterpolation(X,q[pitch].y,q[pitch+1].y,63,AVM_LUT_FRACTION_BITS);\
+	Q = LinearInterpolation(Y,R1,R2,63,AVM_LUT_FRACTION_BITS);\
 }
 ///https://en.wikipedia.org/wiki/Bilinear_interpolation
 #define BilinearInterpolationUV(q, lut, Q, pitch)\
@@ -74,17 +75,17 @@ typedef yuyv yuvHD1080P[HD1080P_WIDTH];
 	UInt16 X =	lut->xFraction;\
 	UInt16 Y =	lut->yFraction;\
 	UInt16 R1,R2;\
-	R1 = LinearInterpolation(X,q[0].uv,q[2].uv,64,AVM_LUT_FRACTION_BITS);\
-	R2 = LinearInterpolation(X,q[pitch].uv,q[pitch+2].uv,64,AVM_LUT_FRACTION_BITS);\
-	Q = LinearInterpolation(Y,R1,R2,64,AVM_LUT_FRACTION_BITS);\
+	R1 = LinearInterpolation(X,q[0].uv,q[2].uv,63,AVM_LUT_FRACTION_BITS);\
+	R2 = LinearInterpolation(X,q[pitch].uv,q[pitch+2].uv,63,AVM_LUT_FRACTION_BITS);\
+	Q = LinearInterpolation(Y,R1,R2,63,AVM_LUT_FRACTION_BITS);\
 }
 
 
 static inline Int32 makeSingleView720P(  UInt32       *RESTRICT inPtr,
                            	   UInt32           *RESTRICT outPtr,
 							   UInt32			*RESTRICT viewLUTPtr,
-							   ViewInfo			*RESTRICT viewInfo,
-							   ViewInfo			*RESTRICT childViewInfoLUT
+							   AlgorithmLink_SurroundViewLutInfo			*RESTRICT viewInfo,
+							   AlgorithmLink_SurroundViewLutInfo			*RESTRICT childViewInfoLUT
                           )
 {
 	UInt16 rowIdx;
@@ -93,26 +94,27 @@ static inline Int32 makeSingleView720P(  UInt32       *RESTRICT inPtr,
     yuvHD720P* iPtr;
     yuvHD720P* oPtr;
 
-    UInt16 width = viewInfo->width + viewInfo->startX;
+    UInt16 startX = viewInfo->startX + childViewInfoLUT->startX;
+    UInt16 width = childViewInfoLUT->width + startX;
+    UInt16 height = childViewInfoLUT->height;
 
     ViewLUT_Packed *lut = ((ViewLUT_Packed*)viewLUTPtr) + (childViewInfoLUT->pitch * childViewInfoLUT->startY);
 
     iPtr  = (yuvHD720P*)inPtr;
-    oPtr = ((yuvHD720P*)outPtr) + viewInfo->startY;
+    oPtr = ((yuvHD720P*)outPtr) + viewInfo->startY + childViewInfoLUT->startY;
 
 #ifdef BUILD_DSP
 #pragma UNROLL(2);
 #pragma MUST_ITERATE(500,720, 2);
 #endif
-    for(rowIdx = 0; rowIdx < viewInfo->height ; rowIdx++)
+    for(rowIdx = 0; rowIdx < height ; rowIdx++)
     {
-    	lut += childViewInfoLUT->pitch;
     	ViewLUT_Packed *lutbak;
 #ifdef BUILD_DSP
 #pragma UNROLL(4);
 #pragma MUST_ITERATE(500,1280, 4);
 #endif
-        for(colIdx = viewInfo->startX, lutbak = lut + childViewInfoLUT->startX; colIdx < width ; colIdx++, lutbak++)
+        for(colIdx = startX, lutbak = lut + childViewInfoLUT->startX; colIdx < width ; colIdx++, lutbak++)
         {
         	yuyv *q = &iPtr[lutbak->yInteger][lutbak->xInteger];
 
@@ -123,7 +125,7 @@ static inline Int32 makeSingleView720P(  UInt32       *RESTRICT inPtr,
 #pragma UNROLL(2);
 #pragma MUST_ITERATE(350,640, 2);
 #endif
-        for(colIdx = viewInfo->startX, lutbak = lut + childViewInfoLUT->startX; colIdx < width ; colIdx+=2, lutbak+=2)
+        for(colIdx = startX, lutbak = lut + childViewInfoLUT->startX; colIdx < width ; colIdx+=2, lutbak+=2)
         {
         	yuyv *q = &iPtr[lutbak->yInteger][lutbak->xInteger & 0xfffe];
         	///U
@@ -133,6 +135,7 @@ static inline Int32 makeSingleView720P(  UInt32       *RESTRICT inPtr,
         	BilinearInterpolationUV(q, lutbak, oPtr[rowIdx][colIdx+1].uv, HD720P_WIDTH);
         }
 #endif
+    	lut += childViewInfoLUT->pitch;
     }
     return SYSTEM_LINK_STATUS_SOK;
 }
@@ -140,8 +143,8 @@ static inline Int32 makeSingleView720P(  UInt32       *RESTRICT inPtr,
 static inline Int32 makeSingleView1080P(  UInt32       *RESTRICT inPtr,
                            	   UInt32           *RESTRICT outPtr,
 							   UInt32			*RESTRICT viewLUTPtr,
-							   ViewInfo			*RESTRICT viewInfo,
-							   ViewInfo			*RESTRICT childViewInfoLUT
+							   AlgorithmLink_SurroundViewLutInfo			*RESTRICT viewInfo,
+							   AlgorithmLink_SurroundViewLutInfo			*RESTRICT childViewInfoLUT
                           )
 {
 	UInt16 rowIdx;
@@ -198,12 +201,14 @@ static inline Int32 makeSingleView1080P(  UInt32       *RESTRICT inPtr,
 static inline Int32 makeSingleView(  UInt32       	*RESTRICT inPtr,
                            	   UInt32           *RESTRICT outPtr,
 							   UInt32			*RESTRICT viewLUTPtr,
-							   ViewInfo			*RESTRICT viewInfo,
-							   ViewInfo			*RESTRICT childViewInfoLUT
+							   AlgorithmLink_SurroundViewLutInfo			*RESTRICT viewInfo,
+							   AlgorithmLink_SurroundViewLutInfo			*RESTRICT childViewInfoLUT
                           )
 {
+/*
 	viewInfo->width = viewInfo->width < childViewInfoLUT->width + childViewInfoLUT->startX ? viewInfo->width : childViewInfoLUT->width + childViewInfoLUT->startX;
 	viewInfo->height = viewInfo->height < childViewInfoLUT->height + childViewInfoLUT->startY ? viewInfo->height : childViewInfoLUT->height+ childViewInfoLUT->startY;
+*/
 
 	if(viewInfo->pitch == HD720P_WIDTH)
 	{

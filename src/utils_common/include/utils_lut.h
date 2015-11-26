@@ -31,6 +31,26 @@ typedef struct
 }ViewMode;
 // - END
 
+typedef struct
+{
+	UInt16 startX;
+	UInt16 startY;
+	UInt16 width;
+	UInt16 height;
+}lut_Info;
+
+typedef enum lut_Info_Index
+{
+	LUT_INFO_TOP_A00,
+	LUT_INFO_TOP_A01,
+	LUT_INFO_TOP_A02,
+	LUT_INFO_TOP_A03,
+	LUT_INFO_TOP_A04,
+	LUT_INFO_TOP_A05,
+	LUT_INFO_TOP_A06,
+	LUT_INFO_TOP_A07,
+	LUT_INFO_INDEX_MAX
+}LUT_INFO_INDEX;
 
 typedef enum lut_index
 {
@@ -44,12 +64,13 @@ typedef enum lut_index
 	Basic_rightNT,
 	cmaskNT,
 	Basic_frontFullView,
-	Basit_rearFullView,
-	Basic_litInfo,
+	Basic_rearFullView,
+	Basic_lutInfo,
 	MAX_LUT_INDEX
 }LUT_INDEX;
 
 void* LUTAlloc(LUT_INDEX index );
 void LUTFree(LUT_INDEX index);
+lut_Info* GetLutInfo(LUT_INFO_INDEX index);
 
 #endif /* EXAMPLES_TDA2XX_SRC_DEVICES_UTILS_LUT_H_ */

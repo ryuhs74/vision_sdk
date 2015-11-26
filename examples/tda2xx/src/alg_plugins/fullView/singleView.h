@@ -85,7 +85,8 @@ static inline Int32 makeSingleView720P(  UInt32       *RESTRICT inPtr,
     yuvHD720P* iPtr;
     yuvHD720P* oPtr;
 
-    UInt16 width = viewInfo->width + viewInfo->startX;
+    UInt16 startX = viewInfo->startX + childViewInfoLUT->startX;
+    UInt16 width = childViewInfoLUT->width + startX;
 
     ViewLUT_Packed *lut = ((ViewLUT_Packed*)viewLUTPtr) + (childViewInfoLUT->pitch * childViewInfoLUT->startY);
 
@@ -96,7 +97,7 @@ static inline Int32 makeSingleView720P(  UInt32       *RESTRICT inPtr,
 #pragma UNROLL(2);
 #pragma MUST_ITERATE(500,720, 2);
 #endif
-    for(rowIdx = 0; rowIdx < viewInfo->height ; rowIdx++)
+    for(rowIdx = childViewInfoLUT->startY; rowIdx < childViewInfoLUT->height ; rowIdx++)
     {
     	lut += childViewInfoLUT->pitch;
     	ViewLUT_Packed *lutbak;
@@ -104,7 +105,7 @@ static inline Int32 makeSingleView720P(  UInt32       *RESTRICT inPtr,
 #pragma UNROLL(4);
 #pragma MUST_ITERATE(500,1280, 4);
 #endif
-        for(colIdx = viewInfo->startX, lutbak = lut + childViewInfoLUT->startX; colIdx < width ; colIdx++, lutbak++)
+        for(colIdx = startX, lutbak = lut + childViewInfoLUT->startX; colIdx < width ; colIdx++, lutbak++)
         {
         	yuyv *q = &iPtr[lutbak->yInteger][lutbak->xInteger];
 
@@ -115,7 +116,7 @@ static inline Int32 makeSingleView720P(  UInt32       *RESTRICT inPtr,
 #pragma UNROLL(2);
 #pragma MUST_ITERATE(350,640, 2);
 #endif
-        for(colIdx = viewInfo->startX, lutbak = lut + childViewInfoLUT->startX; colIdx < width ; colIdx+=2, lutbak+=2)
+        for(colIdx = startX, lutbak = lut + childViewInfoLUT->startX; colIdx < width ; colIdx+=2, lutbak+=2)
         {
         	yuyv *q = &iPtr[lutbak->yInteger][lutbak->xInteger & 0xfffe];
         	///U
@@ -194,9 +195,11 @@ static inline Int32 makeSingleView(  UInt32       	*RESTRICT inPtr,
 							   ViewInfo			*RESTRICT childViewInfoLUT
                           )
 {
-	viewInfo->width = viewInfo->width < childViewInfoLUT->width + childViewInfoLUT->startX ? viewInfo->width : childViewInfoLUT->width + childViewInfoLUT->startX;
-	viewInfo->height = viewInfo->height < childViewInfoLUT->height + childViewInfoLUT->startY ? viewInfo->height : childViewInfoLUT->height+ childViewInfoLUT->startY;
+//	viewInfo->width = viewInfo->width < childViewInfoLUT->width + childViewInfoLUT->startX ? viewInfo->width : childViewInfoLUT->width + childViewInfoLUT->startX;
+//	viewInfo->height = viewInfo->height < childViewInfoLUT->height + childViewInfoLUT->startY ? viewInfo->height : childViewInfoLUT->height+ childViewInfoLUT->startY;
 
+	makeSingleView720P(inPtr, outPtr, viewLUTPtr, viewInfo, childViewInfoLUT);
+#if 0
 	if(viewInfo->pitch == HD720P_WIDTH)
 	{
 		makeSingleView720P(inPtr, outPtr, viewLUTPtr, viewInfo, childViewInfoLUT);
@@ -207,7 +210,7 @@ static inline Int32 makeSingleView(  UInt32       	*RESTRICT inPtr,
 	{
 		return SYSTEM_LINK_STATUS_EINVALID_PARAMS;
 	}
-
+#endif
     return SYSTEM_LINK_STATUS_SOK;
 }
 

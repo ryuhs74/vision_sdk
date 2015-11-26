@@ -31,7 +31,6 @@
  */
 #include "iFullViewAlgo.h"
 #include "singleView.h"
-#include "blendView.h"
 
 
 /**

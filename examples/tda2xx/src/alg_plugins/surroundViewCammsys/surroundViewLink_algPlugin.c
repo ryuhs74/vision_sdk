@@ -24,6 +24,24 @@
  */
 #include "surroundViewLink_priv.h"
 #include "singleView.h"
+#include "blendView.h"
+
+ Int32 (*AlgorithmLink_surroundViewMake)(void * pObj,
+         AlgorithmLink_SurroundViewObj *pSurroundViewObj,
+         System_VideoFrameCompositeBuffer *pInFrameCompositeBuffer,
+         System_VideoFrameBuffer *pOutFrameBuffer
+         );
+
+ Int32 AlgorithmLink_surroundViewMakeTopView(void * pObj,
+                     AlgorithmLink_SurroundViewObj *pSurroundViewObj,
+                     System_VideoFrameCompositeBuffer *pInFrameCompositeBuffer,
+                     System_VideoFrameBuffer *pOutFrameBuffer
+                     );
+ Int32 AlgorithmLink_surroundViewMakeFullView(void * pObj,
+                     AlgorithmLink_SurroundViewObj *pSurroundViewObj,
+                     System_VideoFrameCompositeBuffer *pInFrameCompositeBuffer,
+                     System_VideoFrameBuffer *pOutFrameBuffer
+                     );
 /**
  *******************************************************************************
  *
@@ -89,9 +107,7 @@ Bool AlgorithmLink_surroundViewIsLayoutPrmValid(void * pObj,
                     )
 {
     Bool isValid = TRUE;
-    AlgorithmLink_SurroundViewLayoutWinInfo *pWinInfo;
-    System_LinkChInfo *pInChInfo;
-    UInt32 winId;
+
 
     /* if number of window > max possible then possibly some array overrun
      * occured hence, flag as in valid parameter
@@ -108,110 +124,6 @@ Bool AlgorithmLink_surroundViewIsLayoutPrmValid(void * pObj,
     if(pLayoutPrm->outBufHeight > pSurroundViewObj->createArgs.maxOutBufHeight)
     {
         pLayoutPrm->outBufHeight = pSurroundViewObj->createArgs.maxOutBufHeight;
-    }
-
-    if(isValid)
-    {
-        /* crop input / output region if out of bounds */
-        for(winId=0; winId<pLayoutPrm->numWin; winId++)
-        {
-            pWinInfo = &pLayoutPrm->winInfo[winId];
-
-            if(pWinInfo->chId >= pSurroundViewObj->prevLinkQueInfo.numCh)
-            {
-                /* invalid CH ID, ignore window parameters */
-                pWinInfo->chId = ALGORITHM_LINK_SURROUND_VIEW_INVALID_CH_ID;
-                continue;
-            }
-
-            if(pWinInfo->outStartX >= pLayoutPrm->outBufWidth)
-            {
-                /* window is completely outside the frame so mark the
-                 * window channel ID as invalid
-                 */
-                pWinInfo->chId = ALGORITHM_LINK_SURROUND_VIEW_INVALID_CH_ID;
-            }
-
-            if(pWinInfo->outStartY >= pLayoutPrm->outBufHeight)
-            {
-                /* window is completely outside the frame so mark the
-                 * window channel ID as invalid
-                 */
-                pWinInfo->chId = ALGORITHM_LINK_SURROUND_VIEW_INVALID_CH_ID;
-            }
-
-            if( (pWinInfo->outStartX + pWinInfo->width)
-                        > pLayoutPrm->outBufWidth
-                )
-            {
-                /* window is partially outside the frame so crop the window
-                 * width
-                 */
-                pWinInfo->width = pLayoutPrm->outBufWidth - pWinInfo->outStartX;
-            }
-
-            if( (pWinInfo->outStartY + pWinInfo->height)
-                    > pLayoutPrm->outBufHeight
-               )
-            {
-                /* window is partially outside the frame so crop the window
-                 * height
-                 */
-                pWinInfo->height = pLayoutPrm->outBufHeight
-                                        - pWinInfo->outStartY;
-            }
-
-            if(pWinInfo->chId != ALGORITHM_LINK_SURROUND_VIEW_INVALID_CH_ID)
-            {
-                pInChInfo = &pSurroundViewObj->prevLinkQueInfo.chInfo
-                                [pWinInfo->chId];
-
-
-                if( (pInChInfo->startX + pWinInfo->inStartX) >= pInChInfo->width)
-                {
-                    /* window is completely outside the frame so mark the
-                     * window channel ID as invalid
-                     */
-                    pWinInfo->chId = ALGORITHM_LINK_SURROUND_VIEW_INVALID_CH_ID;
-                }
-
-                if( (pInChInfo->startY + pWinInfo->inStartY)
-                            >= pInChInfo->height
-                   )
-                {
-                    /* window is completely outside the frame so mark the
-                     * window channel ID as invalid
-                     */
-                    pWinInfo->chId = ALGORITHM_LINK_SURROUND_VIEW_INVALID_CH_ID;
-                }
-
-                if( (pInChInfo->startX + pWinInfo->inStartX + pWinInfo->width)
-                        > pInChInfo->width
-                    )
-                {
-                    /* window is partially outside the frame so crop the window
-                     * width
-                     */
-                    pWinInfo->width = pInChInfo->width
-                                        -
-                                    (pInChInfo->startX + pWinInfo->inStartX)
-                                      ;
-                }
-
-                if( (pInChInfo->startY + pWinInfo->inStartY + pWinInfo->height)
-                        > pInChInfo->height
-                    )
-                {
-                    /* window is partially outside the frame so crop the window
-                     * width
-                     */
-                    pWinInfo->height= pInChInfo->height
-                                        -
-                                    (pInChInfo->startY + pWinInfo->inStartY)
-                                      ;
-                }
-            }
-        }
     }
 
     return isValid;
@@ -629,7 +541,22 @@ Int32 AlgorithmLink_surroundViewCreate(void * pObj, void * pCreateParams)
 
     pSurroundViewObj->isFirstFrameRecv = FALSE;
 
-    return status;
+    pSurroundViewObj->buf1 =
+            Utils_memAlloc(
+                    UTILS_HEAPID_DDR_CACHED_SR,
+                    ( pSurroundViewObj->outBufSize ),
+                    ALGORITHMLINK_FRAME_ALIGN
+                );
+    pSurroundViewObj->buf2 =
+            Utils_memAlloc(
+                    UTILS_HEAPID_DDR_CACHED_SR,
+                    ( pSurroundViewObj->outBufSize ),
+                    ALGORITHMLINK_FRAME_ALIGN
+                );
+
+    AlgorithmLink_surroundViewMake = AlgorithmLink_surroundViewMakeTopView;
+
+   return status;
 }
 
 
@@ -745,76 +672,7 @@ Int32 AlgorithmLink_surroundViewDoDmaFill(void * pObj,
  *
  *******************************************************************************
  */
-Int32 AlgorithmLink_surroundViewDoDmaCopyFill(void * pObj,
-                    AlgorithmLink_SurroundViewObj *pSurroundViewObj,
-                    System_VideoFrameCompositeBuffer *pInFrameCompositeBuffer,
-                    System_VideoFrameBuffer *pOutFrameBuffer
-                    )
-{
-    Int32 status    = SYSTEM_LINK_STATUS_SOK;
-    AlgorithmLink_SurroundViewLayoutParams *pLayoutPrm;
-    AlgorithmLink_SurroundViewLayoutWinInfo *pWinInfo;
-    Utils_DmaCopyFill2D *pDmaPrm;
-    System_LinkChInfo *pInChInfo;
-    UInt32 numDmaCopy, winId;
 
-    AlgorithmLink_surroundViewDoDmaFill(pObj, pSurroundViewObj, pOutFrameBuffer);
-
-    pLayoutPrm = &pSurroundViewObj->curLayoutPrm;
-
-    numDmaCopy = 0;
-    for(winId=0; winId<pLayoutPrm->numWin; winId++)
-    {
-        pWinInfo = &pLayoutPrm->winInfo[winId];
-
-        if(pWinInfo->chId >= pInFrameCompositeBuffer->numFrames
-            ||
-           pWinInfo->chId >= pSurroundViewObj->prevLinkQueInfo.numCh
-            )
-        {
-            /* invalid CH ID, ignore any copy */
-            continue;
-        }
-
-        pDmaPrm = &pSurroundViewObj->dmaCopyPrms[numDmaCopy];
-
-        pDmaPrm->destAddr[0]   = pOutFrameBuffer->bufAddr[0];
-        pDmaPrm->destAddr[1]   = pOutFrameBuffer->bufAddr[1];
-        pDmaPrm->destStartX    = pWinInfo->outStartX;
-        pDmaPrm->destStartY    = pWinInfo->outStartY;
-        pDmaPrm->width         = pWinInfo->width;
-        pDmaPrm->height        = pWinInfo->height;
-
-        pDmaPrm->srcAddr[0]
-            = pInFrameCompositeBuffer->bufAddr[0][pWinInfo->chId];
-        pDmaPrm->srcAddr[1]
-            = pInFrameCompositeBuffer->bufAddr[1][pWinInfo->chId];
-
-        UTILS_assert(pDmaPrm->srcAddr[0]!=NULL);
-
-        pInChInfo = &pSurroundViewObj->prevLinkQueInfo.chInfo[pWinInfo->chId];
-
-        pDmaPrm->srcPitch[0] = pInChInfo->pitch[0];
-        pDmaPrm->srcPitch[1] = pInChInfo->pitch[1];
-
-        pDmaPrm->srcStartX   = pInChInfo->startX + pWinInfo->inStartX;
-        pDmaPrm->srcStartY   = pInChInfo->startY + pWinInfo->inStartY;
-
-        numDmaCopy++;
-    }
-
-    if(numDmaCopy)
-    {
-        status = Utils_dmaCopy2D(
-                &pSurroundViewObj->dmaChObj,
-                &pSurroundViewObj->dmaCopyPrms[0],
-                numDmaCopy
-                );
-        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
-    }
-
-    return status;
-}
 Int32 AlgorithmLink_surroundViewMakeTopView(void * pObj,
                     AlgorithmLink_SurroundViewObj *pSurroundViewObj,
                     System_VideoFrameCompositeBuffer *pInFrameCompositeBuffer,
@@ -823,50 +681,121 @@ Int32 AlgorithmLink_surroundViewMakeTopView(void * pObj,
 {
     Int32 status    = SYSTEM_LINK_STATUS_SOK;
     AlgorithmLink_SurroundViewLayoutParams *pLayoutPrm;
+    AlgorithmLink_SurroundViewLutInfo *pLutViewInfo;// = pLayoutPrm->lutViewInfo;
 
-	ViewInfo sideView;
-	ViewInfo sideViewLut;
+//    AlgorithmLink_surroundViewDoDmaFill(pObj, pSurroundViewObj, pOutFrameBuffer);
+
+    pLayoutPrm = &pSurroundViewObj->curLayoutPrm;
+    pLutViewInfo = pLayoutPrm->lutViewInfo;
 
 
-    AlgorithmLink_surroundViewDoDmaFill(pObj, pSurroundViewObj, pOutFrameBuffer);
+
+	status = makeSingleView(pInFrameCompositeBuffer->bufAddr[0][pLayoutPrm->singleViewInputChannel],
+							pOutFrameBuffer->bufAddr[0],
+							pLayoutPrm->psingleViewLUT,
+							pLayoutPrm->psingleViewInfo,
+							pLayoutPrm->psingleViewLUTInfo);
+
+	///front
+	status = makeSingleView(pInFrameCompositeBuffer->bufAddr[0][3],
+							pOutFrameBuffer->bufAddr[0],
+							pLayoutPrm->Basic_frontNT,
+							&pLutViewInfo[LUT_VIEW_INFO_TOP_VIEW],
+							&pLutViewInfo[LUT_VIEW_INFO_TOP_A00]);
+
+	///left
+	status = makeSingleView(pInFrameCompositeBuffer->bufAddr[0][1],
+							pOutFrameBuffer->bufAddr[0],
+							pLayoutPrm->Basic_leftNT,
+							&pLutViewInfo[LUT_VIEW_INFO_TOP_VIEW],
+							&pLutViewInfo[LUT_VIEW_INFO_TOP_A02]);
+	///rear
+	status = makeSingleView(pInFrameCompositeBuffer->bufAddr[0][0],
+							pOutFrameBuffer->bufAddr[0],
+							pLayoutPrm->Basic_rearNT,
+							&pLutViewInfo[LUT_VIEW_INFO_TOP_VIEW],
+							&pLutViewInfo[LUT_VIEW_INFO_TOP_A04]);
+
+
+	///right
+	status = makeSingleView(pInFrameCompositeBuffer->bufAddr[0][2],
+							pOutFrameBuffer->bufAddr[0],
+							pLayoutPrm->Basic_rightNT,
+							&pLutViewInfo[LUT_VIEW_INFO_TOP_VIEW],
+							&pLutViewInfo[LUT_VIEW_INFO_TOP_A06]);
+
+	///left, front
+	makeBlendView(	pInFrameCompositeBuffer->bufAddr[0][1],
+					pInFrameCompositeBuffer->bufAddr[0][3],
+					pSurroundViewObj->buf1,
+					pSurroundViewObj->buf2,
+					pOutFrameBuffer->bufAddr[0],
+					pLayoutPrm->Basic_leftNT,
+					pLayoutPrm->Basic_frontNT,
+					pLayoutPrm->cmaskNT,
+					&pLutViewInfo[LUT_VIEW_INFO_TOP_VIEW],
+					&pLutViewInfo[LUT_VIEW_INFO_TOP_A01]);
+
+	///left, rear
+	makeBlendView(	pInFrameCompositeBuffer->bufAddr[0][1],
+					pInFrameCompositeBuffer->bufAddr[0][0],
+					pSurroundViewObj->buf1,
+					pSurroundViewObj->buf2,
+					pOutFrameBuffer->bufAddr[0],
+					pLayoutPrm->Basic_leftNT,
+					pLayoutPrm->Basic_rearNT,
+					pLayoutPrm->cmaskNT,
+					&pLutViewInfo[LUT_VIEW_INFO_TOP_VIEW],
+					&pLutViewInfo[LUT_VIEW_INFO_TOP_A03]);
+
+
+	///right, front
+	makeBlendView(	pInFrameCompositeBuffer->bufAddr[0][2],
+					pInFrameCompositeBuffer->bufAddr[0][3],
+					pSurroundViewObj->buf1,
+					pSurroundViewObj->buf2,
+					pOutFrameBuffer->bufAddr[0],
+					pLayoutPrm->Basic_rightNT,
+					pLayoutPrm->Basic_frontNT,
+					pLayoutPrm->cmaskNT,
+					&pLutViewInfo[LUT_VIEW_INFO_TOP_VIEW],
+					&pLutViewInfo[LUT_VIEW_INFO_TOP_A07]);
+
+	///right, rear
+	makeBlendView(	pInFrameCompositeBuffer->bufAddr[0][2],
+					pInFrameCompositeBuffer->bufAddr[0][0],
+					pSurroundViewObj->buf1,
+					pSurroundViewObj->buf2,
+					pOutFrameBuffer->bufAddr[0],
+					pLayoutPrm->Basic_rightNT,
+					pLayoutPrm->Basic_rearNT,
+					pLayoutPrm->cmaskNT,
+					&pLutViewInfo[LUT_VIEW_INFO_TOP_VIEW],
+					&pLutViewInfo[LUT_VIEW_INFO_TOP_A05]);
+
+    return status;
+}
+Int32 AlgorithmLink_surroundViewMakeFullView(void * pObj,
+                    AlgorithmLink_SurroundViewObj *pSurroundViewObj,
+                    System_VideoFrameCompositeBuffer *pInFrameCompositeBuffer,
+                    System_VideoFrameBuffer *pOutFrameBuffer
+                    )
+{
+    Int32 status    = SYSTEM_LINK_STATUS_SOK;
+    AlgorithmLink_SurroundViewLayoutParams *pLayoutPrm;
+
+//    AlgorithmLink_surroundViewDoDmaFill(pObj, pSurroundViewObj, pOutFrameBuffer);
 
     pLayoutPrm = &pSurroundViewObj->curLayoutPrm;
 
+	status = makeSingleView(pInFrameCompositeBuffer->bufAddr[0][pLayoutPrm->singleViewInputChannel],
+							pOutFrameBuffer->bufAddr[0],
+							pLayoutPrm->psingleViewLUT,
+							pLayoutPrm->psingleViewInfo,
+							pLayoutPrm->psingleViewLUTInfo);
 
-
-    sideView.width = 712;
-	sideView.height = 508;
-    sideView.pitch = 1280;
-    sideView.startX = 550;
-    sideView.startY = 16;
-
-    sideViewLut.width = 712;
-    sideViewLut.height = 508;
-    sideViewLut.pitch = 712;
-    sideViewLut.startX = 0;
-    sideViewLut.startY = 0;
-
-	status =  makeSingleView(pInFrameCompositeBuffer->bufAddr[0][3],pOutFrameBuffer->bufAddr[0], pLayoutPrm->pLut1, &sideView, &sideViewLut);
-#if 0
-    sideView.width = 520;
-	sideView.height = 688;
-    sideView.pitch = 1280;
-    sideView.startX = 16;
-    sideView.startY = 16;
-
-    sideViewLut.width = 712;
-    sideViewLut.height = 508;
-    sideViewLut.pitch = 712;
-    sideViewLut.startX = 0;
-    sideViewLut.startY = 0;
-	status =  makeSingleView(pInFrameCompositeBuffer->bufAddr[0][3],pOutFrameBuffer->bufAddr[0], pLayoutPrm->pLut5, &sideView, &sideViewLut);
-	status =  makeSingleView(pInFrameCompositeBuffer->bufAddr[0][3],pOutFrameBuffer->bufAddr[0], pLayoutPrm->pLut6, &sideView, &sideViewLut);
-	status =  makeSingleView(pInFrameCompositeBuffer->bufAddr[0][3],pOutFrameBuffer->bufAddr[0], pLayoutPrm->pLut7, &sideView, &sideViewLut);
-	status =  makeSingleView(pInFrameCompositeBuffer->bufAddr[0][3],pOutFrameBuffer->bufAddr[0], pLayoutPrm->pLut8, &sideView, &sideViewLut);
-#endif
     return status;
 }
-
 
 /**
  *******************************************************************************
@@ -985,7 +914,7 @@ Int32 AlgorithmLink_surroundViewProcess(void * pObj)
             linkStatsInfo->linkStats.chStats
                     [pInBuffer->chNum].outBufCount[0]++;
 
-            AlgorithmLink_surroundViewMakeTopView(
+            AlgorithmLink_surroundViewMake(
                     pObj,
                     pSurroundViewObj,
                     pInFrameCompositeBuffer,
@@ -1132,7 +1061,7 @@ Int32 AlgorithmLink_surroundViewControl(void * pObj, void * pControlParams)
 /**
  *******************************************************************************
  *
- * \brief Implementation of Stop Plugin for this algorithm
+ * \brief Implementation of S Plugin for this algorithm
  *
  *        For this algorithm there is no locking of frames and hence no
  *        flushing of frames. Also there are no any other functionality to be
@@ -1192,6 +1121,14 @@ Int32 AlgorithmLink_surroundViewDelete(void * pObj)
                     );
         UTILS_assert(status==SYSTEM_LINK_STATUS_SOK);
     }
+
+	Utils_memFree(	UTILS_HEAPID_DDR_CACHED_SR,
+					pSurroundViewObj->buf1,
+					pSurroundViewObj->outBufSize);
+
+	Utils_memFree(	UTILS_HEAPID_DDR_CACHED_SR,
+					pSurroundViewObj->buf2,
+					pSurroundViewObj->outBufSize);
 
     status = Utils_memFree(
                 UTILS_HEAPID_DDR_CACHED_SR,

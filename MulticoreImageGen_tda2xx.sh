@@ -42,8 +42,8 @@ export App_MPU_CPU0=$PWD/binaries/vision_sdk/bin/tda2xx-evm/vision_sdk_a15_0_deb
 export App_MPU_CPU1=
 # App_MPU_SMP is to define MPU SMP application, To enable SMP mode - remove "App_MPU_CPU0" & set "APP_MPU_SMP"
 # export APP_MPU_SMP=$PWD/binaries/vision_sdk/bin/tda2xx-evm/vision_sdk_a15_0_debug.xa15fg
-export App_IPU1_CPU0=$PWD/binaries/vision_sdk/bin/tda2xx-evm/vision_sdk_ipu1_0_$profile.xem4
-export App_IPU1_CPU1=$PWD/binaries/vision_sdk/bin/tda2xx-evm/vision_sdk_ipu1_1_$profile.xem4
+export App_IPU1_CPU0=$PWD/binaries/vision_sdk/bin/tda2xx-evm/vision_sdk_ipu1_0_debug.xem4
+export App_IPU1_CPU1=$PWD/binaries/vision_sdk/bin/tda2xx-evm/vision_sdk_ipu1_1_debug.xem4
 # App_IPU1_CPU_SMP is to define the IPU SMP application
 export App_IPU1_CPU_SMP=
 export App_IPU2_CPU0=
