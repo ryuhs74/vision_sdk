@@ -255,6 +255,7 @@ typedef struct
      *   NOTE: local EDMA controller is available for DSP only
      *         for M4, A15 always system DMA controller will be used
      */
+    ViewMode					sViewmode;
 
 } AlgorithmLink_SurroundViewCreateParams;
 
