@@ -483,6 +483,9 @@ Int32 GrpxSrcLink_runDisplayStats(GrpxSrcLink_Obj *pObj)
                 GrpxSrcLink_displaySurroundViewStandaloneStats(pObj);
             }
             else
+            {
+            	GrpxSrcLink_displayStats(pObj);
+            }
 #endif
             {
             	/*

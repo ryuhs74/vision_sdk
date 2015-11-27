@@ -24,7 +24,7 @@
  *******************************************************************************
  */
 #include "grpxSrcLink_priv.h"
-#include <examples/tda2xx/src/links/uartCmd/uartCmd_priv.h> //ryuhs74@20151105 - Test UI CMD
+#include <examples/tda2xx/src/links/uartCmd/uartCmd_priv.h> //ryuhs74@20151105
 
 /**
  *******************************************************************************
@@ -251,15 +251,6 @@ Int32 GrpxSrcLink_drawAVM_E500Layout(GrpxSrcLink_Obj *pObj) // 이 함수를 TOP / F
 
 void GrpxSrcLink_putCmd( uint8_t _cmd )
 {
-	/*
-	#define IRDA_KEY_PWR	(0x09)
-		#define IRDA_KEY_FULL	(0x05)
-		#define IRDA_KEY_LOCK	(0x5C)
-		#define IRDA_KEY_UP		(0x0F)
-		#define IRDA_KEY_DOWN	(0x0E)
-		#define IRDA_KEY_LEFT	(0x0B)
-		#define IRDA_KEY_RIGHT	(0x0A)
-	 */
 #if 1
 	Int32 status;
 
