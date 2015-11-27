@@ -261,45 +261,28 @@ void GrpxSrcLink_putCmd( uint8_t _cmd )
 		#define IRDA_KEY_RIGHT	(0x0A)
 	 */
 #if 1
-	GrpxSrcLink_CreateParams viewmodeprm;
 	Int32 status;
 
 	if( _cmd == IRDA_KEY_UP ){
 		Vps_printf("In GrpxSrcLink_putCmd, CMD_REQ_FRONT_VIEW");
-
-		viewmodeprm.sViewmode.viewmode =  TOP_VIEW;
-		viewmodeprm.sViewmode.viewnt = FRONT_VIEW;
 		_cmd = SYSTEM_CMD_FRONT_SIDE_VIEW;
 	} else if( _cmd == IRDA_KEY_DOWN ){
 		Vps_printf("In GrpxSrcLink_putCmd, CMD_REQ_REAR_VIEW");
-
-		viewmodeprm.sViewmode.viewmode =  TOP_VIEW;
-		viewmodeprm.sViewmode.viewnt = REAR_VIEW;
 		_cmd = SYSTEM_CMD_REAR_SIDE_VIEW;
 	} else if( _cmd == IRDA_KEY_RIGHT ){
 		Vps_printf("In GrpxSrcLink_putCmd, CMD_REQ_RIGHT_VIEW");
-
-		viewmodeprm.sViewmode.viewmode =  TOP_VIEW;
-		viewmodeprm.sViewmode.viewnt = RIGHT_VIEW;
 		_cmd = SYSTEM_CMD_RIGH_SIDE_VIEW;
 	} else if( _cmd == IRDA_KEY_LEFT ){
 		Vps_printf("In GrpxSrcLink_putCmd, CMD_REQ_LEFT_VIEW");
-
-		viewmodeprm.sViewmode.viewmode =  TOP_VIEW;
-		viewmodeprm.sViewmode.viewnt = LEFT_VIEW;
 		_cmd = SYSTEM_CMD_LEFT_SIDE_VIEW;
 	}else if( _cmd == IRDA_KEY_FULL ){
 		if( gFullFront == 0 )//Front Full View
 		{
 			Vps_printf("In GrpxSrcLink_putCmd, IRDA_KEY_FULL, Front");
-			viewmodeprm.sViewmode.viewmode =  FULL_VIEW;
-			viewmodeprm.sViewmode.viewnt = FRONT_VIEW;
 			_cmd = SYSTEM_CMD_FULL_FRONT_VIEW;
 			gFullFront = 1;
 		} else {
 			Vps_printf("In GrpxSrcLink_putCmd, IRDA_KEY_FULL, Rear");
-			viewmodeprm.sViewmode.viewmode =  FULL_VIEW;
-			viewmodeprm.sViewmode.viewnt = REAR_VIEW;
 			_cmd = SYSTEM_CMD_FULL_REAR_VIEW;
 			gFullFront = 0;
 		}
@@ -316,7 +299,7 @@ void GrpxSrcLink_putCmd( uint8_t _cmd )
 		*/
 	}
 
-	status = System_linkControl(gGrpxSrcLinkID, _cmd, &viewmodeprm, sizeof(viewmodeprm), TRUE); //gGrpxSrcLinkID °´Ã¼°¡ µÎ°³.
+	status = System_linkControl(gGrpxSrcLinkID, _cmd, NULL, 0, TRUE); //gGrpxSrcLinkID °´Ã¼°¡ µÎ°³.
 
 	Vps_printf("   CMD Send %s gGrpxSrcLinkID\n", ( status == 0x0)?"Success":"Fail");
 

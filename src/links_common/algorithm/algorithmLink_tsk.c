@@ -176,7 +176,6 @@ Void AlgorithmLink_tskMain(struct Utils_TskHndl *pTsk, Utils_MsgHndl *pMsg)
 
     AlgorithmLink_Obj *pObj = (AlgorithmLink_Obj *) pTsk->appData;
     AlgorithmLink_ControlParams *pControlParams;
-    ViewMode *pViewParams;
 
     /*
      * Different commands are serviced via this switch case. For each

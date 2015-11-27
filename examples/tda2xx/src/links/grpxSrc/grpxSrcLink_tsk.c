@@ -485,32 +485,6 @@ Int32 GrpxSrcLink_runDisplayStats(GrpxSrcLink_Obj *pObj)
             else
 #endif
             {
-            	//ryuhs74@20151104 - TEST
-#if 0
-                //GrpxSrcLink_displayStats(pObj);
-            	if( nNext == 0){ //rear
-            		nNext = 1;
-            		pObj->createArgs.sViewmode.viewmode = TOP_VIEW;
-            		pObj->createArgs.sViewmode.viewnt = REAR_VIEW;
-            	} else if( nNext == 1 ) {//Right
-            		nNext = 2;
-            		pObj->createArgs.sViewmode.viewmode = TOP_VIEW;
-            		pObj->createArgs.sViewmode.viewnt = RIGHT_VIEW;
-            	} else if( nNext == 2 ) { //Left
-            		nNext = 0;
-            		pObj->createArgs.sViewmode.viewmode = TOP_VIEW;
-            		pObj->createArgs.sViewmode.viewnt = LEFT_VIEW;
-            	} else if( nNext == 3 ) { //Full Fornt
-            		nNext = 4;
-            		pObj->createArgs.sViewmode.viewmode = FULL_VIEW;
-            		pObj->createArgs.sViewmode.viewnt = FRONT_VIEW;
-            	} else if( nNext == 4 ) { // Full Rear
-            		nNext = 0;
-            		pObj->createArgs.sViewmode.viewmode = FULL_VIEW;
-            		pObj->createArgs.sViewmode.viewnt = REAR_VIEW;
-            	}
-            	GrpxSrcLink_drawAVM_E500Button(pObj);
-#else
             	/*
 				 GrpxSrcLink_DrawE500Layout(pObj);
 
@@ -523,9 +497,6 @@ Int32 GrpxSrcLink_runDisplayStats(GrpxSrcLink_Obj *pObj)
 				 */
             	GrpxSrcLink_drawAVM_E500Button(pObj);
             	pObj->createArgs.sViewmode.prvVient =  pObj->createArgs.sViewmode.viewnt;
-#endif
-
-            	pObj->createArgs.sViewmode.prvVient = pObj->createArgs.sViewmode.viewnt;
             }
 
             pObj->statsDisplayObj.startTime = Utils_getCurTimeInMsec();
@@ -779,11 +750,8 @@ Void GrpxSrcLink_tskMain(struct Utils_TskHndl * pTsk, Utils_MsgHndl * pMsg)
                  //ryuhs74@20151103 - Add AVM-E500 Draw Layout START
                  case SYSTEM_CMD_FRONT_SIDE_VIEW:
                  {
-                	 GrpxSrcLink_CreateParams Prm;
-
-                	 memcpy(&Prm, Utils_msgGetPrm(pMsg), sizeof(GrpxSrcLink_CreateParams));
-                	 pObj->createArgs.sViewmode.viewmode = Prm.sViewmode.viewmode;
-                	 pObj->createArgs.sViewmode.viewnt = Prm.sViewmode.viewnt;
+                	 pObj->createArgs.sViewmode.viewmode = TOP_VIEW;
+                	 pObj->createArgs.sViewmode.viewnt = FRONT_VIEW;
 					 Vps_printf("CMD Call SYSTEM_CMD_REAR_SIDE_VIEW viewmode : %d, viewnt: %d\n",
 							 pObj->createArgs.sViewmode.viewmode,
 							 pObj->createArgs.sViewmode.viewnt);
@@ -792,11 +760,8 @@ Void GrpxSrcLink_tskMain(struct Utils_TskHndl * pTsk, Utils_MsgHndl * pMsg)
 					 break;
                  case SYSTEM_CMD_REAR_SIDE_VIEW:
                  {
-                	 GrpxSrcLink_CreateParams Prm;
-
-                	 memcpy(&Prm, Utils_msgGetPrm(pMsg), sizeof(GrpxSrcLink_CreateParams));
-                	 pObj->createArgs.sViewmode.viewmode = Prm.sViewmode.viewmode;
-                	 pObj->createArgs.sViewmode.viewnt = Prm.sViewmode.viewnt;
+                	 pObj->createArgs.sViewmode.viewmode = TOP_VIEW;
+                	 pObj->createArgs.sViewmode.viewnt = REAR_VIEW;
                 	 Vps_printf("CMD Call SYSTEM_CMD_REAR_SIDE_VIEW viewmode : %d, viewnt: %d\n",
                 	 							 pObj->createArgs.sViewmode.viewmode,
                 	 							 pObj->createArgs.sViewmode.viewnt);
@@ -805,11 +770,8 @@ Void GrpxSrcLink_tskMain(struct Utils_TskHndl * pTsk, Utils_MsgHndl * pMsg)
                 	 break;
                  case SYSTEM_CMD_RIGH_SIDE_VIEW:
                  {
-					 GrpxSrcLink_CreateParams Prm;
-
-					 memcpy(&Prm, Utils_msgGetPrm(pMsg), sizeof(GrpxSrcLink_CreateParams));
-					 pObj->createArgs.sViewmode.viewmode = Prm.sViewmode.viewmode;
-					 pObj->createArgs.sViewmode.viewnt = Prm.sViewmode.viewnt;
+					 pObj->createArgs.sViewmode.viewmode = TOP_VIEW;
+					 pObj->createArgs.sViewmode.viewnt = RIGHT_VIEW;
                 	 Vps_printf("CMD Call SYSTEM_CMD_REAR_SIDE_VIEW viewmode : %d, viewnt: %d\n",
                 			 pObj->createArgs.sViewmode.viewmode,
 							 pObj->createArgs.sViewmode.viewnt);
@@ -818,11 +780,9 @@ Void GrpxSrcLink_tskMain(struct Utils_TskHndl * pTsk, Utils_MsgHndl * pMsg)
                 	 break;
                  case SYSTEM_CMD_LEFT_SIDE_VIEW:
                  {
-					 GrpxSrcLink_CreateParams Prm;
 
-					 memcpy(&Prm, Utils_msgGetPrm(pMsg), sizeof(GrpxSrcLink_CreateParams));
-					 pObj->createArgs.sViewmode.viewmode = Prm.sViewmode.viewmode;
-					 pObj->createArgs.sViewmode.viewnt = Prm.sViewmode.viewnt;
+					 pObj->createArgs.sViewmode.viewmode = TOP_VIEW;
+					 pObj->createArgs.sViewmode.viewnt = LEFT_VIEW;
                 	 Vps_printf("CMD Call SYSTEM_CMD_REAR_SIDE_VIEW viewmode : %d, viewnt: %d\n",
                 			 pObj->createArgs.sViewmode.viewmode,
 							 pObj->createArgs.sViewmode.viewnt);
@@ -831,11 +791,8 @@ Void GrpxSrcLink_tskMain(struct Utils_TskHndl * pTsk, Utils_MsgHndl * pMsg)
                 	 break;
                  case SYSTEM_CMD_FULL_FRONT_VIEW:
                  {
-					 GrpxSrcLink_CreateParams Prm;
-
-					 memcpy(&Prm, Utils_msgGetPrm(pMsg), sizeof(GrpxSrcLink_CreateParams));
-					 pObj->createArgs.sViewmode.viewmode = Prm.sViewmode.viewmode;
-					 pObj->createArgs.sViewmode.viewnt = Prm.sViewmode.viewnt;
+					 pObj->createArgs.sViewmode.viewmode = FULL_VIEW;
+					 pObj->createArgs.sViewmode.viewnt = FRONT_VIEW;
                 	 Vps_printf("CMD Call SYSTEM_CMD_REAR_SIDE_VIEW viewmode : %d, viewnt: %d\n",
                 			 pObj->createArgs.sViewmode.viewmode,
 							 pObj->createArgs.sViewmode.viewnt);
@@ -844,11 +801,8 @@ Void GrpxSrcLink_tskMain(struct Utils_TskHndl * pTsk, Utils_MsgHndl * pMsg)
                 	 break;
                  case SYSTEM_CMD_FULL_REAR_VIEW:
                  {
-					 GrpxSrcLink_CreateParams Prm;
-
-					 memcpy(&Prm, Utils_msgGetPrm(pMsg), sizeof(GrpxSrcLink_CreateParams));
-					 pObj->createArgs.sViewmode.viewmode = Prm.sViewmode.viewmode;
-					 pObj->createArgs.sViewmode.viewnt = Prm.sViewmode.viewnt;
+					 pObj->createArgs.sViewmode.viewmode = FULL_VIEW;
+					 pObj->createArgs.sViewmode.viewnt = REAR_VIEW;
                 	 Vps_printf("CMD Call SYSTEM_CMD_REAR_SIDE_VIEW viewmode : %d, viewnt: %d\n",
                 			 pObj->createArgs.sViewmode.viewmode,
 							 pObj->createArgs.sViewmode.viewnt);
