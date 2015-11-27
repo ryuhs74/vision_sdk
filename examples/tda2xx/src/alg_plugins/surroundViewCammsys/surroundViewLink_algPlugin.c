@@ -489,8 +489,6 @@ Int32 AlgorithmLink_surroundViewMakeTopView(void * pObj,
     AlgorithmLink_SurroundViewLayoutParams *pLayoutPrm;
     AlgorithmLink_SurroundViewLutInfo *pLutViewInfo;// = pLayoutPrm->lutViewInfo;
 
-//    AlgorithmLink_surroundViewDoDmaFill(pObj, pSurroundViewObj, pOutFrameBuffer);
-
     pLayoutPrm = &pSurroundViewObj->curLayoutPrm;
     pLutViewInfo = pLayoutPrm->lutViewInfo;
 
@@ -578,6 +576,7 @@ Int32 AlgorithmLink_surroundViewMakeTopView(void * pObj,
 					pLayoutPrm->cmaskNT,
 					&pLutViewInfo[LUT_VIEW_INFO_TOP_VIEW],
 					&pLutViewInfo[LUT_VIEW_INFO_TOP_A05]);
+
 
     return status;
 }
