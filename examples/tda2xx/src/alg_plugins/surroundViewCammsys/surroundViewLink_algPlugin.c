@@ -856,6 +856,27 @@ Int32 AlgorithmLink_surroundViewControl(void * pObj, void * pControlParams)
         case SYSTEM_CMD_PRINT_STATISTICS:
             AlgorithmLink_surroundViewPrintStatistics(pObj, pSurroundViewObj);
             break;
+        //ryuhs74@20151127 - START
+        case SYSTEM_CMD_FRONT_SIDE_VIEW:
+        	Vps_printf("In SYSTEM_CMD_FRONT_SIDE_VIEW\n");
+        	break;
+        case SYSTEM_CMD_REAR_SIDE_VIEW:
+        	Vps_printf("In SYSTEM_CMD_REAR_SIDE_VIEW\n");
+            break;
+        case SYSTEM_CMD_RIGH_SIDE_VIEW:
+        	Vps_printf("In SYSTEM_CMD_RIGH_SIDE_VIEW\n");
+            break;
+        case SYSTEM_CMD_LEFT_SIDE_VIEW:
+        	Vps_printf("In SYSTEM_CMD_LEFT_SIDE_VIEW\n");
+            break;
+        case SYSTEM_CMD_FULL_FRONT_VIEW:
+        	Vps_printf("In SYSTEM_CMD_FULL_FRONT_VIEW\n");
+            break;
+        case SYSTEM_CMD_FULL_REAR_VIEW:
+        	Vps_printf("In SYSTEM_CMD_FULL_REAR_VIEW\n");
+            break;
+        //ryuhs74@20151127 - END
+
         default:
             status = SYSTEM_LINK_STATUS_EINVALID_PARAMS;
             break;

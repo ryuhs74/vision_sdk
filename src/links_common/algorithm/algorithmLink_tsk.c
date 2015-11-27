@@ -33,6 +33,7 @@
 #include <src/utils_common/include/utils_idle.h>
 #endif
 #include <include/link_api/algorithmLink_surroundView.h>
+#include <src/utils_common/include/utils_lut.h> //ryuhs74@20151112 - Add
 
 void AlgorithmLink_surroundViewSetViewMode(void *pObj, AlgorithmLink_SurroundViewCreateParams* pCreateParams);
 /**
@@ -171,10 +172,11 @@ Void AlgorithmLink_tskMain(struct Utils_TskHndl *pTsk, Utils_MsgHndl *pMsg)
     UInt32 cmd = Utils_msgGetCmd(pMsg);
     Int32 status = SYSTEM_LINK_STATUS_SOK;
     UInt32          flushCmds[1];
-    AlgorithmLink_SurroundViewCreateParams* pCreateParms;
+    //AlgorithmLink_SurroundViewCreateParams* pCreateParms;
 
     AlgorithmLink_Obj *pObj = (AlgorithmLink_Obj *) pTsk->appData;
     AlgorithmLink_ControlParams *pControlParams;
+    ViewMode *pViewParams;
 
     /*
      * Different commands are serviced via this switch case. For each
@@ -200,18 +202,6 @@ Void AlgorithmLink_tskMain(struct Utils_TskHndl *pTsk, Utils_MsgHndl *pMsg)
             }
             Utils_tskAckOrFreeMsg(pMsg, status);
             break;
-        //ryuhs74@20151126- Add View Mode Cmd START
-        case SYSTEM_CMD_FRONT_SIDE_VIEW:
-        case SYSTEM_CMD_REAR_SIDE_VIEW:
-        case SYSTEM_CMD_RIGH_SIDE_VIEW:
-        case SYSTEM_CMD_LEFT_SIDE_VIEW:
-        case SYSTEM_CMD_FULL_FRONT_VIEW:
-        case SYSTEM_CMD_FULL_REAR_VIEW:
-        	pCreateParms = (AlgorithmLink_SurroundViewCreateParams*)Utils_msgGetPrm(pMsg);
-        	AlgorithmLink_surroundViewSetViewMode(pObj, pCreateParms);
-        	Utils_tskAckOrFreeMsg(pMsg, SYSTEM_LINK_STATUS_SOK);
-        	break;
-        //ryuhs74@20151126- Add View Mode Cmd END
         case SYSTEM_CMD_NEW_DATA:
 //Vps_printf("Alg: tskMain SYSTEM_CMD_NEW_DATA LinkId: %d start !!!\n",pObj->linkId);
           Utils_tskAckOrFreeMsg(pMsg, 0);
