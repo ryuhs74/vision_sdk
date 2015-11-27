@@ -149,8 +149,8 @@ static Void chains_surround_View_SetAlgSurroundViewPrm(
     pPrm->initLayoutParams.cmaskNT = LUTAlloc(cmaskNT);
 
 
-    pLutInfo[LUT_VIEW_INFO_FULL_VIEW].startX 	= 0;
-    pLutInfo[LUT_VIEW_INFO_FULL_VIEW].startY 	= 0;
+    pLutInfo[LUT_VIEW_INFO_FULL_VIEW].startX 	= 16;
+    pLutInfo[LUT_VIEW_INFO_FULL_VIEW].startY 	= 16;
     pLutInfo[LUT_VIEW_INFO_FULL_VIEW].width 	= 1280;
     pLutInfo[LUT_VIEW_INFO_FULL_VIEW].height	= 720;
     pLutInfo[LUT_VIEW_INFO_FULL_VIEW].pitch		= 1280;
