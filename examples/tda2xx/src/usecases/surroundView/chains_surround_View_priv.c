@@ -630,48 +630,23 @@ void E500ViewMode_putCmd( uint8_t _cmd )
 
 	if( _cmd == IRDA_KEY_UP ){
 		Vps_printf("In E500ViewMode_putCmd, IRDA_KEY_UP");
-
-		//Alg_SurroundViewPrm.sViewmode.viewmode =  TOP_VIEW;
-		//Alg_SurroundViewPrm.sViewmode.viewnt = FRONT_VIEW;
-		//_cmd = SYSTEM_CMD_FRONT_SIDE_VIEW;
 		AlgLinkControlPrm.controlCmd = SYSTEM_CMD_FRONT_SIDE_VIEW;
 	} else if( _cmd == IRDA_KEY_DOWN ){
 		Vps_printf("In E500ViewMode_putCmd, IRDA_KEY_DOWN");
-
-		//Alg_SurroundViewPrm.sViewmode.viewmode =  TOP_VIEW;
-		//Alg_SurroundViewPrm.sViewmode.viewnt = REAR_VIEW;
-		//_cmd = SYSTEM_CMD_REAR_SIDE_VIEW;
 		AlgLinkControlPrm.controlCmd = SYSTEM_CMD_REAR_SIDE_VIEW;
 	} else if( _cmd == IRDA_KEY_RIGHT ){
 		Vps_printf("In E500ViewMode_putCmd, IRDA_KEY_RIGHT");
-
-		//Alg_SurroundViewPrm.sViewmode.viewmode =  TOP_VIEW;
-		//Alg_SurroundViewPrm.sViewmode.viewnt = RIGHT_VIEW;
-
-		//sViewmode.viewmode = TOP_VIEW;
-		//sViewmode.viewnt = RIGHT_VIEW;
-		//_cmd = SYSTEM_CMD_RIGH_SIDE_VIEW;
 		AlgLinkControlPrm.controlCmd = SYSTEM_CMD_RIGH_SIDE_VIEW;
 	} else if( _cmd == IRDA_KEY_LEFT ){
 		Vps_printf("In E500ViewMode_putCmd, IRDA_KEY_LEFT");
-
-		//Alg_SurroundViewPrm.sViewmode.viewmode =  TOP_VIEW;
-		//Alg_SurroundViewPrm.sViewmode.viewnt = LEFT_VIEW;
-		//_cmd = SYSTEM_CMD_LEFT_SIDE_VIEW;
 		AlgLinkControlPrm.controlCmd = SYSTEM_CMD_LEFT_SIDE_VIEW;
 	}else if( _cmd == IRDA_KEY_FULL ){
 		if( gFullFront == 0 )//Front Full View
 		{
 			Vps_printf("In E500ViewMode_putCmd, IRDA_KEY_FULL");
-			//Alg_SurroundViewPrm.sViewmode.viewmode =  FULL_VIEW;
-			//Alg_SurroundViewPrm.sViewmode.viewnt = FRONT_VIEW;
-			//_cmd = SYSTEM_CMD_FULL_FRONT_VIEW;
 			AlgLinkControlPrm.controlCmd = SYSTEM_CMD_FULL_FRONT_VIEW;
 		} else {
 			Vps_printf("In E500ViewMode_putCmd, IRDA_KEY_FULL");
-			//Alg_SurroundViewPrm.sViewmode.viewmode =  FULL_VIEW;
-			//Alg_SurroundViewPrm.sViewmode.viewnt = REAR_VIEW;
-			//_cmd = SYSTEM_CMD_FULL_REAR_VIEW;
 			AlgLinkControlPrm.controlCmd = SYSTEM_CMD_FULL_REAR_VIEW;
 		}
 	}
