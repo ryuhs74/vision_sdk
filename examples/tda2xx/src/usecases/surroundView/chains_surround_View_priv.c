@@ -362,6 +362,8 @@ Void chains_surround_View_printStatistics(chains_surround_ViewObj *pObj){
        Task_sleep(500);
 }
 
+AlgorithmLink_SurroundViewCreateParams       Alg_SurroundViewPrm;
+
 void E500ViewMode_putCmd( uint8_t _cmd )
 {
 	/*
@@ -374,7 +376,7 @@ void E500ViewMode_putCmd( uint8_t _cmd )
 		#define IRDA_KEY_RIGHT	(0x0A)
 	 */
 #if 1
-	AlgorithmLink_SurroundViewCreateParams       Alg_SurroundViewPrm;
+
 	Int32 status;
 
 	if( _cmd == IRDA_KEY_UP ){
@@ -416,7 +418,7 @@ void E500ViewMode_putCmd( uint8_t _cmd )
 		}
 	}
 
-	status = System_linkControl(gE500LUTLinkID, _cmd, &Alg_SurroundViewPrm, sizeof(AlgorithmLink_SurroundViewCreateParams), TRUE); //gGrpxSrcLinkID °´Ã¼°¡ µÎ°³.
+	status = System_linkControl(gE500LUTLinkID, _cmd, &Alg_SurroundViewPrm, sizeof(Alg_SurroundViewPrm), TRUE); //gGrpxSrcLinkID °´Ã¼°¡ µÎ°³.
 	Vps_printf("   CMD Send %s E500ViewMode_putCmd\n", ( status == 0x0)?"Success":"Fail");
 #endif
 }
