@@ -558,7 +558,7 @@ Void chains_lvdsVipSurroundViewStandalone_StopAndDeleteApp(Chains_LvdsVipSurroun
  *******************************************************************************
 */
 
-void GrpxSrcLink_putCmd( uint8_t _cmd );
+//void GrpxSrcLink_putCmd( uint8_t _cmd );
 Void Chains_lvdsVipSurroundViewStandalone(Chains_Ctrl *chainsCfg)
 {
     char ch, chPrev;
@@ -599,22 +599,22 @@ Void Chains_lvdsVipSurroundViewStandalone(Chains_Ctrl *chainsCfg)
                     break;
                 //ryuhs74@20151105 - Test UI CMD START
                 case '3' :
-                	GrpxSrcLink_putCmd( CMD_REQ_FRONT_VIEW );
+                	//GrpxSrcLink_putCmd( CMD_REQ_FRONT_VIEW );
                 	break;
                 case '4':
-                	GrpxSrcLink_putCmd( CMD_REQ_REAR_VIEW );
+                	//GrpxSrcLink_putCmd( CMD_REQ_REAR_VIEW );
                 	break;
                 case '5':
-                	GrpxSrcLink_putCmd( CMD_REQ_RIGHT_VIEW );
+                	//GrpxSrcLink_putCmd( CMD_REQ_RIGHT_VIEW );
                 	break;
                 case '6':
-                	GrpxSrcLink_putCmd( CMD_REQ_LEFT_VIEW );
+                	//GrpxSrcLink_putCmd( CMD_REQ_LEFT_VIEW );
                 	break;
                 case '7':
-                    GrpxSrcLink_putCmd( CMD_REQ_FULL_FRONT_VIEW );
+                    //GrpxSrcLink_putCmd( CMD_REQ_FULL_FRONT_VIEW );
                     break;
                 case '8':
-                    GrpxSrcLink_putCmd( CMD_REQ_FULL_REAR_VIEW );
+                    //GrpxSrcLink_putCmd( CMD_REQ_FULL_REAR_VIEW );
                     break;
                 //ryuhs74@20151105 - Test UI CMD END
 
