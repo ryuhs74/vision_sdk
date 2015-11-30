@@ -28,191 +28,86 @@ extern UInt32 gFullFront;
 
 Void chains_surround_View_SetLinkId(chains_surround_ViewObj *pObj){
        pObj->CaptureLinkID                  = SYSTEM_LINK_ID_CAPTURE;
-       pObj->DupLinkID                      = IPU1_0_LINK (SYSTEM_LINK_ID_DUP_0);
        pObj->SyncLinkID                     = IPU1_0_LINK (SYSTEM_LINK_ID_SYNC_0);
+       pObj->DupLinkID                      = IPU1_0_LINK (SYSTEM_LINK_ID_DUP_0);
+
        pObj->IPCOut_IPU1_0_DSP_0_0LinkID    = IPU1_0_LINK (SYSTEM_LINK_ID_IPC_OUT_0);
        pObj->IPCIn_DSP_0_IPU1_0_0LinkID     = DSP1_LINK (SYSTEM_LINK_ID_IPC_IN_0);
-       pObj->Alg_SurroundViewLinkID         = DSP1_LINK (SYSTEM_LINK_ID_ALG_0);
+       pObj->Alg_SurroundViewLink_0_ID      = DSP1_LINK (SYSTEM_LINK_ID_ALG_0);
        pObj->IPCOut_DSP_0_IPU1_0_0LinkID    = DSP1_LINK (SYSTEM_LINK_ID_IPC_OUT_0);
        pObj->IPCIn_IPU1_0_DSP_0_0LinkID     = IPU1_0_LINK (SYSTEM_LINK_ID_IPC_IN_0);
+
+       pObj->IPCOut_IPU1_0_DSP_1_0LinkID    = IPU1_0_LINK (SYSTEM_LINK_ID_IPC_OUT_1);
+       pObj->IPCIn_DSP_1_IPU1_0_0LinkID     = DSP2_LINK (SYSTEM_LINK_ID_IPC_IN_1);
+       pObj->Alg_SurroundViewLink_1_ID      = DSP2_LINK (SYSTEM_LINK_ID_ALG_0);
+       pObj->IPCOut_DSP_1_IPU1_0_0LinkID    = DSP2_LINK (SYSTEM_LINK_ID_IPC_OUT_1);
+       pObj->IPCIn_IPU1_0_DSP_1_0LinkID     = IPU1_0_LINK (SYSTEM_LINK_ID_IPC_IN_1);
+
        pObj->MergeLinkID                    = IPU1_0_LINK (SYSTEM_LINK_ID_MERGE_0);
        pObj->Display_videoLinkID            = SYSTEM_LINK_ID_DISPLAY_0;
        pObj->GrpxSrcLinkID                  = IPU1_0_LINK (SYSTEM_LINK_ID_GRPX_SRC_0);
        pObj->Display_GrpxLinkID             = SYSTEM_LINK_ID_DISPLAY_1;
 
-       //ryuhs74@20151127 - Add
-       //pObj->DupLiniID2
-       /*= IPU1_0_LINK (SYSTEM_LINK_ID_DUP_1);
-       pObj->SyncLinkID2					= IPU1_0_LINK (SYSTEM_LINK_ID_SYNC_1);
-       pObj->IPCOut_IPU1_0_DSP_1_0LinkID 	= IPU1_0_LINK (SYSTEM_LINK_ID_IPC_OUT_1);
-       pObj->IPCIn_DSP_1_IPU1_0_0LinkID		= DSP2_LINK (SYSTEM_LINK_ID_IPC_IN_0);
-       pObj->Alg_SurroundViewLinkID_DSP2	= DSP2_LINK(SYSTEM_LINK_ID_ALG_0);
-       pObj->IPCOut_DSP_1_IPU1_0_0LinkID	= DSP2_LINK (SYSTEM_LINK_ID_IPC_OUT_0);
-       pObj->IPCIn_IPU1_0_DSP_1_0LinkID		= IPU1_0_LINK (SYSTEM_LINK_ID_IPC_IN_1);
-       */
-
-
-       //pObj->Save_SaveLinkID                = IPU1_0_LINK (SYSTEM_LINT_SAVE_0); //ryuhs74@20151027 - Add Save Link
        gGrpxSrcLinkID = pObj->GrpxSrcLinkID;
-       gE500LUTLinkID = pObj->Alg_SurroundViewLinkID;
+       gE500LUTLinkID = pObj->Alg_SurroundViewLink_0_ID;
 }
 
 Void chains_surround_View_ResetLinkPrms(chains_surround_ViewObj *pObj){
        CaptureLink_CreateParams_Init(&pObj->CapturePrm);
-       DupLink_CreateParams_Init(&pObj->DupPrm);
        SyncLink_CreateParams_Init(&pObj->SyncPrm);
+       DupLink_CreateParams_Init(&pObj->DupPrm);
+
        IpcLink_CreateParams_Init(&pObj->IPCOut_IPU1_0_DSP_0_0Prm);
        IpcLink_CreateParams_Init(&pObj->IPCIn_DSP_0_IPU1_0_0Prm);
-       AlgorithmLink_SurroundViewCreateParams_Init(&pObj->Alg_SurroundViewPrm);
+       AlgorithmLink_SurroundViewCreateParams_Init(&pObj->Alg_SurroundViewPrm_0);
        IpcLink_CreateParams_Init(&pObj->IPCOut_DSP_0_IPU1_0_0Prm);
        IpcLink_CreateParams_Init(&pObj->IPCIn_IPU1_0_DSP_0_0Prm);
+
+       IpcLink_CreateParams_Init(&pObj->IPCOut_IPU1_0_DSP_1_0Prm);
+       IpcLink_CreateParams_Init(&pObj->IPCIn_DSP_1_IPU1_0_0Prm);
+       AlgorithmLink_SurroundViewCreateParams_Init(&pObj->Alg_SurroundViewPrm_1);
+       IpcLink_CreateParams_Init(&pObj->IPCOut_DSP_1_IPU1_0_0Prm);
+       IpcLink_CreateParams_Init(&pObj->IPCIn_IPU1_0_DSP_1_0Prm);
+
        MergeLink_CreateParams_Init(&pObj->MergePrm);
        DisplayLink_CreateParams_Init(&pObj->Display_videoPrm);
        GrpxSrcLink_CreateParams_Init(&pObj->GrpxSrcPrm);
        DisplayLink_CreateParams_Init(&pObj->Display_GrpxPrm);
-
-       //ryuhs74@20151127 - Add
-       //DupLink_CreateParams_Init(&pObj->DupPrm2);
-       /*
-	   SyncLink_CreateParams_Init(&pObj->SyncPrm2);
-	   IpcLink_CreateParams_Init(&pObj->IPCOut_IPU1_0_DSP_1_0Prm);
-	   IpcLink_CreateParams_Init(&pObj->IPCIn_DSP_1_IPU1_0_0Prm);
-	   AlgorithmLink_SurroundViewCreateParams_Init(&pObj->Alg_SurroundViewPrm_DSP2);
-	   IpcLink_CreateParams_Init(&pObj->IPCOut_DSP_1_IPU1_0_0Prm);
-	   IpcLink_CreateParams_Init(&pObj->IPCIn_IPU1_0_DSP_1_0Prm);
-	   */
-
-       //ryuhs74@20151027 - Add Save Link
-       //SaveLink_CreateParams_Init(&pObj->Save_Prm);
-
 }
 
 Void chains_surround_View_SetPrms(chains_surround_ViewObj *pObj){
        (pObj->DupPrm).numOutQue = 2;
-       (pObj->Alg_SurroundViewPrm).baseClassCreate.size  = sizeof(AlgorithmLink_SurroundViewCreateParams);
-       (pObj->Alg_SurroundViewPrm).baseClassCreate.algId  = ALGORITHM_LINK_DSP_ALG_SURROUND_VIEW;
+       (pObj->Alg_SurroundViewPrm_0).baseClassCreate.size  = sizeof(AlgorithmLink_SurroundViewCreateParams);
+       (pObj->Alg_SurroundViewPrm_0).baseClassCreate.algId  = ALGORITHM_LINK_DSP_ALG_SURROUND_VIEW;
 
-       //ryuhs74@20151127 - Add
-       //(pObj->Alg_SurroundViewPrm_DSP2).baseClassCreate.size  = sizeof(AlgorithmLink_SurroundViewCreateParams);
-       //(pObj->Alg_SurroundViewPrm_DSP2).baseClassCreate.algId  = ALGORITHM_LINK_DSP_ALG_SURROUND_VIEW;
-
-
+       (pObj->Alg_SurroundViewPrm_1).baseClassCreate.size  = sizeof(AlgorithmLink_SurroundViewCreateParams);
+       (pObj->Alg_SurroundViewPrm_1).baseClassCreate.algId  = ALGORITHM_LINK_DSP_ALG_SURROUND_VIEW;
        (pObj->MergePrm).numInQue = 2;
+
+
 }
 
 Void chains_surround_View_ConnectLinks(chains_surround_ViewObj *pObj){
-#if 0
-		//Capture -> Dup -> Sync -> Dup2 -> IPCOUT DSP1 -> IPCIN DSP1 -> Alg_DSP1 -> IPCOut DSP1 -> IPCIn DSP1 -> Merge
-		//							    -> IPCOUT DSP2 -> IPCIN DSP2 -> Alg_DSP2 -> IPCOut DSP2 -> IPCIn DSP2 ->
 
-	   //Capture -> Sync
-       pObj->CapturePrm.outQueParams.nextLink = pObj->SyncLinkID;
-       pObj->SyncPrm.inQueParams.prevLinkId = pObj->CaptureLinkID;
-       pObj->SyncPrm.inQueParams.prevLinkQueId = 0;
-
-       //Dup -> Sync
-       //pObj->DupPrm.outQueParams[0].nextLink = pObj->SyncLinkID;
-       //pObj->SyncPrm.inQueParams.prevLinkId = pObj->DupLinkID;
-       //pObj->SyncPrm.inQueParams.prevLinkQueId = 0;
-
-       //Sync -> Dup2
-       pObj->SyncPrm.outQueParams.nextLink = pObj->DupLinkID;
-       pObj->DupPrm.inQueParams.prevLinkId = pObj->SyncLinkID;
-       pObj->DupPrm.inQueParams.prevLinkQueId = 0;
-
-       //Dup2 -> IPCOut DSP1
-       pObj->DupPrm.outQueParams[0].nextLink = pObj->IPCOut_IPU1_0_DSP_0_0LinkID;
-       pObj->IPCOut_IPU1_0_DSP_0_0Prm.inQueParams.prevLinkId = pObj->DupLinkID;
-       pObj->IPCOut_IPU1_0_DSP_0_0Prm.inQueParams.prevLinkQueId = 0;
-
-       //IPCOut DSP1 -> IPC IN DSP1
-       pObj->IPCOut_IPU1_0_DSP_0_0Prm.outQueParams.nextLink = pObj->IPCIn_DSP_0_IPU1_0_0LinkID;
-       pObj->IPCIn_DSP_0_IPU1_0_0Prm.inQueParams.prevLinkId = pObj->IPCOut_IPU1_0_DSP_0_0LinkID;
-       pObj->IPCIn_DSP_0_IPU1_0_0Prm.inQueParams.prevLinkQueId = 0;
-
-       //IPCIn_DSP_0_IPU1_0_0 -> Alg_FullView
-       pObj->IPCIn_DSP_0_IPU1_0_0Prm.outQueParams.nextLink = pObj->Alg_SurroundViewLinkID;
-       pObj->Alg_SurroundViewPrm.inQueParams.prevLinkId = pObj->IPCIn_DSP_0_IPU1_0_0LinkID;
-       pObj->Alg_SurroundViewPrm.inQueParams.prevLinkQueId = 0;
-
-       //Alg_FullView -> IPCOut_DSP_0_IPU1_0_0
-       pObj->Alg_SurroundViewPrm.outQueParams.nextLink = pObj->IPCOut_DSP_0_IPU1_0_0LinkID;
-       pObj->IPCOut_DSP_0_IPU1_0_0Prm.inQueParams.prevLinkId = pObj->Alg_SurroundViewLinkID;
-       pObj->IPCOut_DSP_0_IPU1_0_0Prm.inQueParams.prevLinkQueId = 0;
-
-       //IPCOut_DSP_0_IPU1_0_0 -> IPCIn_IPU1_0_DSP_0_0
-       pObj->IPCOut_DSP_0_IPU1_0_0Prm.outQueParams.nextLink = pObj->IPCIn_IPU1_0_DSP_0_0LinkID;
-       pObj->IPCIn_IPU1_0_DSP_0_0Prm.inQueParams.prevLinkId = pObj->IPCOut_DSP_0_IPU1_0_0LinkID;
-       pObj->IPCIn_IPU1_0_DSP_0_0Prm.inQueParams.prevLinkQueId = 0;
-
-       //IPCIn_IPU1_0_DSP_0_0 -> Merge
-       pObj->IPCIn_IPU1_0_DSP_0_0Prm.outQueParams.nextLink = pObj->MergeLinkID;
-       pObj->MergePrm.inQueParams[0].prevLinkId = pObj->IPCIn_IPU1_0_DSP_0_0LinkID;
-       pObj->MergePrm.inQueParams[0].prevLinkQueId = 0;
-
-       // =========== DSP 2 ==========================
-       //Dup2 -> IPCOut DSP2
-       pObj->DupPrm.outQueParams[1].nextLink = pObj->IPCOut_IPU1_0_DSP_1_0LinkID;
-       pObj->IPCOut_IPU1_0_DSP_1_0Prm.inQueParams.prevLinkId = pObj->DupLinkID;
-       pObj->IPCOut_IPU1_0_DSP_1_0Prm.inQueParams.prevLinkQueId = 1;
-
-       //IPCOut DSP2 -> IPC IN DSP2
-       pObj->IPCOut_IPU1_0_DSP_1_0Prm.outQueParams.nextLink = pObj->IPCIn_DSP_1_IPU1_0_0LinkID;
-       pObj->IPCIn_DSP_1_IPU1_0_0Prm.inQueParams.prevLinkId = pObj->IPCOut_IPU1_0_DSP_1_0LinkID;
-       pObj->IPCIn_DSP_1_IPU1_0_0Prm.inQueParams.prevLinkQueId = 0;
-
-       //IPCIn_DSP_1_IPU1_0_0 -> Alg_FullView
-       pObj->IPCIn_DSP_1_IPU1_0_0Prm.outQueParams.nextLink = pObj->Alg_SurroundViewLinkID_DSP2;
-       pObj->Alg_SurroundViewPrm_DSP2.inQueParams.prevLinkId = pObj->IPCIn_DSP_1_IPU1_0_0LinkID;
-       pObj->Alg_SurroundViewPrm_DSP2.inQueParams.prevLinkQueId = 0;
-
-
-       //Alg_FullView -> IPCOut_DSP_0_IPU1_0_0
-       pObj->Alg_SurroundViewPrm_DSP2.outQueParams.nextLink = pObj->IPCOut_DSP_1_IPU1_0_0LinkID;
-       pObj->IPCOut_DSP_1_IPU1_0_0Prm.inQueParams.prevLinkId = pObj->Alg_SurroundViewLinkID_DSP2;
-       pObj->IPCOut_DSP_1_IPU1_0_0Prm.inQueParams.prevLinkQueId = 0;
-
-       //IPCOut_DSP_0_IPU1_0_0 -> IPCIn_IPU1_0_DSP_0_0
-       pObj->IPCOut_DSP_1_IPU1_0_0Prm.outQueParams.nextLink = pObj->IPCIn_IPU1_0_DSP_1_0LinkID;
-       pObj->IPCIn_IPU1_0_DSP_1_0Prm.inQueParams.prevLinkId = pObj->IPCOut_DSP_1_IPU1_0_0LinkID;
-       pObj->IPCIn_IPU1_0_DSP_1_0Prm.inQueParams.prevLinkQueId = 0;
-
-       //IPCIn_IPU1_0_DSP_0_0 -> Merge
-       pObj->IPCIn_IPU1_0_DSP_1_0Prm.outQueParams.nextLink = pObj->MergeLinkID;
-       pObj->MergePrm.inQueParams[1].prevLinkId = pObj->IPCIn_IPU1_0_DSP_1_0LinkID;
-       pObj->MergePrm.inQueParams[1].prevLinkQueId = 1;
-       // =========== DSP 2 ==========================
-
-       //Merge -> Display_video
-       pObj->MergePrm.outQueParams.nextLink = pObj->Display_videoLinkID;
-       pObj->Display_videoPrm.inQueParams.prevLinkId = pObj->MergeLinkID;
-       pObj->Display_videoPrm.inQueParams.prevLinkQueId = 0;
-
-       //GrpxSrc -> Display_Grpx
-       pObj->GrpxSrcPrm.outQueParams.nextLink = pObj->Display_GrpxLinkID;
-       pObj->Display_GrpxPrm.inQueParams.prevLinkId = pObj->GrpxSrcLinkID;
-       pObj->Display_GrpxPrm.inQueParams.prevLinkQueId = 0;
-#else
-       //Capture -> Dup
-	   pObj->CapturePrm.outQueParams.nextLink = pObj->DupLinkID;
-	   pObj->DupPrm.inQueParams.prevLinkId = pObj->CaptureLinkID;
-	   pObj->DupPrm.inQueParams.prevLinkQueId = 0;
-
-	   //Dup -> VPE
-	   pObj->DupPrm.outQueParams[0].nextLink = pObj->SyncLinkID;
-	   pObj->SyncPrm.inQueParams.prevLinkId = pObj->DupLinkID;
+       //Capture -> SYNC
+	   pObj->CapturePrm.outQueParams.nextLink = pObj->SyncLinkID;
+	   pObj->SyncPrm.inQueParams.prevLinkId = pObj->CaptureLinkID;
 	   pObj->SyncPrm.inQueParams.prevLinkQueId = 0;
 
-	   //Dup -> Merge
-	   pObj->DupPrm.outQueParams[1].nextLink = pObj->MergeLinkID;
-	   pObj->MergePrm.inQueParams[1].prevLinkId = pObj->DupLinkID;
-	   pObj->MergePrm.inQueParams[1].prevLinkQueId = 1;
+	   //SYNC -> DUP
+	   pObj->SyncPrm.outQueParams.nextLink = pObj->DupLinkID;
+	   pObj->DupPrm.inQueParams.prevLinkId = pObj->SyncLinkID;
+	   pObj->DupPrm.inQueParams.prevLinkQueId = 0;
 
-
-	   //Sync -> Alg_SurroundView
-	   pObj->SyncPrm.outQueParams.nextLink = pObj->IPCOut_IPU1_0_DSP_0_0LinkID;
-	   pObj->IPCOut_IPU1_0_DSP_0_0Prm.inQueParams.prevLinkId = pObj->SyncLinkID;
+	   //Dup -> Alg_SurroundView_0(DSO0)
+	   pObj->DupPrm.outQueParams[0].nextLink = pObj->IPCOut_IPU1_0_DSP_0_0LinkID;
+	   pObj->IPCOut_IPU1_0_DSP_0_0Prm.inQueParams.prevLinkId = pObj->DupLinkID;
 	   pObj->IPCOut_IPU1_0_DSP_0_0Prm.inQueParams.prevLinkQueId = 0;
+
+	   //Dup -> Alg_SurroundView_1(DSP1)
+	   pObj->DupPrm.outQueParams[1].nextLink = pObj->IPCOut_IPU1_0_DSP_1_0LinkID;
+	   pObj->IPCOut_IPU1_0_DSP_1_0Prm.inQueParams.prevLinkId = pObj->DupLinkID;
+	   pObj->IPCOut_IPU1_0_DSP_1_0Prm.inQueParams.prevLinkQueId = 1;
 
 
 	   //IPCOut_IPU1_0_DSP_0_0 -> IPCIn_DSP_0_IPU1_0_0
@@ -221,13 +116,13 @@ Void chains_surround_View_ConnectLinks(chains_surround_ViewObj *pObj){
 	   pObj->IPCIn_DSP_0_IPU1_0_0Prm.inQueParams.prevLinkQueId = 0;
 
 	   //IPCIn_DSP_0_IPU1_0_0 -> Alg_FullView
-	   pObj->IPCIn_DSP_0_IPU1_0_0Prm.outQueParams.nextLink = pObj->Alg_SurroundViewLinkID;
-	   pObj->Alg_SurroundViewPrm.inQueParams.prevLinkId = pObj->IPCIn_DSP_0_IPU1_0_0LinkID;
-	   pObj->Alg_SurroundViewPrm.inQueParams.prevLinkQueId = 0;
+	   pObj->IPCIn_DSP_0_IPU1_0_0Prm.outQueParams.nextLink = pObj->Alg_SurroundViewLink_0_ID;
+	   pObj->Alg_SurroundViewPrm_0.inQueParams.prevLinkId = pObj->IPCIn_DSP_0_IPU1_0_0LinkID;
+	   pObj->Alg_SurroundViewPrm_0.inQueParams.prevLinkQueId = 0;
 
 	   //Alg_FullView -> IPCOut_DSP_0_IPU1_0_0
-	   pObj->Alg_SurroundViewPrm.outQueParams.nextLink = pObj->IPCOut_DSP_0_IPU1_0_0LinkID;
-	   pObj->IPCOut_DSP_0_IPU1_0_0Prm.inQueParams.prevLinkId = pObj->Alg_SurroundViewLinkID;
+	   pObj->Alg_SurroundViewPrm_0.outQueParams.nextLink = pObj->IPCOut_DSP_0_IPU1_0_0LinkID;
+	   pObj->IPCOut_DSP_0_IPU1_0_0Prm.inQueParams.prevLinkId = pObj->Alg_SurroundViewLink_0_ID;
 	   pObj->IPCOut_DSP_0_IPU1_0_0Prm.inQueParams.prevLinkQueId = 0;
 
 	   //IPCOut_DSP_0_IPU1_0_0 -> IPCIn_IPU1_0_DSP_0_0
@@ -241,6 +136,33 @@ Void chains_surround_View_ConnectLinks(chains_surround_ViewObj *pObj){
 	   pObj->MergePrm.inQueParams[0].prevLinkQueId = 0;
 
 
+
+	   //IPCOut_IPU1_0_DSP_0_0 -> IPCIn_DSP_0_IPU1_0_0
+	   pObj->IPCOut_IPU1_0_DSP_1_0Prm.outQueParams.nextLink = pObj->IPCIn_DSP_1_IPU1_0_0LinkID;
+	   pObj->IPCIn_DSP_1_IPU1_0_0Prm.inQueParams.prevLinkId = pObj->IPCOut_IPU1_0_DSP_1_0LinkID;
+	   pObj->IPCIn_DSP_1_IPU1_0_0Prm.inQueParams.prevLinkQueId = 0;
+
+	   //IPCIn_DSP_0_IPU1_0_0 -> Alg_FullView
+	   pObj->IPCIn_DSP_1_IPU1_0_0Prm.outQueParams.nextLink = pObj->Alg_SurroundViewLink_1_ID;
+	   pObj->Alg_SurroundViewPrm_1.inQueParams.prevLinkId = pObj->IPCIn_DSP_1_IPU1_0_0LinkID;
+	   pObj->Alg_SurroundViewPrm_1.inQueParams.prevLinkQueId = 0;
+
+	   //Alg_FullView -> IPCOut_DSP_0_IPU1_0_0
+	   pObj->Alg_SurroundViewPrm_1.outQueParams.nextLink = pObj->IPCOut_DSP_1_IPU1_0_0LinkID;
+	   pObj->IPCOut_DSP_1_IPU1_0_0Prm.inQueParams.prevLinkId = pObj->Alg_SurroundViewLink_1_ID;
+	   pObj->IPCOut_DSP_1_IPU1_0_0Prm.inQueParams.prevLinkQueId = 0;
+
+	   //IPCOut_DSP_0_IPU1_0_0 -> IPCIn_IPU1_0_DSP_0_0
+	   pObj->IPCOut_DSP_1_IPU1_0_0Prm.outQueParams.nextLink = pObj->IPCIn_IPU1_0_DSP_1_0LinkID;
+	   pObj->IPCIn_IPU1_0_DSP_1_0Prm.inQueParams.prevLinkId = pObj->IPCOut_DSP_1_IPU1_0_0LinkID;
+	   pObj->IPCIn_IPU1_0_DSP_1_0Prm.inQueParams.prevLinkQueId = 0;
+
+	   //IPCIn_IPU1_0_DSP_0_0 -> Display_Video
+	   pObj->IPCIn_IPU1_0_DSP_1_0Prm.outQueParams.nextLink = pObj->MergeLinkID;
+	   pObj->MergePrm.inQueParams[1].prevLinkId = pObj->IPCIn_IPU1_0_DSP_1_0LinkID;
+	   pObj->MergePrm.inQueParams[1].prevLinkQueId = 0;
+
+
 	   //Merge -> Display_video
 	   pObj->MergePrm.outQueParams.nextLink = pObj->Display_videoLinkID;
 	   pObj->Display_videoPrm.inQueParams.prevLinkId = pObj->MergeLinkID;
@@ -250,237 +172,172 @@ Void chains_surround_View_ConnectLinks(chains_surround_ViewObj *pObj){
 	   pObj->GrpxSrcPrm.outQueParams.nextLink = pObj->Display_GrpxLinkID;
 	   pObj->Display_GrpxPrm.inQueParams.prevLinkId = pObj->GrpxSrcLinkID;
 	   pObj->Display_GrpxPrm.inQueParams.prevLinkQueId = 0;
-#endif
-
-
 
 }
 
-Int32 chains_surround_View_Create(chains_surround_ViewObj *pObj, Void *appObj){
+Int32 chains_surround_View_Create(chains_surround_ViewObj *pObj, Void *appObj)
+{
 
-       Int32 status;
+	Int32 status;
 
-       chains_surround_View_SetLinkId(pObj);
-       chains_surround_View_ResetLinkPrms(pObj);
+	chains_surround_View_SetLinkId(pObj);
+	chains_surround_View_ResetLinkPrms(pObj);
 
-       chains_surround_View_SetPrms(pObj);
-       chains_surround_View_SetAppPrms(pObj, appObj);
+	chains_surround_View_SetPrms(pObj);
+	chains_surround_View_SetAppPrms(pObj, appObj);
 
-       chains_surround_View_ConnectLinks(pObj);
-#if 0
-       //Capture -> Dup -> Sync -> Dup2 -> IPCOUT DSP1 -> IPCIN DSP1 -> Alg_DSP1 -> IPCOut DSP1 -> IPCIn DSP1 -> Merge
-       //							    -> IPCOUT DSP2 -> IPCIN DSP2 -> Alg_DSP2 -> IPCOut DSP2 -> IPCIn DSP2 ->
-       status = System_linkCreate(pObj->CaptureLinkID, &pObj->CapturePrm, sizeof(pObj->CapturePrm));
-       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+	chains_surround_View_ConnectLinks(pObj);
 
-       status = System_linkCreate(pObj->DupLinkID, &pObj->DupPrm, sizeof(pObj->DupPrm));
-       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+	status = System_linkCreate(	pObj->CaptureLinkID,
+								&pObj->CapturePrm,
+								sizeof(pObj->CapturePrm));
+	UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
-       status = System_linkCreate(pObj->SyncLinkID, &pObj->SyncPrm, sizeof(pObj->SyncPrm));
-       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+	status = System_linkCreate(	pObj->SyncLinkID,
+								&pObj->SyncPrm,
+								sizeof(pObj->SyncPrm));
+	UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
-       //ryuyhs74@20151127 - Add
-       //status = System_linkCreate(pObj->DupLiniID2, &pObj->DupPrm2, sizeof(pObj->DupPrm2));
-       //UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+	status = System_linkCreate(	pObj->DupLinkID,
+								&pObj->DupPrm,
+								sizeof(pObj->DupPrm));
+	UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
+	status = System_linkCreate(	pObj->IPCOut_IPU1_0_DSP_0_0LinkID,
+								&pObj->IPCOut_IPU1_0_DSP_0_0Prm,
+								sizeof(pObj->IPCOut_IPU1_0_DSP_0_0Prm));
+	UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
+	status = System_linkCreate(	pObj->IPCIn_DSP_0_IPU1_0_0LinkID,
+								&pObj->IPCIn_DSP_0_IPU1_0_0Prm,
+								sizeof(pObj->IPCIn_DSP_0_IPU1_0_0Prm));
+
+	status = System_linkCreate(	pObj->Alg_SurroundViewLink_0_ID,
+								&pObj->Alg_SurroundViewPrm_0,
+								sizeof(pObj->Alg_SurroundViewPrm_0));
+	UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
+	status = System_linkCreate(	pObj->IPCOut_DSP_0_IPU1_0_0LinkID,
+								&pObj->IPCOut_DSP_0_IPU1_0_0Prm,
+								sizeof(pObj->IPCOut_DSP_0_IPU1_0_0Prm));
+	UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
+	status = System_linkCreate(	pObj->IPCIn_IPU1_0_DSP_0_0LinkID,
+								&pObj->IPCIn_IPU1_0_DSP_0_0Prm,
+								sizeof(pObj->IPCIn_IPU1_0_DSP_0_0Prm));
+	UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
 
-       status = System_linkCreate(pObj->IPCOut_IPU1_0_DSP_0_0LinkID, &pObj->IPCOut_IPU1_0_DSP_0_0Prm, sizeof(pObj->IPCOut_IPU1_0_DSP_0_0Prm));
-       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
-       status = System_linkCreate(pObj->IPCIn_DSP_0_IPU1_0_0LinkID, &pObj->IPCIn_DSP_0_IPU1_0_0Prm, sizeof(pObj->IPCIn_DSP_0_IPU1_0_0Prm));
-       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+	status = System_linkCreate(	pObj->IPCOut_IPU1_0_DSP_1_0LinkID,
+								&pObj->IPCOut_IPU1_0_DSP_1_0Prm,
+								sizeof(pObj->IPCOut_IPU1_0_DSP_1_0Prm));
+	UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
-       status = System_linkCreate(pObj->Alg_SurroundViewLinkID, &pObj->Alg_SurroundViewPrm, sizeof(pObj->Alg_SurroundViewPrm));
-       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+	status = System_linkCreate(	pObj->IPCIn_DSP_1_IPU1_0_0LinkID,
+								&pObj->IPCIn_DSP_1_IPU1_0_0Prm,
+								sizeof(pObj->IPCIn_DSP_1_IPU1_0_0Prm));
 
-       status = System_linkCreate(pObj->IPCOut_DSP_0_IPU1_0_0LinkID, &pObj->IPCOut_DSP_0_IPU1_0_0Prm, sizeof(pObj->IPCOut_DSP_0_IPU1_0_0Prm));
-       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+	status = System_linkCreate(	pObj->Alg_SurroundViewLink_0_ID,
+								&pObj->Alg_SurroundViewPrm_1,
+								sizeof(pObj->Alg_SurroundViewPrm_1));
+	UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
-       status = System_linkCreate(pObj->IPCIn_IPU1_0_DSP_0_0LinkID, &pObj->IPCIn_IPU1_0_DSP_0_0Prm, sizeof(pObj->IPCIn_IPU1_0_DSP_0_0Prm));
-       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+	status = System_linkCreate(	pObj->IPCOut_DSP_1_IPU1_0_0LinkID,
+								&pObj->IPCOut_DSP_1_IPU1_0_0Prm,
+								sizeof(pObj->IPCOut_DSP_1_IPU1_0_0Prm));
+	UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
-       // ================================== DSP2 ======================================
-       status = System_linkCreate(pObj->IPCOut_IPU1_0_DSP_1_0LinkID, &pObj->IPCOut_IPU1_0_DSP_1_0Prm, sizeof(pObj->IPCOut_IPU1_0_DSP_1_0Prm));
-	   UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+	status = System_linkCreate(	pObj->IPCIn_IPU1_0_DSP_1_0LinkID,
+								&pObj->IPCIn_IPU1_0_DSP_1_0Prm,
+								sizeof(pObj->IPCIn_IPU1_0_DSP_1_0Prm));
+	UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
-	   status = System_linkCreate(pObj->IPCIn_DSP_1_IPU1_0_0LinkID, &pObj->IPCIn_DSP_1_IPU1_0_0Prm, sizeof(pObj->IPCIn_DSP_1_IPU1_0_0Prm));
-	   UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
-	   status = System_linkCreate(pObj->Alg_SurroundViewLinkID_DSP2, &pObj->Alg_SurroundViewPrm, sizeof(pObj->Alg_SurroundViewPrm_DSP2));
-	   UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+	status = System_linkCreate(	pObj->MergeLinkID,
+								&pObj->MergePrm,
+								sizeof(pObj->MergePrm));
+	UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
-	   status = System_linkCreate(pObj->IPCOut_DSP_1_IPU1_0_0LinkID, &pObj->IPCOut_DSP_1_IPU1_0_0Prm, sizeof(pObj->IPCOut_DSP_1_IPU1_0_0Prm));
-	   UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+	status = System_linkCreate(	pObj->Display_videoLinkID,
+								&pObj->Display_videoPrm,
+								sizeof(pObj->Display_videoPrm));
+	UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
-	   status = System_linkCreate(pObj->IPCIn_IPU1_0_DSP_1_0LinkID, &pObj->IPCIn_IPU1_0_DSP_1_0Prm, sizeof(pObj->IPCIn_IPU1_0_DSP_1_0Prm));
-	   UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
-	  // ================================== DSP2 ======================================
+	status = System_linkCreate(	pObj->GrpxSrcLinkID,
+								&pObj->GrpxSrcPrm,
+								sizeof(pObj->GrpxSrcPrm));
+	UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
-       status = System_linkCreate(pObj->MergeLinkID, &pObj->MergePrm, sizeof(pObj->MergePrm));
-       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+	status = System_linkCreate(	pObj->Display_GrpxLinkID,
+								&pObj->Display_GrpxPrm,
+								sizeof(pObj->Display_GrpxPrm));
+	UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
-       status = System_linkCreate(pObj->Display_videoLinkID, &pObj->Display_videoPrm, sizeof(pObj->Display_videoPrm));
-       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+	UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
-       status = System_linkCreate(pObj->GrpxSrcLinkID, &pObj->GrpxSrcPrm, sizeof(pObj->GrpxSrcPrm));
-       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
-
-       status = System_linkCreate(pObj->Display_GrpxLinkID, &pObj->Display_GrpxPrm, sizeof(pObj->Display_GrpxPrm));
-       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
-#else
-       status = System_linkCreate(pObj->CaptureLinkID, &pObj->CapturePrm, sizeof(pObj->CapturePrm));
-              UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
-
-              status = System_linkCreate(pObj->DupLinkID, &pObj->DupPrm, sizeof(pObj->DupPrm));
-              UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
-
-              status = System_linkCreate(pObj->SyncLinkID, &pObj->SyncPrm, sizeof(pObj->SyncPrm));
-              UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
-
-              status = System_linkCreate(pObj->IPCOut_IPU1_0_DSP_0_0LinkID, &pObj->IPCOut_IPU1_0_DSP_0_0Prm, sizeof(pObj->IPCOut_IPU1_0_DSP_0_0Prm));
-              UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
-
-              status = System_linkCreate(pObj->IPCIn_DSP_0_IPU1_0_0LinkID, &pObj->IPCIn_DSP_0_IPU1_0_0Prm, sizeof(pObj->IPCIn_DSP_0_IPU1_0_0Prm));
-
-              status = System_linkCreate(pObj->Alg_SurroundViewLinkID, &pObj->Alg_SurroundViewPrm, sizeof(pObj->Alg_SurroundViewPrm));
-              UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
-
-              status = System_linkCreate(pObj->IPCOut_DSP_0_IPU1_0_0LinkID, &pObj->IPCOut_DSP_0_IPU1_0_0Prm, sizeof(pObj->IPCOut_DSP_0_IPU1_0_0Prm));
-              UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
-
-              status = System_linkCreate(pObj->IPCIn_IPU1_0_DSP_0_0LinkID, &pObj->IPCIn_IPU1_0_DSP_0_0Prm, sizeof(pObj->IPCIn_IPU1_0_DSP_0_0Prm));
-              UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
-
-              status = System_linkCreate(pObj->MergeLinkID, &pObj->MergePrm, sizeof(pObj->MergePrm));
-              UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
-
-              status = System_linkCreate(pObj->Display_videoLinkID, &pObj->Display_videoPrm, sizeof(pObj->Display_videoPrm));
-              UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
-
-              status = System_linkCreate(pObj->GrpxSrcLinkID, &pObj->GrpxSrcPrm, sizeof(pObj->GrpxSrcPrm));
-              UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
-
-              status = System_linkCreate(pObj->Display_GrpxLinkID, &pObj->Display_GrpxPrm, sizeof(pObj->Display_GrpxPrm));
-              UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
-#endif
-
-       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
-
-       return status;
+	return status;
 }
 
-Int32 chains_surround_View_Start(chains_surround_ViewObj *pObj){
+Int32 chains_surround_View_Start(chains_surround_ViewObj *pObj)
+{
 
-       Int32 status;
+	Int32 status;
 
-#if 0
-       //Capture -> Sync -> Dup -> IPCOUT DSP1 -> IPCIN DSP1 -> Alg_DSP1 -> IPCOut DSP1 -> IPCIn DSP1 -> Merge
-       //					    -> IPCOUT DSP2 -> IPCIN DSP2 -> Alg_DSP2 -> IPCOut DSP2 -> IPCIn DSP2 ->
+	status = System_linkStart(pObj->Display_GrpxLinkID);
+	UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
-       status = System_linkStart(pObj->Display_GrpxLinkID);
-       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+	status = System_linkStart(pObj->GrpxSrcLinkID);
+	UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
-       status = System_linkStart(pObj->GrpxSrcLinkID);
-       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+	status = System_linkStart(pObj->Display_videoLinkID);
+	UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
-       status = System_linkStart(pObj->Display_videoLinkID);
-       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+	status = System_linkStart(pObj->MergeLinkID);
+	UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
+	status = System_linkStart(pObj->IPCIn_IPU1_0_DSP_0_0LinkID);
+	UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
+	status = System_linkStart(pObj->IPCOut_DSP_0_IPU1_0_0LinkID);
+	UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
+	status = System_linkStart(pObj->Alg_SurroundViewLink_0_ID);
+	UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
+	status = System_linkStart(pObj->IPCIn_DSP_0_IPU1_0_0LinkID);
+	UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
+	status = System_linkStart(pObj->IPCOut_IPU1_0_DSP_0_0LinkID);
+	UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
 
-       //ryuhs74@20151127 - Add
-       status = System_linkStart(pObj->MergeLinkID);
-       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+	status = System_linkStart(pObj->IPCIn_IPU1_0_DSP_1_0LinkID);
+	UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
+	status = System_linkStart(pObj->IPCOut_DSP_1_IPU1_0_0LinkID);
+	UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
+	status = System_linkStart(pObj->Alg_SurroundViewLink_1_ID);
+	UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
+	status = System_linkStart(pObj->IPCIn_DSP_1_IPU1_0_0LinkID);
+	UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
+	status = System_linkStart(pObj->IPCOut_IPU1_0_DSP_1_0LinkID);
+	UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
+	status = System_linkStart(pObj->DupLinkID);
+	UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
+	status = System_linkStart(pObj->SyncLinkID);
+	UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
 
-       //ryuhs74@20151127 - Add
-       status = System_linkStart(pObj->IPCIn_IPU1_0_DSP_1_0LinkID);
-       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+	status = System_linkStart(pObj->CaptureLinkID);
+	UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
-       status = System_linkStart(pObj->IPCIn_IPU1_0_DSP_0_0LinkID);
-       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
-
-       //ryuhs74@20151127 - Add
-       status = System_linkStart(pObj->IPCOut_DSP_1_IPU1_0_0LinkID);
-       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
-
-       status = System_linkStart(pObj->IPCOut_DSP_0_IPU1_0_0LinkID);
-       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
-
-       //ryuhs74@20151127 - Add
-       status = System_linkStart(pObj->Alg_SurroundViewLinkID_DSP2);
-       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
-
-       status = System_linkStart(pObj->Alg_SurroundViewLinkID);
-       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
-
-       //ryuhs74@20151127 - Add
-       status = System_linkStart(pObj->IPCIn_DSP_1_IPU1_0_0LinkID);
-       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
-
-       status = System_linkStart(pObj->IPCIn_DSP_0_IPU1_0_0LinkID);
-       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
-
-       //ryuhs74@20151127 - Add
-       status = System_linkStart(pObj->IPCOut_IPU1_0_DSP_1_0LinkID);
-       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
-
-       status = System_linkStart(pObj->IPCOut_IPU1_0_DSP_0_0LinkID);
-       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
-
-       //ryuhs74@20151127 - Add
-       //status = System_linkStart(pObj->DupLiniID2);
-       //UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
-
-       status = System_linkStart(pObj->DupLinkID);
-       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
-
-       status = System_linkStart(pObj->SyncLinkID);
-       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
-
-       status = System_linkStart(pObj->CaptureLinkID);
-       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
-#else
-       status = System_linkStart(pObj->Display_GrpxLinkID);
-              UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
-
-              status = System_linkStart(pObj->GrpxSrcLinkID);
-              UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
-
-              status = System_linkStart(pObj->Display_videoLinkID);
-              UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
-
-              status = System_linkStart(pObj->MergeLinkID);
-              UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
-
-              status = System_linkStart(pObj->IPCIn_IPU1_0_DSP_0_0LinkID);
-              UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
-
-              status = System_linkStart(pObj->IPCOut_DSP_0_IPU1_0_0LinkID);
-              UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
-
-              status = System_linkStart(pObj->Alg_SurroundViewLinkID);
-              UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
-
-              status = System_linkStart(pObj->IPCIn_DSP_0_IPU1_0_0LinkID);
-              UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
-
-              status = System_linkStart(pObj->IPCOut_IPU1_0_DSP_0_0LinkID);
-              UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
-
-              status = System_linkStart(pObj->SyncLinkID);
-              UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
-
-              status = System_linkStart(pObj->DupLinkID);
-              UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
-
-              status = System_linkStart(pObj->CaptureLinkID);
-              UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
-#endif
-       //ryyuhs74@20151028 - Add Save Link
-       //status = System_linkStart(pObj->Save_SaveLinkID);
-       //UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
-
-       return status;
+	return status;
 }
 
 Int32 chains_surround_View_Stop(chains_surround_ViewObj *pObj){
@@ -505,26 +362,35 @@ Int32 chains_surround_View_Stop(chains_surround_ViewObj *pObj){
        status = System_linkStop(pObj->IPCOut_DSP_0_IPU1_0_0LinkID);
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
-       status = System_linkStop(pObj->Alg_SurroundViewLinkID);
+       status = System_linkStop(pObj->Alg_SurroundViewLink_0_ID);
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
        status = System_linkStop(pObj->IPCIn_DSP_0_IPU1_0_0LinkID);
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
        status = System_linkStop(pObj->IPCOut_IPU1_0_DSP_0_0LinkID);
+       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
+
+       status = System_linkStop(pObj->IPCIn_IPU1_0_DSP_1_0LinkID);
+       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
+       status = System_linkStop(pObj->IPCOut_DSP_1_IPU1_0_0LinkID);
+       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
+       status = System_linkStop(pObj->Alg_SurroundViewLink_1_ID);
+       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
+       status = System_linkStop(pObj->IPCIn_DSP_1_IPU1_0_0LinkID);
+       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
+       status = System_linkStop(pObj->IPCOut_IPU1_0_DSP_1_0LinkID);
+       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
+       status = System_linkStop(pObj->DupLinkID);
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
        status = System_linkStop(pObj->SyncLinkID);
-       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
-
-       status = System_linkStop(pObj->IPCIn_DSP_0_IPU1_0_0LinkID);
-       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
-
-       status = System_linkStop(pObj->IPCOut_IPU1_0_DSP_0_0LinkID);
-       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
-
-
-       status = System_linkStop(pObj->DupLinkID);
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
        status = System_linkStop(pObj->CaptureLinkID);
@@ -555,7 +421,7 @@ Int32 chains_surround_View_Delete(chains_surround_ViewObj *pObj){
        status = System_linkDelete(pObj->IPCOut_DSP_0_IPU1_0_0LinkID);
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
-       status = System_linkDelete(pObj->Alg_SurroundViewLinkID);
+       status = System_linkDelete(pObj->Alg_SurroundViewLink_0_ID);
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
        status = System_linkDelete(pObj->IPCIn_DSP_0_IPU1_0_0LinkID);
@@ -564,10 +430,26 @@ Int32 chains_surround_View_Delete(chains_surround_ViewObj *pObj){
        status = System_linkDelete(pObj->IPCOut_IPU1_0_DSP_0_0LinkID);
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
-       status = System_linkDelete(pObj->SyncLinkID);
+
+       status = System_linkDelete(pObj->IPCIn_IPU1_0_DSP_1_0LinkID);
+       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
+       status = System_linkDelete(pObj->IPCOut_DSP_1_IPU1_0_0LinkID);
+       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
+       status = System_linkDelete(pObj->Alg_SurroundViewLink_1_ID);
+       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
+       status = System_linkDelete(pObj->IPCIn_DSP_1_IPU1_0_0LinkID);
+       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
+       status = System_linkDelete(pObj->IPCOut_IPU1_0_DSP_1_0LinkID);
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
        status = System_linkDelete(pObj->DupLinkID);
+       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
+       status = System_linkDelete(pObj->SyncLinkID);
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
        status = System_linkDelete(pObj->CaptureLinkID);
@@ -578,15 +460,24 @@ Int32 chains_surround_View_Delete(chains_surround_ViewObj *pObj){
 
 Void chains_surround_View_printBufferStatistics(chains_surround_ViewObj *pObj){
        System_linkPrintBufferStatistics(pObj->CaptureLinkID);
-       System_linkPrintBufferStatistics(pObj->DupLinkID);
        System_linkPrintBufferStatistics(pObj->SyncLinkID);
+       System_linkPrintBufferStatistics(pObj->DupLinkID);
        System_linkPrintBufferStatistics(pObj->IPCOut_IPU1_0_DSP_0_0LinkID);
        Task_sleep(500);
        System_linkPrintBufferStatistics(pObj->IPCIn_DSP_0_IPU1_0_0LinkID);
-       System_linkPrintBufferStatistics(pObj->Alg_SurroundViewLinkID);
+       System_linkPrintBufferStatistics(pObj->Alg_SurroundViewLink_0_ID);
        System_linkPrintBufferStatistics(pObj->IPCOut_DSP_0_IPU1_0_0LinkID);
        Task_sleep(500);
        System_linkPrintBufferStatistics(pObj->IPCIn_IPU1_0_DSP_0_0LinkID);
+
+       System_linkPrintBufferStatistics(pObj->IPCOut_IPU1_0_DSP_1_0LinkID);
+       Task_sleep(500);
+       System_linkPrintBufferStatistics(pObj->IPCIn_DSP_1_IPU1_0_0LinkID);
+       System_linkPrintBufferStatistics(pObj->Alg_SurroundViewLink_1_ID);
+       System_linkPrintBufferStatistics(pObj->IPCOut_DSP_1_IPU1_0_0LinkID);
+       Task_sleep(500);
+       System_linkPrintBufferStatistics(pObj->IPCIn_IPU1_0_DSP_1_0LinkID);
+
        System_linkPrintBufferStatistics(pObj->MergeLinkID);
        System_linkPrintBufferStatistics(pObj->Display_videoLinkID);
        System_linkPrintBufferStatistics(pObj->GrpxSrcLinkID);
@@ -596,15 +487,24 @@ Void chains_surround_View_printBufferStatistics(chains_surround_ViewObj *pObj){
 
 Void chains_surround_View_printStatistics(chains_surround_ViewObj *pObj){
        System_linkPrintStatistics(pObj->CaptureLinkID);
-       System_linkPrintStatistics(pObj->DupLinkID);
        System_linkPrintStatistics(pObj->SyncLinkID);
+       System_linkPrintStatistics(pObj->DupLinkID);
        System_linkPrintStatistics(pObj->IPCOut_IPU1_0_DSP_0_0LinkID);
        Task_sleep(500);
        System_linkPrintStatistics(pObj->IPCIn_DSP_0_IPU1_0_0LinkID);
-       System_linkPrintStatistics(pObj->Alg_SurroundViewLinkID);
+       System_linkPrintStatistics(pObj->Alg_SurroundViewLink_0_ID);
        System_linkPrintStatistics(pObj->IPCOut_DSP_0_IPU1_0_0LinkID);
        Task_sleep(500);
        System_linkPrintStatistics(pObj->IPCIn_IPU1_0_DSP_0_0LinkID);
+
+
+       System_linkPrintStatistics(pObj->IPCOut_IPU1_0_DSP_1_0LinkID);
+       Task_sleep(500);
+       System_linkPrintStatistics(pObj->IPCIn_DSP_1_IPU1_0_0LinkID);
+       System_linkPrintStatistics(pObj->Alg_SurroundViewLink_1_ID);
+       System_linkPrintStatistics(pObj->IPCOut_DSP_1_IPU1_0_0LinkID);
+       Task_sleep(500);
+       System_linkPrintStatistics(pObj->IPCIn_IPU1_0_DSP_1_0LinkID);
        System_linkPrintStatistics(pObj->MergeLinkID);
        System_linkPrintStatistics(pObj->Display_videoLinkID);
        System_linkPrintStatistics(pObj->GrpxSrcLinkID);

@@ -250,7 +250,14 @@ Void chains_surround_View_SetAppPrms(chains_surround_ViewObj *pUcObj, Void *appO
         );
 
     chains_surround_View_SetAlgSurroundViewPrm(
-                            &pUcObj->Alg_SurroundViewPrm,
+                            &pUcObj->Alg_SurroundViewPrm_0,
+                            pObj->numLvdsCh,
+                            CAPTURE_SENSOR_WIDTH,
+                            CAPTURE_SENSOR_HEIGHT
+                            );
+
+    chains_surround_View_SetAlgSurroundViewPrm(
+                            &pUcObj->Alg_SurroundViewPrm_1,
                             pObj->numLvdsCh,
                             CAPTURE_SENSOR_WIDTH,
                             CAPTURE_SENSOR_HEIGHT
