@@ -44,6 +44,7 @@ Void chains_surround_View_SetLinkId(chains_surround_ViewObj *pObj){
        pObj->IPCIn_IPU1_0_DSP_1_0LinkID     = IPU1_0_LINK (SYSTEM_LINK_ID_IPC_IN_1);
 
        pObj->MergeLinkID                    = IPU1_0_LINK (SYSTEM_LINK_ID_MERGE_0);
+       pObj->SyncLinkSurroundViewID         = IPU1_0_LINK (SYSTEM_LINK_ID_SYNC_1);
        pObj->Display_videoLinkID            = SYSTEM_LINK_ID_DISPLAY_0;
        pObj->GrpxSrcLinkID                  = IPU1_0_LINK (SYSTEM_LINK_ID_GRPX_SRC_0);
        pObj->Display_GrpxLinkID             = SYSTEM_LINK_ID_DISPLAY_1;
@@ -70,6 +71,7 @@ Void chains_surround_View_ResetLinkPrms(chains_surround_ViewObj *pObj){
        IpcLink_CreateParams_Init(&pObj->IPCIn_IPU1_0_DSP_1_0Prm);
 
        MergeLink_CreateParams_Init(&pObj->MergePrm);
+       SyncLink_CreateParams_Init(&pObj->SyncSurroundViewPrm);
        DisplayLink_CreateParams_Init(&pObj->Display_videoPrm);
        GrpxSrcLink_CreateParams_Init(&pObj->GrpxSrcPrm);
        DisplayLink_CreateParams_Init(&pObj->Display_GrpxPrm);
@@ -163,9 +165,14 @@ Void chains_surround_View_ConnectLinks(chains_surround_ViewObj *pObj){
 	   pObj->MergePrm.inQueParams[1].prevLinkQueId = 0;
 
 
-	   //Merge -> Display_video
-	   pObj->MergePrm.outQueParams.nextLink = pObj->Display_videoLinkID;
-	   pObj->Display_videoPrm.inQueParams.prevLinkId = pObj->MergeLinkID;
+	   //Merge -> SYNC SurronudView
+	   pObj->MergePrm.outQueParams.nextLink = pObj->SyncLinkSurroundViewID;
+	   pObj->SyncSurroundViewPrm.inQueParams.prevLinkId = pObj->MergeLinkID;
+	   pObj->SyncSurroundViewPrm.inQueParams.prevLinkQueId = 0;
+
+	   //SYNC -> DUP
+	   pObj->SyncSurroundViewPrm.outQueParams.nextLink = pObj->Display_videoLinkID;
+	   pObj->Display_videoPrm.inQueParams.prevLinkId = pObj->SyncLinkSurroundViewID;
 	   pObj->Display_videoPrm.inQueParams.prevLinkQueId = 0;
 
 	   //GrpxSrc -> Display_Grpx
@@ -259,6 +266,11 @@ Int32 chains_surround_View_Create(chains_surround_ViewObj *pObj, Void *appObj)
 								sizeof(pObj->MergePrm));
 	UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
+	status = System_linkCreate(	pObj->SyncLinkSurroundViewID,
+								&pObj->SyncSurroundViewPrm,
+								sizeof(pObj->SyncSurroundViewPrm));
+	UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
 	status = System_linkCreate(	pObj->Display_videoLinkID,
 								&pObj->Display_videoPrm,
 								sizeof(pObj->Display_videoPrm));
@@ -291,6 +303,9 @@ Int32 chains_surround_View_Start(chains_surround_ViewObj *pObj)
 	UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
 	status = System_linkStart(pObj->Display_videoLinkID);
+	UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
+	status = System_linkStart(pObj->SyncLinkSurroundViewID);
 	UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
 	status = System_linkStart(pObj->MergeLinkID);
@@ -351,6 +366,9 @@ Int32 chains_surround_View_Stop(chains_surround_ViewObj *pObj){
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
        status = System_linkStop(pObj->Display_videoLinkID);
+       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
+       status = System_linkStop(pObj->SyncLinkSurroundViewID);
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
        status = System_linkStop(pObj->MergeLinkID);
