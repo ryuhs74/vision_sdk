@@ -16,8 +16,8 @@
 #endif
 #endif
 
-#define AVM_LUT_INTEGER_BITS			10
-#define AVM_LUT_FRACTION_BITS			6
+#define AVM_LUT_INTEGER_BITS			11
+#define AVM_LUT_FRACTION_BITS			5
 
 typedef struct
 {
@@ -73,17 +73,17 @@ typedef yuyv yuvHD1080P[HD1080P_WIDTH];
 #define BilinearInterpolation(q, lut, Q,  pitch)\
 {\
 	register UInt16 R1,R2;\
-	R1 = LinearInterpolation(_X,q[0].y,q[1].y,63,AVM_LUT_FRACTION_BITS);\
-	R2 = LinearInterpolation(_X,q[pitch].y,q[pitch+1].y,63,AVM_LUT_FRACTION_BITS);\
-	Q = LinearInterpolation(_Y,R1,R2,63,AVM_LUT_FRACTION_BITS);\
+	R1 = LinearInterpolation(_X,q[0].y,q[1].y,31,AVM_LUT_FRACTION_BITS);\
+	R2 = LinearInterpolation(_X,q[pitch].y,q[pitch+1].y,31,AVM_LUT_FRACTION_BITS);\
+	Q = LinearInterpolation(_Y,R1,R2,31,AVM_LUT_FRACTION_BITS);\
 }
 ///https://en.wikipedia.org/wiki/Bilinear_interpolation
 #define BilinearInterpolationUV(q, lut, Q, pitch)\
 {\
 	register UInt16 R1,R2;\
-	R1 = LinearInterpolation(_X,q[0].uv,q[2].uv,63,AVM_LUT_FRACTION_BITS);\
-	R2 = LinearInterpolation(_X,q[pitch].uv,q[pitch+2].uv,63,AVM_LUT_FRACTION_BITS);\
-	Q = LinearInterpolation(_Y,R1,R2,63,AVM_LUT_FRACTION_BITS);\
+	R1 = LinearInterpolation(_X,q[0].uv,q[2].uv,31,AVM_LUT_FRACTION_BITS);\
+	R2 = LinearInterpolation(_X,q[pitch].uv,q[pitch+2].uv,31,AVM_LUT_FRACTION_BITS);\
+	Q = LinearInterpolation(_Y,R1,R2,31,AVM_LUT_FRACTION_BITS);\
 }
 
 
