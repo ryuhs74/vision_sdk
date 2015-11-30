@@ -379,7 +379,6 @@ static Void chains_surround_View_SwitchDisplayChannel(
  *******************************************************************************
 */
 extern int gisCapture;
-//Surround_ViewAppObj* gpChainsObj = NULL; //ryuhs74@20151014
 Surround_ViewAppObj svChainsObj;
 char Chains_menuRunTime2();
 Void Chains_surround_View(Chains_Ctrl *chainsCfg)
@@ -429,6 +428,18 @@ Void Chains_surround_View(Chains_Ctrl *chainsCfg)
 								   TRUE);
 				*/
             }
+            	break;
+            case '3':
+            	Vps_printf("In chains_main, SYSTEM_CMD_REAR_SIDE_VIEW\n");
+            	System_linkControl(svChainsObj.ucObj.GrpxSrcLinkID , SYSTEM_CMD_REAR_SIDE_VIEW, NULL, 0, TRUE); //gGrpxSrcLinkID °´Ã¼°¡ µÎ°³.
+            	Vps_printf("   CMD Send chains_main\n");
+            	break;
+            case '4':
+            	Vps_printf("In chains_main, SYSTEM_CMD_LEFT_SIDE_VIEW\n");
+            	System_linkControl(svChainsObj.ucObj.GrpxSrcLinkID, SYSTEM_CMD_LEFT_SIDE_VIEW, NULL, 0, TRUE); //gGrpxSrcLinkID °´Ã¼°¡ µÎ°³.
+            	Vps_printf("   CMD Send chains_main\n");
+            	break;
+            case '5':
             	break;
             default:
                 Vps_printf("\nUnsupported option '%c'. Please try again\n", ch);
