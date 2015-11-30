@@ -732,6 +732,8 @@ Void GrpxSrcLink_tskMain(struct Utils_TskHndl * pTsk, Utils_MsgHndl * pMsg)
         if (status != SYSTEM_LINK_STATUS_EFAIL)
         {
             cmd = Utils_msgGetCmd(pMsg);
+            Vps_printf("CMD : %d, GrpxSrcLink_tskMain\n",cmd);
+
 
             switch (cmd)
             {
@@ -755,7 +757,7 @@ Void GrpxSrcLink_tskMain(struct Utils_TskHndl * pTsk, Utils_MsgHndl * pMsg)
                  {
                 	 pObj->createArgs.sViewmode.viewmode = TOP_VIEW;
                 	 pObj->createArgs.sViewmode.viewnt = FRONT_VIEW;
-					 Vps_printf("CMD Call SYSTEM_CMD_REAR_SIDE_VIEW viewmode : %d, viewnt: %d\n",
+					 Vps_printf("CMD Call SYSTEM_CMD_FRONT_SIDE_VIEW viewmode : %d, viewnt: %d\n",
 							 pObj->createArgs.sViewmode.viewmode,
 							 pObj->createArgs.sViewmode.viewnt);
 					 Utils_tskAckOrFreeMsg(pMsg, SYSTEM_LINK_STATUS_SOK);
@@ -775,7 +777,7 @@ Void GrpxSrcLink_tskMain(struct Utils_TskHndl * pTsk, Utils_MsgHndl * pMsg)
                  {
 					 pObj->createArgs.sViewmode.viewmode = TOP_VIEW;
 					 pObj->createArgs.sViewmode.viewnt = RIGHT_VIEW;
-                	 Vps_printf("CMD Call SYSTEM_CMD_REAR_SIDE_VIEW viewmode : %d, viewnt: %d\n",
+                	 Vps_printf("CMD Call SYSTEM_CMD_RIGH_SIDE_VIEW viewmode : %d, viewnt: %d\n",
                 			 pObj->createArgs.sViewmode.viewmode,
 							 pObj->createArgs.sViewmode.viewnt);
                 	 Utils_tskAckOrFreeMsg(pMsg, SYSTEM_LINK_STATUS_SOK);
@@ -786,7 +788,7 @@ Void GrpxSrcLink_tskMain(struct Utils_TskHndl * pTsk, Utils_MsgHndl * pMsg)
 
 					 pObj->createArgs.sViewmode.viewmode = TOP_VIEW;
 					 pObj->createArgs.sViewmode.viewnt = LEFT_VIEW;
-                	 Vps_printf("CMD Call SYSTEM_CMD_REAR_SIDE_VIEW viewmode : %d, viewnt: %d\n",
+                	 Vps_printf("CMD Call SYSTEM_CMD_LEFT_SIDE_VIEW viewmode : %d, viewnt: %d\n",
                 			 pObj->createArgs.sViewmode.viewmode,
 							 pObj->createArgs.sViewmode.viewnt);
                 	 Utils_tskAckOrFreeMsg(pMsg, SYSTEM_LINK_STATUS_SOK);
@@ -796,7 +798,7 @@ Void GrpxSrcLink_tskMain(struct Utils_TskHndl * pTsk, Utils_MsgHndl * pMsg)
                  {
 					 pObj->createArgs.sViewmode.viewmode = FULL_VIEW;
 					 pObj->createArgs.sViewmode.viewnt = FRONT_VIEW;
-                	 Vps_printf("CMD Call SYSTEM_CMD_REAR_SIDE_VIEW viewmode : %d, viewnt: %d\n",
+                	 Vps_printf("CMD Call SYSTEM_CMD_FULL_FRONT_VIEW viewmode : %d, viewnt: %d\n",
                 			 pObj->createArgs.sViewmode.viewmode,
 							 pObj->createArgs.sViewmode.viewnt);
                 	 Utils_tskAckOrFreeMsg(pMsg, SYSTEM_LINK_STATUS_SOK);
@@ -806,7 +808,7 @@ Void GrpxSrcLink_tskMain(struct Utils_TskHndl * pTsk, Utils_MsgHndl * pMsg)
                  {
 					 pObj->createArgs.sViewmode.viewmode = FULL_VIEW;
 					 pObj->createArgs.sViewmode.viewnt = REAR_VIEW;
-                	 Vps_printf("CMD Call SYSTEM_CMD_REAR_SIDE_VIEW viewmode : %d, viewnt: %d\n",
+                	 Vps_printf("CMD Call SYSTEM_CMD_FULL_REAR_VIEW viewmode : %d, viewnt: %d\n",
                 			 pObj->createArgs.sViewmode.viewmode,
 							 pObj->createArgs.sViewmode.viewnt);
                 	 Utils_tskAckOrFreeMsg(pMsg, SYSTEM_LINK_STATUS_SOK);
@@ -814,7 +816,8 @@ Void GrpxSrcLink_tskMain(struct Utils_TskHndl * pTsk, Utils_MsgHndl * pMsg)
                 	 break;
                 	 //ryuhs74@20151103 - Add AVM-E500 Draw Layout END
                  default:
-                     Utils_tskAckOrFreeMsg(pMsg, status);
+                	 Vps_printf("default\n");
+                     Utils_tskAckOrFreeMsg(pMsg, SYSTEM_LINK_STATUS_SOK);//status);
                  break;
             }
 

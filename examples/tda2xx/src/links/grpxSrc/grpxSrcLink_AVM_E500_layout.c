@@ -163,29 +163,67 @@ Int32 Draw2D_FillBacgroundColor( GrpxSrcLink_Obj *pObj )
 
 Int32 Draw2D_AVME500_TopView( GrpxSrcLink_Obj *pObj )
 {
-	//Draw2D_RegionPrm region;
+	Draw2D_RegionPrm regionTop;
+	Draw2D_RegionPrm regionLeft;
+	Draw2D_RegionPrm regionRight;
+	Draw2D_RegionPrm regionMidle;
+	Draw2D_RegionPrm regionBootm;
+	Draw2D_RegionPrm regionBootm2;
 	Draw2D_FontPrm fontPrm;
 	//Draw2D_BmpPrm bmpPrm; //For Car Imag Draw
 
 	// TOP( Surround ) View video Region
-	/*
-	region.color  = DRAW2D_TRANSPARENT_COLOR;
-	region.startX = TOP_FULLVIEW_START_XY;
-	region.startY = TOP_FULLVIEW_START_XY;
-	region.height = TOP_VIEW_W;
-	region.width  = TOP_VIEW_H;
+	regionTop.color  = AVME500_BACKGROUND_COLOR;
+	regionTop.startX = 0;
+	regionTop.startY = 0;
+	regionTop.height = 16;
+	regionTop.width  = 1280;
 
-	Draw2D_fillRegion(pObj->draw2DHndl,&region);
+	Draw2D_fillRegion(pObj->draw2DHndl,&regionTop);
 
-	// Side View Region
-	region.color  = DRAW2D_TRANSPARENT_COLOR;
-	region.startX = SIDEVIEW_START_X;
-	region.startY = TOP_FULLVIEW_START_XY;
-	region.height = SIDE_VIEW_W;
-	region.width  = SIDE_VIEW_H;
+	regionBootm.color  = AVME500_BACKGROUND_COLOR;
+	regionBootm.startX = 554-19;
+	regionBootm.startY = TOP_VIEW_TEXT_START_Y;
+	regionBootm.height = 196;
+	regionBootm.width  = 1280-524;
 
-	Draw2D_fillRegion(pObj->draw2DHndl,&region);
-	*/
+	Draw2D_fillRegion(pObj->draw2DHndl,&regionBootm);
+
+	regionBootm2.color  = AVME500_BACKGROUND_COLOR;
+	regionBootm2.startX = 0;
+	regionBootm2.startY = 720-16;
+	regionBootm2.height = 16;
+	regionBootm2.width  = 1280;
+
+	Draw2D_fillRegion(pObj->draw2DHndl,&regionBootm2);
+
+
+	regionLeft.color  = AVME500_BACKGROUND_COLOR;
+	regionLeft.startX = 0;
+	regionLeft.startY = 0;
+	regionLeft.height = 720;
+	regionLeft.width  = 16;
+
+
+	Draw2D_fillRegion(pObj->draw2DHndl,&regionLeft);
+
+	regionMidle.color  = AVME500_BACKGROUND_COLOR;
+	regionMidle.startX = 552-18;
+	regionMidle.startY = 0;
+	regionMidle.height = 720;
+	regionMidle.width  = 18;
+
+	Draw2D_fillRegion(pObj->draw2DHndl,&regionMidle);
+
+	regionRight.color  = AVME500_BACKGROUND_COLOR;
+	regionRight.startX = 1261;
+	regionRight.startY = 0;
+	regionRight.height = 720;
+	regionRight.width  = 20;
+
+	Draw2D_fillRegion(pObj->draw2DHndl,&regionRight);
+
+
 
 	if (pObj->createArgs.enableJeepOverlay == TRUE)
 	{
@@ -207,23 +245,48 @@ Int32 Draw2D_AVME500_TopView( GrpxSrcLink_Obj *pObj )
 
 Int32 Draw2D_AVME500_FullView( GrpxSrcLink_Obj *pObj )
 {
-	//Draw2D_RegionPrm region;
 	Draw2D_FontPrm fontPrm;
+	Draw2D_RegionPrm regionTop;
+	Draw2D_RegionPrm regionLeft;
+	Draw2D_RegionPrm regionRight;
+	Draw2D_RegionPrm regionBootm;
 
-	///Full View Region
-	/*
-	region.color  = DRAW2D_TRANSPARENT_COLOR;
-	region.startX = TOP_FULLVIEW_START_XY;
-	region.startY = TOP_FULLVIEW_START_XY;
-	region.height = FULL_VIEW_W;
-	region.width  = FULL_VIEW_H;
+	regionTop.color  = AVME500_BACKGROUND_COLOR;
+	regionTop.startX = 0;
+	regionTop.startY = 0;
+	regionTop.height = 16;
+	regionTop.width  = 1280;
 
-	Draw2D_fillRegion(pObj->draw2DHndl,&region);
-	*/
+	Draw2D_fillRegion(pObj->draw2DHndl,&regionTop);
+
+	regionBootm.color  = AVME500_BACKGROUND_COLOR;
+	regionBootm.startX = 0;
+	regionBootm.startY = 568-16;
+	regionBootm.height = 168;
+	regionBootm.width  = 1280;
+
+	Draw2D_fillRegion(pObj->draw2DHndl,&regionBootm);
+
+	regionLeft.color  = AVME500_BACKGROUND_COLOR;
+	regionLeft.startX = 0;
+	regionLeft.startY = 0;
+	regionLeft.height = 720;
+	regionLeft.width  = 16;
+
+	Draw2D_fillRegion(pObj->draw2DHndl,&regionLeft);
+
+	regionRight.color  = AVME500_BACKGROUND_COLOR;
+	regionRight.startX = 1261;
+	regionRight.startY = 0;
+	regionRight.height = 720;
+	regionRight.width  = 20;
+
+	Draw2D_fillRegion(pObj->draw2DHndl,&regionRight);
+
 
 	fontPrm.fontIdx = 5;
 	Draw2D_drawString(pObj->draw2DHndl, FULL_VIEW_TEXT_START_X, FULL_VIEW_TEXT_START_Y,  "Warning! Please check around", &fontPrm );
-	Draw2D_drawString(pObj->draw2DHndl, FULL_VIEW_TEXT_START_X+34, FULL_VIEW_TEXT_START_X+24,  "the vehicle directly", &fontPrm );
+	Draw2D_drawString(pObj->draw2DHndl, FULL_VIEW_TEXT_START_X+24, FULL_VIEW_TEXT_START_Y+34,  "the vehicle directly", &fontPrm );
 
 	return SYSTEM_LINK_STATUS_SOK;
 }
@@ -249,33 +312,48 @@ Int32 GrpxSrcLink_drawAVM_E500Layout(GrpxSrcLink_Obj *pObj) // 이 함수를 TOP / F
     return SYSTEM_LINK_STATUS_SOK;
 }
 
+#if 0
 void GrpxSrcLink_putCmd( uint8_t _cmd )
 {
 #if 1
 	Int32 status;
 
 	if( _cmd == IRDA_KEY_UP ){
-		Vps_printf("In GrpxSrcLink_putCmd, CMD_REQ_FRONT_VIEW");
 		_cmd = SYSTEM_CMD_FRONT_SIDE_VIEW;
+		Vps_printf("In GrpxSrcLink_putCmd, CMD_REQ_FRONT_VIEW, CMD : %d", _cmd);
+		status = System_linkControl(gGrpxSrcLinkID, _cmd, NULL, 0, TRUE); //gGrpxSrcLinkID 객체가 두개.
+		Vps_printf("   CMD Send %s gGrpxSrcLinkID\n", ( status == 0x0)?"Success":"Fail");
 	} else if( _cmd == IRDA_KEY_DOWN ){
-		Vps_printf("In GrpxSrcLink_putCmd, CMD_REQ_REAR_VIEW");
 		_cmd = SYSTEM_CMD_REAR_SIDE_VIEW;
+		Vps_printf("In GrpxSrcLink_putCmd, CMD_REQ_REAR_VIEW, CMD : %d", _cmd);
+		status = System_linkControl(gGrpxSrcLinkID, _cmd, NULL, 0, TRUE); //gGrpxSrcLinkID 객체가 두개.
+		Vps_printf("   CMD Send %s gGrpxSrcLinkID\n", ( status == 0x0)?"Success":"Fail");
 	} else if( _cmd == IRDA_KEY_RIGHT ){
-		Vps_printf("In GrpxSrcLink_putCmd, CMD_REQ_RIGHT_VIEW");
 		_cmd = SYSTEM_CMD_RIGH_SIDE_VIEW;
+		Vps_printf("In GrpxSrcLink_putCmd, CMD_REQ_RIGHT_VIEW, CMD : %d", _cmd);
+		status = System_linkControl(gGrpxSrcLinkID, _cmd, NULL, 0, TRUE); //gGrpxSrcLinkID 객체가 두개.
+		Vps_printf("   CMD Send %s gGrpxSrcLinkID\n", ( status == 0x0)?"Success":"Fail");
 	} else if( _cmd == IRDA_KEY_LEFT ){
-		Vps_printf("In GrpxSrcLink_putCmd, CMD_REQ_LEFT_VIEW");
 		_cmd = SYSTEM_CMD_LEFT_SIDE_VIEW;
+		Vps_printf("In GrpxSrcLink_putCmd, CMD_REQ_LEFT_VIEW, CMD : %d", _cmd);
+		status = System_linkControl(gGrpxSrcLinkID, _cmd, NULL, 0, TRUE); //gGrpxSrcLinkID 객체가 두개.
+		Vps_printf("   CMD Send %s gGrpxSrcLinkID\n", ( status == 0x0)?"Success":"Fail");
 	}else if( _cmd == IRDA_KEY_FULL ){
 		if( gFullFront == 0 )//Front Full View
 		{
-			Vps_printf("In GrpxSrcLink_putCmd, IRDA_KEY_FULL, Front");
+
 			_cmd = SYSTEM_CMD_FULL_FRONT_VIEW;
+			Vps_printf("In GrpxSrcLink_putCmd, IRDA_KEY_FULL, Front, CMD : %d", _cmd);
 			gFullFront = 1;
+			status = System_linkControl(gGrpxSrcLinkID, _cmd, NULL, 0, TRUE); //gGrpxSrcLinkID 객체가 두개.
+			Vps_printf("   CMD Send %s gGrpxSrcLinkID\n", ( status == 0x0)?"Success":"Fail");
 		} else {
-			Vps_printf("In GrpxSrcLink_putCmd, IRDA_KEY_FULL, Rear");
+
 			_cmd = SYSTEM_CMD_FULL_REAR_VIEW;
+			Vps_printf("In GrpxSrcLink_putCmd, IRDA_KEY_FULL, Rear, CMD : %d", _cmd);
 			gFullFront = 0;
+			status = System_linkControl(gGrpxSrcLinkID, _cmd, NULL, 0, TRUE); //gGrpxSrcLinkID 객체가 두개.
+			Vps_printf("   CMD Send %s gGrpxSrcLinkID\n", ( status == 0x0)?"Success":"Fail");
 		}
 	} else if( _cmd == IRDA_KEY_PWR ){
 		/*
@@ -290,13 +368,12 @@ void GrpxSrcLink_putCmd( uint8_t _cmd )
 		*/
 	}
 
-	status = System_linkControl(gGrpxSrcLinkID, _cmd, NULL, 0, TRUE); //gGrpxSrcLinkID 객체가 두개.
 
-	Vps_printf("   CMD Send %s gGrpxSrcLinkID\n", ( status == 0x0)?"Success":"Fail");
 
 
 #endif
 }
+#endif
 #if 0
 Void GrpxSrcLink_displaySurroundViewStandaloneDrawCpuLoadBar(
                     GrpxSrcLink_Obj *pObj,
