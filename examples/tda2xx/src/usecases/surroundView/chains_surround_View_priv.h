@@ -50,6 +50,8 @@ typedef struct {
        UInt32    IPCIn_IPU1_0_DSP_1_0LinkID;
 
        UInt32    MergeLinkID;
+
+       UInt32    SyncLinkSurroundViewID;
        UInt32    Display_videoLinkID;
        UInt32    GrpxSrcLinkID;
        UInt32    Display_GrpxLinkID;
@@ -71,6 +73,7 @@ typedef struct {
        IpcLink_CreateParams                    IPCIn_IPU1_0_DSP_1_0Prm;
 
        MergeLink_CreateParams                  MergePrm;
+       SyncLink_CreateParams                   SyncSurroundViewPrm;
        DisplayLink_CreateParams                Display_videoPrm;
        GrpxSrcLink_CreateParams                GrpxSrcPrm;
        DisplayLink_CreateParams                Display_GrpxPrm;
