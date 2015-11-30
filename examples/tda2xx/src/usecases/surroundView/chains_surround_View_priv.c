@@ -38,9 +38,9 @@ Void chains_surround_View_SetLinkId(chains_surround_ViewObj *pObj){
        pObj->IPCIn_IPU1_0_DSP_0_0LinkID     = IPU1_0_LINK (SYSTEM_LINK_ID_IPC_IN_0);
 
        pObj->IPCOut_IPU1_0_DSP_1_0LinkID    = IPU1_0_LINK (SYSTEM_LINK_ID_IPC_OUT_1);
-       pObj->IPCIn_DSP_1_IPU1_0_0LinkID     = DSP2_LINK (SYSTEM_LINK_ID_IPC_IN_1);
+       pObj->IPCIn_DSP_1_IPU1_0_0LinkID     = DSP2_LINK (SYSTEM_LINK_ID_IPC_IN_0);
        pObj->Alg_SurroundViewLink_1_ID      = DSP2_LINK (SYSTEM_LINK_ID_ALG_0);
-       pObj->IPCOut_DSP_1_IPU1_0_0LinkID    = DSP2_LINK (SYSTEM_LINK_ID_IPC_OUT_1);
+       pObj->IPCOut_DSP_1_IPU1_0_0LinkID    = DSP2_LINK (SYSTEM_LINK_ID_IPC_OUT_0);
        pObj->IPCIn_IPU1_0_DSP_1_0LinkID     = IPU1_0_LINK (SYSTEM_LINK_ID_IPC_IN_1);
 
        pObj->MergeLinkID                    = IPU1_0_LINK (SYSTEM_LINK_ID_MERGE_0);
@@ -238,7 +238,7 @@ Int32 chains_surround_View_Create(chains_surround_ViewObj *pObj, Void *appObj)
 								&pObj->IPCIn_DSP_1_IPU1_0_0Prm,
 								sizeof(pObj->IPCIn_DSP_1_IPU1_0_0Prm));
 
-	status = System_linkCreate(	pObj->Alg_SurroundViewLink_0_ID,
+	status = System_linkCreate(	pObj->Alg_SurroundViewLink_1_ID,
 								&pObj->Alg_SurroundViewPrm_1,
 								sizeof(pObj->Alg_SurroundViewPrm_1));
 	UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
