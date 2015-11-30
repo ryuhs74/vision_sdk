@@ -149,15 +149,6 @@ static int UART_ParseCmd(uint8_t *rxBuf)
 		switch (GET_ARG1(rxBuf))
 		//ryuhs74@20151020 - Add HDMI On/Off Test Start
 		{
-		/*
-		 #define IRDA_KEY_PWR	(0x09)
-		#define IRDA_KEY_FULL	(0x05)
-		#define IRDA_KEY_LOCK	(0x5C)
-		#define IRDA_KEY_UP		(0x0F)
-		#define IRDA_KEY_DOWN	(0x0E)
-		#define IRDA_KEY_LEFT	(0x0B)
-		#define IRDA_KEY_RIGHT	(0x0A)
-		 */
 		case IRDA_KEY_PWR: //File Save - IRDA_KEY_PWR = (0x09)
 			//gisCapture = 1;
 			Vps_printf(	"**********************************gisCapture : %d\n",

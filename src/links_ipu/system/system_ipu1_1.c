@@ -122,7 +122,7 @@ Void System_initLinks()
     IpcInLink_init();
     AlgorithmLink_init();
 
-    SaveLink_init(); //ryuhs74@20151027 - Add Save Link
+    //SaveLink_init(); //ryuhs74@20151027 - Add Save Link
 
     #ifdef AVBRX_INCLUDE
         #ifdef NDK_PROC_TO_USE_IPU1_1

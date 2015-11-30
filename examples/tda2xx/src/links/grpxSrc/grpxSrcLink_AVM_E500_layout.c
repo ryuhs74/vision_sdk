@@ -24,7 +24,7 @@
  *******************************************************************************
  */
 #include "grpxSrcLink_priv.h"
-#include <examples/tda2xx/src/links/uartCmd/uartCmd_priv.h> //ryuhs74@20151105 - Test UI CMD
+#include <examples/tda2xx/src/links/uartCmd/uartCmd_priv.h> //ryuhs74@20151105
 
 /**
  *******************************************************************************
@@ -251,55 +251,29 @@ Int32 GrpxSrcLink_drawAVM_E500Layout(GrpxSrcLink_Obj *pObj) // 이 함수를 TOP / F
 
 void GrpxSrcLink_putCmd( uint8_t _cmd )
 {
-	/*
-	#define IRDA_KEY_PWR	(0x09)
-		#define IRDA_KEY_FULL	(0x05)
-		#define IRDA_KEY_LOCK	(0x5C)
-		#define IRDA_KEY_UP		(0x0F)
-		#define IRDA_KEY_DOWN	(0x0E)
-		#define IRDA_KEY_LEFT	(0x0B)
-		#define IRDA_KEY_RIGHT	(0x0A)
-	 */
 #if 1
-	GrpxSrcLink_CreateParams viewmodeprm;
 	Int32 status;
 
 	if( _cmd == IRDA_KEY_UP ){
 		Vps_printf("In GrpxSrcLink_putCmd, CMD_REQ_FRONT_VIEW");
-
-		viewmodeprm.sViewmode.viewmode =  TOP_VIEW;
-		viewmodeprm.sViewmode.viewnt = FRONT_VIEW;
 		_cmd = SYSTEM_CMD_FRONT_SIDE_VIEW;
 	} else if( _cmd == IRDA_KEY_DOWN ){
 		Vps_printf("In GrpxSrcLink_putCmd, CMD_REQ_REAR_VIEW");
-
-		viewmodeprm.sViewmode.viewmode =  TOP_VIEW;
-		viewmodeprm.sViewmode.viewnt = REAR_VIEW;
 		_cmd = SYSTEM_CMD_REAR_SIDE_VIEW;
 	} else if( _cmd == IRDA_KEY_RIGHT ){
 		Vps_printf("In GrpxSrcLink_putCmd, CMD_REQ_RIGHT_VIEW");
-
-		viewmodeprm.sViewmode.viewmode =  TOP_VIEW;
-		viewmodeprm.sViewmode.viewnt = RIGHT_VIEW;
 		_cmd = SYSTEM_CMD_RIGH_SIDE_VIEW;
 	} else if( _cmd == IRDA_KEY_LEFT ){
 		Vps_printf("In GrpxSrcLink_putCmd, CMD_REQ_LEFT_VIEW");
-
-		viewmodeprm.sViewmode.viewmode =  TOP_VIEW;
-		viewmodeprm.sViewmode.viewnt = LEFT_VIEW;
 		_cmd = SYSTEM_CMD_LEFT_SIDE_VIEW;
 	}else if( _cmd == IRDA_KEY_FULL ){
 		if( gFullFront == 0 )//Front Full View
 		{
 			Vps_printf("In GrpxSrcLink_putCmd, IRDA_KEY_FULL, Front");
-			viewmodeprm.sViewmode.viewmode =  FULL_VIEW;
-			viewmodeprm.sViewmode.viewnt = FRONT_VIEW;
 			_cmd = SYSTEM_CMD_FULL_FRONT_VIEW;
 			gFullFront = 1;
 		} else {
 			Vps_printf("In GrpxSrcLink_putCmd, IRDA_KEY_FULL, Rear");
-			viewmodeprm.sViewmode.viewmode =  FULL_VIEW;
-			viewmodeprm.sViewmode.viewnt = REAR_VIEW;
 			_cmd = SYSTEM_CMD_FULL_REAR_VIEW;
 			gFullFront = 0;
 		}
@@ -316,7 +290,7 @@ void GrpxSrcLink_putCmd( uint8_t _cmd )
 		*/
 	}
 
-	status = System_linkControl(gGrpxSrcLinkID, _cmd, &viewmodeprm, sizeof(viewmodeprm), TRUE); //gGrpxSrcLinkID 객체가 두개.
+	status = System_linkControl(gGrpxSrcLinkID, _cmd, NULL, 0, TRUE); //gGrpxSrcLinkID 객체가 두개.
 
 	Vps_printf("   CMD Send %s gGrpxSrcLinkID\n", ( status == 0x0)?"Success":"Fail");
 
