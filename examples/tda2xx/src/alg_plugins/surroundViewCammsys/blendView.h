@@ -46,18 +46,10 @@ static inline Int32 makeBlendView720P(  UInt32       *RESTRICT inPtr_main,
 	mainBuf += (viewInfo->startY + childViewInfoLUT->startY);
 	subBuf += (viewInfo->startY + childViewInfoLUT->startY);
 
-#ifdef BUILD_DSP
-#pragma UNROLL(2);
-#pragma MUST_ITERATE(100,720, 2);
-#endif
+
 	for(rowIdx = 0; rowIdx < childViewInfoLUT->height; rowIdx++)
 	{
 		MaskLUT_Packed *maskBak;
-
-#ifdef BUILD_DSP
-#pragma UNROLL(2);
-#pragma MUST_ITERATE(100,720, 2);
-#endif
 		for(colIdx = 0,maskBak = mask; colIdx < childViewInfoLUT->width; colIdx++, maskBak++)
 		{
 			yuyv q1 = mainBuf[rowIdx][colIdx+startX];

@@ -128,9 +128,11 @@ typedef  struct
     /**< Flag to indicate if first frame is received, this is used as trigger
      *   to start stats counting
      */
-    UInt32* buf1;
-    UInt32* buf2;
 
+	Int32 (*AlgorithmLink_surroundViewMake)(void * pObj,
+											AlgorithmLink_SurroundViewLayoutParams* pLayoutPrm,
+											System_VideoFrameCompositeBuffer *pInFrameCompositeBuffer,
+											System_VideoFrameBuffer *pOutFrameBuffer);
 } AlgorithmLink_SurroundViewObj;
 
 /*******************************************************************************
