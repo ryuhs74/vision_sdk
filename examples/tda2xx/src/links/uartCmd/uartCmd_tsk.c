@@ -29,7 +29,7 @@ static uint32_t RxBufPos = 0;
 #pragma DATA_ALIGN(TxBuf, 128);
 
 //ryuhs74@20151104 - Add Put CMD To GrpxSrcLink
-void GrpxSrcLink_putCmd( uint8_t _cmd );
+//void GrpxSrcLink_putCmd( uint8_t _cmd );
 void E500ViewMode_putCmd( uint8_t _cmd );
 
 
@@ -39,11 +39,13 @@ static int LOCAL_UART_isReceivedAll(uint8_t *buf, uint16_t len)
 
 	if ( len < MIN_MSG_SIZE )
 	{
+		Vps_printf("len < MIN_MSG_SIZEr\n");
 		return -1;
 	}
 	dataLen = GET_LENGTH(buf);
 	if ( len < dataLen + MSG_HEADER_LEN )
 	{
+		Vps_printf("len < dataLen + MSG_HEADER_LEN\n");
 		return -1;
 	}
 	return 0;
@@ -84,6 +86,70 @@ static int UART_SendCmd(uint8_t targetId, uint8_t srcId, uint8_t *data, uint16_t
 
 extern int gisCapture;
 extern UInt32 gdone;
+extern UInt32 gGrpxSrcLinkID;
+
+void GrpxLink_putCmd( uint8_t _cmd )
+{
+#if 1
+	Int32 status;
+
+	if( _cmd == IRDA_KEY_UP ){
+		_cmd = SYSTEM_CMD_FRONT_SIDE_VIEW;
+		Vps_printf("In GrpxSrcLink_putCmd, CMD_REQ_FRONT_VIEW, CMD : %d", _cmd);
+		status = System_linkControl(gGrpxSrcLinkID, _cmd, NULL, 0, TRUE); //gGrpxSrcLinkID °´Ã¼°¡ µÎ°³.
+		Vps_printf("   CMD Send %s gGrpxSrcLinkID\n", ( status == 0x0)?"Success":"Fail");
+	} else if( _cmd == IRDA_KEY_DOWN ){
+		_cmd = SYSTEM_CMD_REAR_SIDE_VIEW;
+		Vps_printf("In GrpxSrcLink_putCmd, CMD_REQ_REAR_VIEW, CMD : %d", _cmd);
+		status = System_linkControl(gGrpxSrcLinkID, _cmd, NULL, 0, TRUE); //gGrpxSrcLinkID °´Ã¼°¡ µÎ°³.
+		Vps_printf("   CMD Send %s gGrpxSrcLinkID\n", ( status == 0x0)?"Success":"Fail");
+	} else if( _cmd == IRDA_KEY_RIGHT ){
+		_cmd = SYSTEM_CMD_RIGH_SIDE_VIEW;
+		Vps_printf("In GrpxSrcLink_putCmd, CMD_REQ_RIGHT_VIEW, CMD : %d", _cmd);
+		status = System_linkControl(gGrpxSrcLinkID, _cmd, NULL, 0, TRUE); //gGrpxSrcLinkID °´Ã¼°¡ µÎ°³.
+		Vps_printf("   CMD Send %s gGrpxSrcLinkID\n", ( status == 0x0)?"Success":"Fail");
+	} else if( _cmd == IRDA_KEY_LEFT ){
+		_cmd = SYSTEM_CMD_LEFT_SIDE_VIEW;
+		Vps_printf("In GrpxSrcLink_putCmd, CMD_REQ_LEFT_VIEW, CMD : %d", _cmd);
+		status = System_linkControl(gGrpxSrcLinkID, _cmd, NULL, 0, TRUE); //gGrpxSrcLinkID °´Ã¼°¡ µÎ°³.
+		Vps_printf("   CMD Send %s gGrpxSrcLinkID\n", ( status == 0x0)?"Success":"Fail");
+	}else if( _cmd == IRDA_KEY_FULL ){
+		/*
+		if( gFullFront == 0 )//Front Full View
+		{
+
+			_cmd = SYSTEM_CMD_FULL_FRONT_VIEW;
+			Vps_printf("In GrpxSrcLink_putCmd, IRDA_KEY_FULL, Front, CMD : %d", _cmd);
+			gFullFront = 1;
+			status = System_linkControl(gGrpxSrcLinkID, _cmd, NULL, 0, TRUE); //gGrpxSrcLinkID °´Ã¼°¡ µÎ°³.
+			Vps_printf("   CMD Send %s gGrpxSrcLinkID\n", ( status == 0x0)?"Success":"Fail");
+		} else {
+
+			_cmd = SYSTEM_CMD_FULL_REAR_VIEW;
+			Vps_printf("In GrpxSrcLink_putCmd, IRDA_KEY_FULL, Rear, CMD : %d", _cmd);
+			gFullFront = 0;
+			status = System_linkControl(gGrpxSrcLinkID, _cmd, NULL, 0, TRUE); //gGrpxSrcLinkID °´Ã¼°¡ µÎ°³.
+			Vps_printf("   CMD Send %s gGrpxSrcLinkID\n", ( status == 0x0)?"Success":"Fail");
+		}
+		*/
+	} else if( _cmd == IRDA_KEY_PWR ){
+		/*
+		if( gisFileSave_TEST == 0 )
+		{
+			//_cmd = SYSTEM_CMD_FILE_SAVE;
+			//gisFileSave_TEST = 1;
+		} else if( gisFileSave_TEST == 1) {
+			//_cmd = SYSTEM_CMD_FILE_SAVE_DONE;
+			//gisFileSave_TEST = 0;
+		}
+		*/
+	}
+
+
+
+
+#endif
+}
 
 static int UART_ParseCmd(uint8_t *rxBuf)
 {
@@ -159,8 +225,8 @@ static int UART_ParseCmd(uint8_t *rxBuf)
 		case IRDA_KEY_LEFT : //LFET - IRDA_KEY_LEFT = (0x0B)
 		case IRDA_KEY_RIGHT : //RIGHT - IRDA_KEY_RIGHT = (0x0A)
 		case IRDA_KEY_FULL : //Full - IRDA_KEY_FULL = (0x05),
-			GrpxSrcLink_putCmd( GET_ARG1(rxBuf) );
-			E500ViewMode_putCmd( GET_ARG1(rxBuf) );
+			GrpxLink_putCmd( GET_ARG1(rxBuf) );
+			//E500ViewMode_putCmd( GET_ARG1(rxBuf) );
 			break;
 		} //ryuhs74@20151020 - Add HDMI On/Off Test End
 		break;
@@ -280,6 +346,7 @@ Void UartCmd_tsk_main(UArg arg0, UArg arg1)
 			RxBufPos = 0;
 		if ( LOCAL_UART_isReceivedAll(RxBuf, RxBufPos) != 0 )
 		{
+			Vps_printf("UART continue\n");
 			continue;
 		}
 
