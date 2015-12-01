@@ -25,6 +25,7 @@
 #include <include/link_api/vpeLink.h>
 #include <include/link_api/syncLink.h>
 #include <include/link_api/algorithmLink_surroundView.h>
+#include <include/link_api/algorithmLink_dmaSwMs.h>
 #include <include/link_api/mergeLink.h>
 #include <include/link_api/grpxSrcLink.h>
 #include <include/link_api/displayLink.h>
@@ -52,6 +53,7 @@ typedef struct {
        UInt32    MergeLinkID;
 
        UInt32    SyncLinkSurroundViewID;
+       UInt32    Alg_DmaSwMsLinkID;
        UInt32    Display_videoLinkID;
        UInt32    GrpxSrcLinkID;
        UInt32    Display_GrpxLinkID;
@@ -74,6 +76,7 @@ typedef struct {
 
        MergeLink_CreateParams                  MergePrm;
        SyncLink_CreateParams                   SyncSurroundViewPrm;
+       AlgorithmLink_DmaSwMsCreateParams       Alg_DmaSwMsPrm;
        DisplayLink_CreateParams                Display_videoPrm;
        GrpxSrcLink_CreateParams                GrpxSrcPrm;
        DisplayLink_CreateParams                Display_GrpxPrm;

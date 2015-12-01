@@ -24,7 +24,7 @@
  *        are synced together by sync link
  *******************************************************************************
  */
-#define SYNC_DELTA_IN_MSEC              (16)
+#define SYNC_DELTA_IN_MSEC              (50)
 
 /**
  *******************************************************************************
@@ -32,7 +32,7 @@
  *        are dropped by sync link
  *******************************************************************************
  */
-#define SYNC_DROP_THRESHOLD_IN_MSEC     (33)
+#define SYNC_DROP_THRESHOLD_IN_MSEC     (150)
 
 /**
  *******************************************************************************
@@ -65,6 +65,119 @@ typedef struct {
 
 } Surround_ViewAppObj;
 
+
+/**
+ *******************************************************************************
+ *
+ * \brief   Set DMA SW Mosaic Create Parameters
+ *
+ *          It is called in Create function.
+ *          In this function SwMs alg link params are set
+ *          The algorithm which is to run on core is set to
+ *          baseClassCreate.algId. The input whdth and height to alg are set.
+ *          Number of input buffers required by alg are also set here.
+
+ * \param   pPrm    [OUT]    VpeLink_CreateParams
+ *
+ *******************************************************************************
+*/
+static Void chains_lvdsVipMultiCam_Display_SetAlgDmaSwMsPrm(
+                    AlgorithmLink_DmaSwMsCreateParams *pPrm,
+                    UInt32 numLvdsCh,
+                    UInt32 displayWidth,
+                    UInt32 displayHeight
+                   )
+{
+    UInt32 winId;
+    AlgorithmLink_DmaSwMsLayoutWinInfo *pWinInfo;
+    UInt32 widthFactor, heightFactor;
+
+    pPrm->maxOutBufWidth     = displayWidth;
+    pPrm->maxOutBufHeight    = displayHeight;
+    pPrm->numOutBuf          = 4;
+    pPrm->useLocalEdma       = FALSE;
+
+    pPrm->initLayoutParams.numWin = numLvdsCh;
+    pPrm->initLayoutParams.outBufWidth  = pPrm->maxOutBufWidth;
+    pPrm->initLayoutParams.outBufHeight = pPrm->maxOutBufHeight;
+
+    switch (numLvdsCh)
+    {
+        case 1:
+            widthFactor  = 1;
+            heightFactor = 1;
+            pPrm->initLayoutParams.numWin = 1;
+            break;
+        case 2:
+            widthFactor  = 2;
+            heightFactor = 1;
+            pPrm->initLayoutParams.numWin = 2;
+            break;
+        case 3:
+        case 4:
+            widthFactor  = 2;
+            heightFactor = 2;
+            pPrm->initLayoutParams.numWin = 4;
+            break;
+        case 5:
+        case 6:
+            widthFactor  = 2;
+            heightFactor = 3;
+            pPrm->initLayoutParams.numWin = 6;
+            break;
+        default:
+            widthFactor  = 2;
+            heightFactor = 2;
+            pPrm->initLayoutParams.numWin = 4;
+            break;
+    }
+
+    /* assuming 4Ch LVDS and 2x2 layout */
+    for(winId=0; winId<pPrm->initLayoutParams.numWin; winId++)
+    {
+        pWinInfo = &pPrm->initLayoutParams.winInfo[winId];
+
+        pWinInfo->chId = winId;
+
+        pWinInfo->inStartX = 0;
+        pWinInfo->inStartY = 0;
+
+        pWinInfo->width     =
+            SystemUtils_floor(pPrm->initLayoutParams.outBufWidth/widthFactor, 16);
+        pWinInfo->height    =
+            pPrm->initLayoutParams.outBufHeight/heightFactor;
+
+        /* winId == 0 */
+        pWinInfo->outStartX = 0;
+        pWinInfo->outStartY = 0;
+
+        if(winId==1)
+        {
+            pWinInfo->outStartX = pWinInfo->width;
+            pWinInfo->outStartY = 0;
+        } else
+        if(winId==2)
+        {
+            pWinInfo->outStartX = 0;
+            pWinInfo->outStartY = pWinInfo->height;
+        } else
+        if(winId==3)
+        {
+            pWinInfo->outStartX = pWinInfo->width;
+            pWinInfo->outStartY = pWinInfo->height;
+        } else
+        if(winId==4)
+        {
+            pWinInfo->outStartX = 0;
+            pWinInfo->outStartY = 2 * pWinInfo->height;
+        } else
+        if(winId==5)
+        {
+            pWinInfo->outStartX = pWinInfo->width;
+            pWinInfo->outStartY = 2 * pWinInfo->height;
+        }
+    }
+}
 
 /**
  *******************************************************************************
@@ -263,6 +376,19 @@ Void chains_surround_View_SetAppPrms(chains_surround_ViewObj *pUcObj, Void *appO
                             CAPTURE_SENSOR_HEIGHT
                             );
 
+
+    chains_surround_View_SetSyncPrm(
+                &pUcObj->SyncSurroundViewPrm,
+                2
+        );
+
+    chains_lvdsVipMultiCam_Display_SetAlgDmaSwMsPrm(
+                            &pUcObj->Alg_DmaSwMsPrm,
+                            2,
+                            CAPTURE_SENSOR_WIDTH,
+                            CAPTURE_SENSOR_HEIGHT
+                            );
+
     ChainsCommon_SetGrpxSrcPrms(&pUcObj->GrpxSrcPrm,
                                                pObj->displayWidth,
                                                pObj->displayHeight
@@ -281,6 +407,8 @@ Void chains_surround_View_SetAppPrms(chains_surround_ViewObj *pUcObj, Void *appO
         pObj->displayHeight
         );
 }
+
+
 
 /**
  *******************************************************************************

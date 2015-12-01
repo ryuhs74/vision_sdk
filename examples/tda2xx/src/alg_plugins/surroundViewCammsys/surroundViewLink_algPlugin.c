@@ -427,7 +427,7 @@ Int32 AlgorithmLink_surroundViewCreate(void * pObj, void * pCreateParams)
     pSurroundViewObj->curLayoutPrm.psingleViewLUTInfo = &pSurroundViewObj->curLayoutPrm.lutViewInfo[LUT_VIEW_INFO_FULL_VIEW_LUT];
     pSurroundViewObj->curLayoutPrm.singleViewInputChannel = 3;
 
-    AlgorithmLink_surroundViewMake = AlgorithmLink_surroundViewMakeFullView;
+    pSurroundViewObj->AlgorithmLink_surroundViewMake = AlgorithmLink_surroundViewMakeFullView;
 #endif
    return status;
 }
