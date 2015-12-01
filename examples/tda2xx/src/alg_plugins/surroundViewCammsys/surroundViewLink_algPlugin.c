@@ -728,6 +728,11 @@ Int32 AlgorithmLink_surroundViewProcess(void * pObj)
                     pOutFrameBuffer
                     );
 
+            Cache_wb(pOutFrameBuffer->bufAddr[0],
+					 pSurroundViewObj->outBufSize,
+                     Cache_Type_ALLD,
+                     TRUE
+                    );
             Utils_updateLatency(&pSurroundViewObj->linkLatency,
                                 pOutBuffer->linkLocalTimestamp);
             Utils_updateLatency(&pSurroundViewObj->srcToLinkLatency,

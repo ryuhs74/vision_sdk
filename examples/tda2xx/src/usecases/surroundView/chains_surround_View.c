@@ -103,29 +103,26 @@ static Void chains_lvdsVipMultiCam_Display_SetAlgDmaSwMsPrm(
 
 	pWinInfo->chId = 0;
 
-	pWinInfo->inStartX = 0;
-	pWinInfo->inStartY = 0;
+	pWinInfo->inStartX = 16;
+	pWinInfo->inStartY = 16;
+	pWinInfo->outStartX = 16;
+	pWinInfo->outStartY = 16;
 
-	pWinInfo->width     = 536;
-	pWinInfo->height    = 720;
-
-	/* winId == 0 */
-	pWinInfo->outStartX = 0;
-	pWinInfo->outStartY = 0;
+	pWinInfo->width     =	520;
+	pWinInfo->height    =	688;
 
 	pWinInfo = &pPrm->initLayoutParams.winInfo[1];
-
 	pWinInfo->chId = 1;
 
-	pWinInfo->inStartX = 0;
+	pWinInfo->inStartX = 520+16;
 	pWinInfo->inStartY = 0;
-
-	pWinInfo->width     = 712+16;
-	pWinInfo->height    = 720;
-
-	pWinInfo->outStartX = 536;
+	pWinInfo->outStartX = 520+16;
 	pWinInfo->outStartY = 0;
 
+	pWinInfo->width     = 712+16;
+	pWinInfo->height    = 558;
+
+	/* winId == 0 */
 
 }
 
@@ -177,9 +174,9 @@ static Void chains_surround_View_SetSyncPrm(
  *
  *******************************************************************************
 */
-static Void chains_surround_View_SetAlgSurroundViewPrm_0(
+static Void chains_surround_View_SetAlgSurroundViewPrm(
                     AlgorithmLink_SurroundViewCreateParams *pPrm,
-                    UInt32 numLvdsCh,
+                    UInt32 numParam,
                     UInt32 displayWidth,
                     UInt32 displayHeight
                    )
@@ -195,76 +192,7 @@ static Void chains_surround_View_SetAlgSurroundViewPrm_0(
     pPrm->numOutBuf          = 4;
     pPrm->useLocalEdma       = FALSE;
 
-    pPrm->initLayoutParams.numWin = numLvdsCh;
-    pPrm->initLayoutParams.outBufWidth  = pPrm->maxOutBufWidth;
-    pPrm->initLayoutParams.outBufHeight = pPrm->maxOutBufHeight;
-
-    pPrm->initLayoutParams.Basic_frontFullView = LUTAlloc(Basic_frontFullView);
-    pPrm->initLayoutParams.Basic_frontNT = LUTAlloc(Basic_frontNT);
-    pPrm->initLayoutParams.Basic_frontView = LUTAlloc(Basic_frontView);
-    pPrm->initLayoutParams.Basic_leftNT = LUTAlloc(Basic_leftNT);
-    pPrm->initLayoutParams.Basic_leftSideView = LUTAlloc(Basic_leftSideView);
-    pPrm->initLayoutParams.Basic_rearFullView = LUTAlloc(Basic_rearFullView);
-    pPrm->initLayoutParams.Basic_rearNT = LUTAlloc(Basic_rearNT);
-    pPrm->initLayoutParams.Basic_rearView = LUTAlloc(Basic_rearView);
-    pPrm->initLayoutParams.Basic_rightNT = LUTAlloc(Basic_rightNT);
-    pPrm->initLayoutParams.Basic_rightSideView = LUTAlloc(Basic_rightSideView);
-    pPrm->initLayoutParams.cmaskNT = LUTAlloc(cmaskNT);
-
-
-    pLutInfo[LUT_VIEW_INFO_FULL_VIEW].startX 	= 16;
-    pLutInfo[LUT_VIEW_INFO_FULL_VIEW].startY 	= 16;
-    pLutInfo[LUT_VIEW_INFO_FULL_VIEW].width 	= 520;
-    pLutInfo[LUT_VIEW_INFO_FULL_VIEW].height	= 720;
-    pLutInfo[LUT_VIEW_INFO_FULL_VIEW].pitch		= 1280;
-
-    pLutInfo[LUT_VIEW_INFO_FULL_VIEW_LUT].startX 	= 0;
-    pLutInfo[LUT_VIEW_INFO_FULL_VIEW_LUT].startY 	= 0;
-    pLutInfo[LUT_VIEW_INFO_FULL_VIEW_LUT].width 	= 520;
-    pLutInfo[LUT_VIEW_INFO_FULL_VIEW_LUT].height	= 558;
-    pLutInfo[LUT_VIEW_INFO_FULL_VIEW_LUT].pitch		= 1248;
-
-    pLutInfo[LUT_VIEW_INFO_TOP_VIEW].startX 	= 16;
-    pLutInfo[LUT_VIEW_INFO_TOP_VIEW].startY 	= 16;
-    pLutInfo[LUT_VIEW_INFO_TOP_VIEW].width 		= 520;
-    pLutInfo[LUT_VIEW_INFO_TOP_VIEW].height		= 688;
-    pLutInfo[LUT_VIEW_INFO_TOP_VIEW].pitch		= 1280;
-
-    for(i=0; i<LUT_INFO_INDEX_MAX; i++)
-    {
-    	lutViewInfo = GetLutInfo((LUT_INFO_INDEX)i);
-        pLutInfo[LUT_VIEW_INFO_TOP_A00+i].startX 		= lutViewInfo->startX;
-        pLutInfo[LUT_VIEW_INFO_TOP_A00+i].startY 		= lutViewInfo->startY;
-        pLutInfo[LUT_VIEW_INFO_TOP_A00+i].width 		= lutViewInfo->width;
-        pLutInfo[LUT_VIEW_INFO_TOP_A00+i].height		= lutViewInfo->height;
-        pLutInfo[LUT_VIEW_INFO_TOP_A00+i].pitch			= 520;
-    }
-#if 0
-    pPrm->initLayoutParams.psingleViewLUT = pPrm->initLayoutParams.Basic_frontView;
-    pPrm->initLayoutParams.psingleViewInfo = &pLutInfo[LUT_VIEW_INFO_SIDE_VIEW];
-    pPrm->initLayoutParams.psingleViewLUTInfo = &pLutInfo[LUT_VIEW_INFO_SIDE_VIEW_LUT];
-    pPrm->initLayoutParams.singleViewInputChannel = 3;
-#endif
-}
-
-
-static Void chains_surround_View_SetAlgSurroundViewPrm_1(
-                    AlgorithmLink_SurroundViewCreateParams *pPrm,
-                    UInt32 numLvdsCh,
-                    UInt32 displayWidth,
-                    UInt32 displayHeight
-                   )
-{
-    AlgorithmLink_SurroundViewLutInfo *pLutInfo;
-
-    pLutInfo = pPrm->initLayoutParams.lutViewInfo;
-
-    pPrm->maxOutBufWidth     = displayWidth;
-    pPrm->maxOutBufHeight    = displayHeight;
-    pPrm->numOutBuf          = 4;
-    pPrm->useLocalEdma       = FALSE;
-
-    pPrm->initLayoutParams.numWin = numLvdsCh;
+    pPrm->initLayoutParams.numWin = 4;
     pPrm->initLayoutParams.outBufWidth  = pPrm->maxOutBufWidth;
     pPrm->initLayoutParams.outBufHeight = pPrm->maxOutBufHeight;
 
@@ -293,7 +221,7 @@ static Void chains_surround_View_SetAlgSurroundViewPrm_1(
     pLutInfo[LUT_VIEW_INFO_FULL_VIEW_LUT].height	= 558;
     pLutInfo[LUT_VIEW_INFO_FULL_VIEW_LUT].pitch		= 1248;
 
-    pLutInfo[LUT_VIEW_INFO_SIDE_VIEW].startX 	= 16;
+    pLutInfo[LUT_VIEW_INFO_SIDE_VIEW].startX 	= 550;
     pLutInfo[LUT_VIEW_INFO_SIDE_VIEW].startY 	= 16;
     pLutInfo[LUT_VIEW_INFO_SIDE_VIEW].width 	= 712;
     pLutInfo[LUT_VIEW_INFO_SIDE_VIEW].height	= 508;
@@ -306,10 +234,29 @@ static Void chains_surround_View_SetAlgSurroundViewPrm_1(
     pLutInfo[LUT_VIEW_INFO_SIDE_VIEW_LUT].pitch		= 712;
 
 
-    pPrm->initLayoutParams.psingleViewLUT = pPrm->initLayoutParams.Basic_frontView;
-    pPrm->initLayoutParams.psingleViewInfo = &pLutInfo[LUT_VIEW_INFO_SIDE_VIEW];
-    pPrm->initLayoutParams.psingleViewLUTInfo = &pLutInfo[LUT_VIEW_INFO_SIDE_VIEW_LUT];
-    pPrm->initLayoutParams.singleViewInputChannel = 3;
+    pLutInfo[LUT_VIEW_INFO_TOP_VIEW].startX 	= 16;
+    pLutInfo[LUT_VIEW_INFO_TOP_VIEW].startY 	= 16;
+    pLutInfo[LUT_VIEW_INFO_TOP_VIEW].width 		= 520;
+    pLutInfo[LUT_VIEW_INFO_TOP_VIEW].height		= 688;
+    pLutInfo[LUT_VIEW_INFO_TOP_VIEW].pitch		= 1280;
+
+    for(i=0; i<LUT_INFO_INDEX_MAX; i++)
+    {
+    	lutViewInfo = GetLutInfo((LUT_INFO_INDEX)i);
+        pLutInfo[LUT_VIEW_INFO_TOP_A00+i].startX 		= lutViewInfo->startX;
+        pLutInfo[LUT_VIEW_INFO_TOP_A00+i].startY 		= lutViewInfo->startY;
+        pLutInfo[LUT_VIEW_INFO_TOP_A00+i].width 		= lutViewInfo->width;
+        pLutInfo[LUT_VIEW_INFO_TOP_A00+i].height		= lutViewInfo->height;
+        pLutInfo[LUT_VIEW_INFO_TOP_A00+i].pitch			= 520;
+    }
+
+    if(numParam == 1)
+    {
+		pPrm->initLayoutParams.psingleViewLUT = pPrm->initLayoutParams.Basic_frontView;
+		pPrm->initLayoutParams.psingleViewInfo = &pLutInfo[LUT_VIEW_INFO_SIDE_VIEW];
+		pPrm->initLayoutParams.psingleViewLUTInfo = &pLutInfo[LUT_VIEW_INFO_SIDE_VIEW_LUT];
+		pPrm->initLayoutParams.singleViewInputChannel = 3;
+    }
 }
 
 /**
@@ -365,16 +312,16 @@ Void chains_surround_View_SetAppPrms(chains_surround_ViewObj *pUcObj, Void *appO
                 pObj->numLvdsCh
         );
 
-    chains_surround_View_SetAlgSurroundViewPrm_0(
+    chains_surround_View_SetAlgSurroundViewPrm(
                             &pUcObj->Alg_SurroundViewPrm_0,
-                            pObj->numLvdsCh,
+                            0,
                             CAPTURE_SENSOR_WIDTH,
                             CAPTURE_SENSOR_HEIGHT
                             );
 
-    chains_surround_View_SetAlgSurroundViewPrm_1(
+    chains_surround_View_SetAlgSurroundViewPrm(
                             &pUcObj->Alg_SurroundViewPrm_1,
-                            pObj->numLvdsCh,
+                            1,
                             CAPTURE_SENSOR_WIDTH,
                             CAPTURE_SENSOR_HEIGHT
                             );
