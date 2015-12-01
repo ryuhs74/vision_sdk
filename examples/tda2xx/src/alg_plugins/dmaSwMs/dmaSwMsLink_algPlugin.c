@@ -934,11 +934,6 @@ Int32 AlgorithmLink_dmaSwMsProcess(void * pObj)
             linkStatsInfo->linkStats.chStats
                     [pInBuffer->chNum].outBufCount[0]++;
 
-            Cache_inv(pOutFrameBuffer->bufAddr[0],
-					 pSurroundViewObj->outBufSize,
-                     Cache_Type_ALLD,
-                     TRUE
-                    );
             AlgorithmLink_dmaSwMsDoDmaCopyFill(
                     pObj,
                     pDmaSwMsObj,

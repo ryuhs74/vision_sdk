@@ -405,31 +405,33 @@ Int32 AlgorithmLink_surroundViewCreate(void * pObj, void * pCreateParams)
 
     pSurroundViewObj->isFirstFrameRecv = FALSE;
 
-    pSurroundViewObj->curLayoutPrm.buf1 =
-            Utils_memAlloc(
-                    UTILS_HEAPID_DDR_CACHED_SR,
-                    ( pSurroundViewObj->outBufSize ),
-                    ALGORITHMLINK_FRAME_ALIGN
-                );
-    pSurroundViewObj->curLayoutPrm.buf2 =
-            Utils_memAlloc(
-                    UTILS_HEAPID_DDR_CACHED_SR,
-                    ( pSurroundViewObj->outBufSize ),
-                    ALGORITHMLINK_FRAME_ALIGN
-                );
 
-    if(pSurroundViewObj->curLayoutPrm.psingleViewLUT == NULL)
+
+    if(pSurroundViewObj->curLayoutPrm.makeViewPart == 0)
     {
     	pSurroundViewObj->AlgorithmLink_surroundViewMake = AlgorithmLink_surroundViewMakeTopView;
+
+	    pSurroundViewObj->curLayoutPrm.buf1 =
+	            Utils_memAlloc(
+	                    UTILS_HEAPID_DDR_CACHED_SR,
+	                    ( pSurroundViewObj->outBufSize ),
+	                    ALGORITHMLINK_FRAME_ALIGN
+	                );
+	    pSurroundViewObj->curLayoutPrm.buf2 =
+	            Utils_memAlloc(
+	                    UTILS_HEAPID_DDR_CACHED_SR,
+	                    ( pSurroundViewObj->outBufSize ),
+	                    ALGORITHMLINK_FRAME_ALIGN
+	                );
     }
     else
     {
-/*
+#if 0 ///full view Test
 		pSurroundViewObj->curLayoutPrm.psingleViewLUT = pSurroundViewObj->curLayoutPrm.Basic_frontFullView;
 		pSurroundViewObj->curLayoutPrm.psingleViewInfo = &pSurroundViewObj->curLayoutPrm.lutViewInfo[LUT_VIEW_INFO_FULL_VIEW];
 		pSurroundViewObj->curLayoutPrm.psingleViewLUTInfo = &pSurroundViewObj->curLayoutPrm.lutViewInfo[LUT_VIEW_INFO_FULL_VIEW_LUT];
 		pSurroundViewObj->curLayoutPrm.singleViewInputChannel = 3;
-*/
+#endif
 		pSurroundViewObj->AlgorithmLink_surroundViewMake = AlgorithmLink_surroundViewMakeSingleView;
     }
    return status;
@@ -991,14 +993,16 @@ Int32 AlgorithmLink_surroundViewDelete(void * pObj)
         UTILS_assert(status==SYSTEM_LINK_STATUS_SOK);
     }
 
-	Utils_memFree(	UTILS_HEAPID_DDR_CACHED_SR,
-					pSurroundViewObj->curLayoutPrm.buf1,
-					pSurroundViewObj->outBufSize);
+    if(pSurroundViewObj->curLayoutPrm.makeViewPart == 0)
+    {
+		Utils_memFree(	UTILS_HEAPID_DDR_CACHED_SR,
+						pSurroundViewObj->curLayoutPrm.buf1,
+						pSurroundViewObj->outBufSize);
 
-	Utils_memFree(	UTILS_HEAPID_DDR_CACHED_SR,
-					pSurroundViewObj->curLayoutPrm.buf2,
+		Utils_memFree(	UTILS_HEAPID_DDR_CACHED_SR,
+						pSurroundViewObj->curLayoutPrm.buf2,
 					pSurroundViewObj->outBufSize);
-
+    }
     UTILS_assert(status==SYSTEM_LINK_STATUS_SOK);
 
     free(pSurroundViewObj);
