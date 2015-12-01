@@ -429,17 +429,63 @@ Void Chains_surround_View(Chains_Ctrl *chainsCfg)
 				*/
             }
             	break;
+            	/*
+            	 *
+
+#define  (0x00000009)
+
+#define  (0x00000010)
+
+#define  (0x00000011)
+
+#define  (0x00000012)
+
+#define  (0x00000013)
+            	*/
             case '3':
-            	Vps_printf("In chains_main, SYSTEM_CMD_REAR_SIDE_VIEW\n");
-            	System_linkControl(svChainsObj.ucObj.GrpxSrcLinkID , SYSTEM_CMD_REAR_SIDE_VIEW, NULL, 0, TRUE); //gGrpxSrcLinkID °´Ã¼°¡ µÎ°³.
+            	Vps_printf("In chains_main, SYSTEM_CMD_FRONT_SIDE_VIEW\n");
+            	System_linkControl(svChainsObj.ucObj.Alg_SurroundViewLinkID , SYSTEM_CMD_FRONT_SIDE_VIEW, NULL, 0, TRUE); //gGrpxSrcLinkID °´Ã¼°¡ µÎ°³.
             	Vps_printf("   CMD Send chains_main\n");
             	break;
             case '4':
-            	Vps_printf("In chains_main, SYSTEM_CMD_LEFT_SIDE_VIEW\n");
-            	System_linkControl(svChainsObj.ucObj.GrpxSrcLinkID, SYSTEM_CMD_LEFT_SIDE_VIEW, NULL, 0, TRUE); //gGrpxSrcLinkID °´Ã¼°¡ µÎ°³.
+            	Vps_printf("In chains_main, SYSTEM_CMD_REAR_SIDE_VIEW\n");
+            	System_linkControl(svChainsObj.ucObj.Alg_SurroundViewLinkID , SYSTEM_CMD_REAR_SIDE_VIEW, NULL, 0, TRUE); //gGrpxSrcLinkID °´Ã¼°¡ µÎ°³.
             	Vps_printf("   CMD Send chains_main\n");
             	break;
             case '5':
+            	Vps_printf("In chains_main, SYSTEM_CMD_RIGH_SIDE_VIEW\n");
+				System_linkControl(svChainsObj.ucObj.Alg_SurroundViewLinkID , SYSTEM_CMD_RIGH_SIDE_VIEW, NULL, 0, TRUE); //gGrpxSrcLinkID °´Ã¼°¡ µÎ°³.
+				Vps_printf("   CMD Send chains_main\n");
+            	break;
+            case '6':
+            	Vps_printf("In chains_main, SYSTEM_CMD_LEFT_SIDE_VIEW\n");
+				System_linkControl(svChainsObj.ucObj.Alg_SurroundViewLinkID , SYSTEM_CMD_LEFT_SIDE_VIEW, NULL, 0, TRUE); //gGrpxSrcLinkID °´Ã¼°¡ µÎ°³.
+				Vps_printf("   CMD Send chains_main\n");
+                break;
+            case '7':
+            	Vps_printf("In chains_main, SYSTEM_CMD_FULL_FRONT_VIEW\n");
+				System_linkControl(svChainsObj.ucObj.Alg_SurroundViewLinkID , SYSTEM_CMD_FULL_FRONT_VIEW, NULL, 0, TRUE); //gGrpxSrcLinkID °´Ã¼°¡ µÎ°³.
+				Vps_printf("   CMD Send chains_main\n");
+                break;
+            case '8':
+            	Vps_printf("In chains_main, SYSTEM_CMD_FULL_REAR_VIEW\n");
+				System_linkControl(svChainsObj.ucObj.Alg_SurroundViewLinkID , SYSTEM_CMD_FULL_REAR_VIEW, NULL, 0, TRUE); //gGrpxSrcLinkID °´Ã¼°¡ µÎ°³.
+				Vps_printf("   CMD Send chains_main\n");
+                break;
+            case '9':
+            	Vps_printf("In chains_main, SYSTEM_CMD_PRINT_STATISTICS\n");
+				System_linkControl(svChainsObj.ucObj.Alg_SurroundViewLinkID , SYSTEM_CMD_PRINT_STATISTICS, NULL, 0, TRUE); //gGrpxSrcLinkID °´Ã¼°¡ µÎ°³.
+				Vps_printf("   CMD Send chains_main\n");
+                break;
+            case 'a':
+            	Vps_printf("In chains_main, SYSTEM_CMD_PRINT_STATISTICS\n");
+				System_linkControl(svChainsObj.ucObj.CaptureLinkID , SYSTEM_CMD_PRINT_STATISTICS, NULL, 0, TRUE); //gGrpxSrcLinkID °´Ã¼°¡ µÎ°³.
+				Vps_printf("   CMD Send chains_main\n");
+				break;
+            case 'b':
+            	Vps_printf("In chains_main, SYSTEM_CMD_STOP To CaptureLinkID\n");
+            	System_linkControl(svChainsObj.ucObj.CaptureLinkID , SYSTEM_CMD_STOP, NULL, 0, TRUE); //gGrpxSrcLinkID °´Ã¼°¡ µÎ°³.
+            	Vps_printf("   CMD Send chains_main\n");
             	break;
             default:
                 Vps_printf("\nUnsupported option '%c'. Please try again\n", ch);
