@@ -24,7 +24,8 @@
  *        are synced together by sync link
  *******************************************************************************
  */
-#define SYNC_DELTA_IN_MSEC              (50)
+#define SYNC_DELTA_IN_MSEC_CAP              (30)
+#define SYNC_DELTA_IN_MSEC_SURROUND_VIEW              (50)
 
 /**
  *******************************************************************************
@@ -32,7 +33,8 @@
  *        are dropped by sync link
  *******************************************************************************
  */
-#define SYNC_DROP_THRESHOLD_IN_MSEC     (150)
+#define SYNC_DROP_THRESHOLD_IN_MSEC_CAP     (33)
+#define SYNC_DROP_THRESHOLD_IN_MSEC_SURROUND_VIEW     (150)
 
 /**
  *******************************************************************************
@@ -76,6 +78,7 @@ typedef struct {
  *          The algorithm which is to run on core is set to
  *          baseClassCreate.algId. The input whdth and height to alg are set.
  *          Number of input buffers required by alg are also set here.
+ *
 
  * \param   pPrm    [OUT]    VpeLink_CreateParams
  *
@@ -83,7 +86,7 @@ typedef struct {
 */
 static Void chains_lvdsVipMultiCam_Display_SetAlgDmaSwMsPrm(
                     AlgorithmLink_DmaSwMsCreateParams *pPrm,
-                    UInt32 numLvdsCh,
+                    UInt32 numViewCh,
                     UInt32 displayWidth,
                     UInt32 displayHeight
                    )
@@ -96,7 +99,7 @@ static Void chains_lvdsVipMultiCam_Display_SetAlgDmaSwMsPrm(
     pPrm->numOutBuf          = 4;
     pPrm->useLocalEdma       = FALSE;
 
-    pPrm->initLayoutParams.numWin = numLvdsCh;
+    pPrm->initLayoutParams.numWin = numViewCh;
     pPrm->initLayoutParams.outBufWidth  = pPrm->maxOutBufWidth;
     pPrm->initLayoutParams.outBufHeight = pPrm->maxOutBufHeight;
 
@@ -155,9 +158,15 @@ static Void chains_surround_View_SetSyncPrm(
     {
         pPrm->chParams.channelSyncList[chId] = TRUE;
     }
-
-    pPrm->chParams.syncDelta = SYNC_DELTA_IN_MSEC;
-    pPrm->chParams.syncThreshold = SYNC_DROP_THRESHOLD_IN_MSEC;
+    if(numLvdsCh == 2)
+    {
+		pPrm->chParams.syncDelta = SYNC_DELTA_IN_MSEC_SURROUND_VIEW;
+		pPrm->chParams.syncThreshold = SYNC_DELTA_IN_MSEC_SURROUND_VIEW;
+    }else
+    {
+		pPrm->chParams.syncDelta = SYNC_DELTA_IN_MSEC_CAP;
+		pPrm->chParams.syncThreshold = SYNC_DELTA_IN_MSEC_CAP;
+    }
 }
 
 /**
@@ -329,14 +338,14 @@ Void chains_surround_View_SetAppPrms(chains_surround_ViewObj *pUcObj, Void *appO
 
     chains_surround_View_SetAlgSurroundViewPrm(
                             &pUcObj->Alg_SurroundViewPrm_0,
-                            0,
+                            0,	///left View
                             CAPTURE_SENSOR_WIDTH,
                             CAPTURE_SENSOR_HEIGHT
                             );
 
     chains_surround_View_SetAlgSurroundViewPrm(
                             &pUcObj->Alg_SurroundViewPrm_1,
-                            1,
+                            1,	///right View
                             CAPTURE_SENSOR_WIDTH,
                             CAPTURE_SENSOR_HEIGHT
                             );
@@ -531,12 +540,12 @@ Void Chains_surround_View(Chains_Ctrl *chainsCfg)
             	break;
             case '3':
             	Vps_printf("In chains_main, SYSTEM_CMD_REAR_SIDE_VIEW\n");
-            	System_linkControl(svChainsObj.ucObj.GrpxSrcLinkID , SYSTEM_CMD_REAR_SIDE_VIEW, NULL, 0, TRUE); //gGrpxSrcLinkID °´Ã¼°¡ µÎ°³.
+            	System_linkControl(svChainsObj.ucObj.GrpxSrcLinkID , SYSTEM_CMD_REAR_SIDE_VIEW, NULL, 0, TRUE); //gGrpxSrcLinkID ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½Î°ï¿½.
             	Vps_printf("   CMD Send chains_main\n");
             	break;
             case '4':
             	Vps_printf("In chains_main, SYSTEM_CMD_LEFT_SIDE_VIEW\n");
-            	System_linkControl(svChainsObj.ucObj.GrpxSrcLinkID, SYSTEM_CMD_LEFT_SIDE_VIEW, NULL, 0, TRUE); //gGrpxSrcLinkID °´Ã¼°¡ µÎ°³.
+            	System_linkControl(svChainsObj.ucObj.GrpxSrcLinkID, SYSTEM_CMD_LEFT_SIDE_VIEW, NULL, 0, TRUE); //gGrpxSrcLinkID ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½Î°ï¿½.
             	Vps_printf("   CMD Send chains_main\n");
             	break;
             case '5':
