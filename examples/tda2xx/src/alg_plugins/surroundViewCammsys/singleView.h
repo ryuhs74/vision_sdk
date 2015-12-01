@@ -104,6 +104,9 @@ static inline Int32 makeSingleView720P(  UInt32       *RESTRICT inPtr,
     UInt16 width = childViewInfoLUT->width + startX;
     UInt16 height = childViewInfoLUT->height;
 
+    if(width > (viewInfo->startX+viewInfo->width))
+    	width = viewInfo->startX+viewInfo->width;
+
     ViewLUT_Packed *lut = ((ViewLUT_Packed*)viewLUTPtr) + (childViewInfoLUT->pitch * childViewInfoLUT->startY);
 
     iPtr  = (yuvHD720P*)inPtr;

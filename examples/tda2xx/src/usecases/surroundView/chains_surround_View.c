@@ -88,9 +88,7 @@ static Void chains_lvdsVipMultiCam_Display_SetAlgDmaSwMsPrm(
                     UInt32 displayHeight
                    )
 {
-    UInt32 winId;
     AlgorithmLink_DmaSwMsLayoutWinInfo *pWinInfo;
-    UInt32 widthFactor, heightFactor;
 
     pPrm->maxOutBufWidth     = displayWidth;
     pPrm->maxOutBufHeight    = displayHeight;
@@ -101,82 +99,34 @@ static Void chains_lvdsVipMultiCam_Display_SetAlgDmaSwMsPrm(
     pPrm->initLayoutParams.outBufWidth  = pPrm->maxOutBufWidth;
     pPrm->initLayoutParams.outBufHeight = pPrm->maxOutBufHeight;
 
-    switch (numLvdsCh)
-    {
-        case 1:
-            widthFactor  = 1;
-            heightFactor = 1;
-            pPrm->initLayoutParams.numWin = 1;
-            break;
-        case 2:
-            widthFactor  = 2;
-            heightFactor = 1;
-            pPrm->initLayoutParams.numWin = 2;
-            break;
-        case 3:
-        case 4:
-            widthFactor  = 2;
-            heightFactor = 2;
-            pPrm->initLayoutParams.numWin = 4;
-            break;
-        case 5:
-        case 6:
-            widthFactor  = 2;
-            heightFactor = 3;
-            pPrm->initLayoutParams.numWin = 6;
-            break;
-        default:
-            widthFactor  = 2;
-            heightFactor = 2;
-            pPrm->initLayoutParams.numWin = 4;
-            break;
-    }
+	pWinInfo = &pPrm->initLayoutParams.winInfo[0];
 
-    /* assuming 4Ch LVDS and 2x2 layout */
-    for(winId=0; winId<pPrm->initLayoutParams.numWin; winId++)
-    {
-        pWinInfo = &pPrm->initLayoutParams.winInfo[winId];
+	pWinInfo->chId = 0;
 
-        pWinInfo->chId = winId;
+	pWinInfo->inStartX = 0;
+	pWinInfo->inStartY = 0;
 
-        pWinInfo->inStartX = 0;
-        pWinInfo->inStartY = 0;
+	pWinInfo->width     = 536;
+	pWinInfo->height    = 720;
 
-        pWinInfo->width     =
-            SystemUtils_floor(pPrm->initLayoutParams.outBufWidth/widthFactor, 16);
-        pWinInfo->height    =
-            pPrm->initLayoutParams.outBufHeight/heightFactor;
+	/* winId == 0 */
+	pWinInfo->outStartX = 0;
+	pWinInfo->outStartY = 0;
 
-        /* winId == 0 */
-        pWinInfo->outStartX = 0;
-        pWinInfo->outStartY = 0;
+	pWinInfo = &pPrm->initLayoutParams.winInfo[1];
 
-        if(winId==1)
-        {
-            pWinInfo->outStartX = pWinInfo->width;
-            pWinInfo->outStartY = 0;
-        } else
-        if(winId==2)
-        {
-            pWinInfo->outStartX = 0;
-            pWinInfo->outStartY = pWinInfo->height;
-        } else
-        if(winId==3)
-        {
-            pWinInfo->outStartX = pWinInfo->width;
-            pWinInfo->outStartY = pWinInfo->height;
-        } else
-        if(winId==4)
-        {
-            pWinInfo->outStartX = 0;
-            pWinInfo->outStartY = 2 * pWinInfo->height;
-        } else
-        if(winId==5)
-        {
-            pWinInfo->outStartX = pWinInfo->width;
-            pWinInfo->outStartY = 2 * pWinInfo->height;
-        }
-    }
+	pWinInfo->chId = 1;
+
+	pWinInfo->inStartX = 0;
+	pWinInfo->inStartY = 0;
+
+	pWinInfo->width     = 712+16;
+	pWinInfo->height    = 720;
+
+	pWinInfo->outStartX = 536;
+	pWinInfo->outStartY = 0;
+
+
 }
 
 /**
@@ -227,7 +177,7 @@ static Void chains_surround_View_SetSyncPrm(
  *
  *******************************************************************************
 */
-static Void chains_surround_View_SetAlgSurroundViewPrm(
+static Void chains_surround_View_SetAlgSurroundViewPrm_0(
                     AlgorithmLink_SurroundViewCreateParams *pPrm,
                     UInt32 numLvdsCh,
                     UInt32 displayWidth,
@@ -237,6 +187,75 @@ static Void chains_surround_View_SetAlgSurroundViewPrm(
     AlgorithmLink_SurroundViewLutInfo *pLutInfo;
     lut_Info* lutViewInfo;
     int i=0;
+
+    pLutInfo = pPrm->initLayoutParams.lutViewInfo;
+
+    pPrm->maxOutBufWidth     = displayWidth;
+    pPrm->maxOutBufHeight    = displayHeight;
+    pPrm->numOutBuf          = 4;
+    pPrm->useLocalEdma       = FALSE;
+
+    pPrm->initLayoutParams.numWin = numLvdsCh;
+    pPrm->initLayoutParams.outBufWidth  = pPrm->maxOutBufWidth;
+    pPrm->initLayoutParams.outBufHeight = pPrm->maxOutBufHeight;
+
+    pPrm->initLayoutParams.Basic_frontFullView = LUTAlloc(Basic_frontFullView);
+    pPrm->initLayoutParams.Basic_frontNT = LUTAlloc(Basic_frontNT);
+    pPrm->initLayoutParams.Basic_frontView = LUTAlloc(Basic_frontView);
+    pPrm->initLayoutParams.Basic_leftNT = LUTAlloc(Basic_leftNT);
+    pPrm->initLayoutParams.Basic_leftSideView = LUTAlloc(Basic_leftSideView);
+    pPrm->initLayoutParams.Basic_rearFullView = LUTAlloc(Basic_rearFullView);
+    pPrm->initLayoutParams.Basic_rearNT = LUTAlloc(Basic_rearNT);
+    pPrm->initLayoutParams.Basic_rearView = LUTAlloc(Basic_rearView);
+    pPrm->initLayoutParams.Basic_rightNT = LUTAlloc(Basic_rightNT);
+    pPrm->initLayoutParams.Basic_rightSideView = LUTAlloc(Basic_rightSideView);
+    pPrm->initLayoutParams.cmaskNT = LUTAlloc(cmaskNT);
+
+
+    pLutInfo[LUT_VIEW_INFO_FULL_VIEW].startX 	= 16;
+    pLutInfo[LUT_VIEW_INFO_FULL_VIEW].startY 	= 16;
+    pLutInfo[LUT_VIEW_INFO_FULL_VIEW].width 	= 520;
+    pLutInfo[LUT_VIEW_INFO_FULL_VIEW].height	= 720;
+    pLutInfo[LUT_VIEW_INFO_FULL_VIEW].pitch		= 1280;
+
+    pLutInfo[LUT_VIEW_INFO_FULL_VIEW_LUT].startX 	= 0;
+    pLutInfo[LUT_VIEW_INFO_FULL_VIEW_LUT].startY 	= 0;
+    pLutInfo[LUT_VIEW_INFO_FULL_VIEW_LUT].width 	= 520;
+    pLutInfo[LUT_VIEW_INFO_FULL_VIEW_LUT].height	= 558;
+    pLutInfo[LUT_VIEW_INFO_FULL_VIEW_LUT].pitch		= 1248;
+
+    pLutInfo[LUT_VIEW_INFO_TOP_VIEW].startX 	= 16;
+    pLutInfo[LUT_VIEW_INFO_TOP_VIEW].startY 	= 16;
+    pLutInfo[LUT_VIEW_INFO_TOP_VIEW].width 		= 520;
+    pLutInfo[LUT_VIEW_INFO_TOP_VIEW].height		= 688;
+    pLutInfo[LUT_VIEW_INFO_TOP_VIEW].pitch		= 1280;
+
+    for(i=0; i<LUT_INFO_INDEX_MAX; i++)
+    {
+    	lutViewInfo = GetLutInfo((LUT_INFO_INDEX)i);
+        pLutInfo[LUT_VIEW_INFO_TOP_A00+i].startX 		= lutViewInfo->startX;
+        pLutInfo[LUT_VIEW_INFO_TOP_A00+i].startY 		= lutViewInfo->startY;
+        pLutInfo[LUT_VIEW_INFO_TOP_A00+i].width 		= lutViewInfo->width;
+        pLutInfo[LUT_VIEW_INFO_TOP_A00+i].height		= lutViewInfo->height;
+        pLutInfo[LUT_VIEW_INFO_TOP_A00+i].pitch			= 520;
+    }
+#if 0
+    pPrm->initLayoutParams.psingleViewLUT = pPrm->initLayoutParams.Basic_frontView;
+    pPrm->initLayoutParams.psingleViewInfo = &pLutInfo[LUT_VIEW_INFO_SIDE_VIEW];
+    pPrm->initLayoutParams.psingleViewLUTInfo = &pLutInfo[LUT_VIEW_INFO_SIDE_VIEW_LUT];
+    pPrm->initLayoutParams.singleViewInputChannel = 3;
+#endif
+}
+
+
+static Void chains_surround_View_SetAlgSurroundViewPrm_1(
+                    AlgorithmLink_SurroundViewCreateParams *pPrm,
+                    UInt32 numLvdsCh,
+                    UInt32 displayWidth,
+                    UInt32 displayHeight
+                   )
+{
+    AlgorithmLink_SurroundViewLutInfo *pLutInfo;
 
     pLutInfo = pPrm->initLayoutParams.lutViewInfo;
 
@@ -274,7 +293,7 @@ static Void chains_surround_View_SetAlgSurroundViewPrm(
     pLutInfo[LUT_VIEW_INFO_FULL_VIEW_LUT].height	= 558;
     pLutInfo[LUT_VIEW_INFO_FULL_VIEW_LUT].pitch		= 1248;
 
-    pLutInfo[LUT_VIEW_INFO_SIDE_VIEW].startX 	= 550;
+    pLutInfo[LUT_VIEW_INFO_SIDE_VIEW].startX 	= 16;
     pLutInfo[LUT_VIEW_INFO_SIDE_VIEW].startY 	= 16;
     pLutInfo[LUT_VIEW_INFO_SIDE_VIEW].width 	= 712;
     pLutInfo[LUT_VIEW_INFO_SIDE_VIEW].height	= 508;
@@ -286,22 +305,6 @@ static Void chains_surround_View_SetAlgSurroundViewPrm(
     pLutInfo[LUT_VIEW_INFO_SIDE_VIEW_LUT].height	= 508;
     pLutInfo[LUT_VIEW_INFO_SIDE_VIEW_LUT].pitch		= 712;
 
-
-    pLutInfo[LUT_VIEW_INFO_TOP_VIEW].startX 	= 16;
-    pLutInfo[LUT_VIEW_INFO_TOP_VIEW].startY 	= 16;
-    pLutInfo[LUT_VIEW_INFO_TOP_VIEW].width 		= 520;
-    pLutInfo[LUT_VIEW_INFO_TOP_VIEW].height		= 688;
-    pLutInfo[LUT_VIEW_INFO_TOP_VIEW].pitch		= 1280;
-
-    for(i=0; i<LUT_INFO_INDEX_MAX; i++)
-    {
-    	lutViewInfo = GetLutInfo((LUT_INFO_INDEX)i);
-        pLutInfo[LUT_VIEW_INFO_TOP_A00+i].startX 		= lutViewInfo->startX;
-        pLutInfo[LUT_VIEW_INFO_TOP_A00+i].startY 		= lutViewInfo->startY;
-        pLutInfo[LUT_VIEW_INFO_TOP_A00+i].width 		= lutViewInfo->width;
-        pLutInfo[LUT_VIEW_INFO_TOP_A00+i].height		= lutViewInfo->height;
-        pLutInfo[LUT_VIEW_INFO_TOP_A00+i].pitch			= 520;
-    }
 
     pPrm->initLayoutParams.psingleViewLUT = pPrm->initLayoutParams.Basic_frontView;
     pPrm->initLayoutParams.psingleViewInfo = &pLutInfo[LUT_VIEW_INFO_SIDE_VIEW];
@@ -362,14 +365,14 @@ Void chains_surround_View_SetAppPrms(chains_surround_ViewObj *pUcObj, Void *appO
                 pObj->numLvdsCh
         );
 
-    chains_surround_View_SetAlgSurroundViewPrm(
+    chains_surround_View_SetAlgSurroundViewPrm_0(
                             &pUcObj->Alg_SurroundViewPrm_0,
                             pObj->numLvdsCh,
                             CAPTURE_SENSOR_WIDTH,
                             CAPTURE_SENSOR_HEIGHT
                             );
 
-    chains_surround_View_SetAlgSurroundViewPrm(
+    chains_surround_View_SetAlgSurroundViewPrm_1(
                             &pUcObj->Alg_SurroundViewPrm_1,
                             pObj->numLvdsCh,
                             CAPTURE_SENSOR_WIDTH,

@@ -37,7 +37,7 @@
 													AlgorithmLink_SurroundViewLayoutParams* pLayoutPrm,
 													System_VideoFrameCompositeBuffer *pInFrameCompositeBuffer,
 													System_VideoFrameBuffer *pOutFrameBuffer);
-static Int32 AlgorithmLink_surroundViewMakeFullView(void * pObj,
+static Int32 AlgorithmLink_surroundViewMakeSingleView(void * pObj,
 													AlgorithmLink_SurroundViewLayoutParams* pLayoutPrm,
 													System_VideoFrameCompositeBuffer *pInFrameCompositeBuffer,
 													System_VideoFrameBuffer *pOutFrameBuffer);
@@ -418,17 +418,20 @@ Int32 AlgorithmLink_surroundViewCreate(void * pObj, void * pCreateParams)
                     ALGORITHMLINK_FRAME_ALIGN
                 );
 
-#if 1
-    pSurroundViewObj->AlgorithmLink_surroundViewMake = AlgorithmLink_surroundViewMakeTopView;
-#else
-
-	pSurroundViewObj->curLayoutPrm.psingleViewLUT = pSurroundViewObj->curLayoutPrm.Basic_frontFullView;
-    pSurroundViewObj->curLayoutPrm.psingleViewInfo = &pSurroundViewObj->curLayoutPrm.lutViewInfo[LUT_VIEW_INFO_FULL_VIEW];
-    pSurroundViewObj->curLayoutPrm.psingleViewLUTInfo = &pSurroundViewObj->curLayoutPrm.lutViewInfo[LUT_VIEW_INFO_FULL_VIEW_LUT];
-    pSurroundViewObj->curLayoutPrm.singleViewInputChannel = 3;
-
-    pSurroundViewObj->AlgorithmLink_surroundViewMake = AlgorithmLink_surroundViewMakeFullView;
-#endif
+    if(pSurroundViewObj->curLayoutPrm.psingleViewLUT == NULL)
+    {
+    	pSurroundViewObj->AlgorithmLink_surroundViewMake = AlgorithmLink_surroundViewMakeTopView;
+    }
+    else
+    {
+/*
+		pSurroundViewObj->curLayoutPrm.psingleViewLUT = pSurroundViewObj->curLayoutPrm.Basic_frontFullView;
+		pSurroundViewObj->curLayoutPrm.psingleViewInfo = &pSurroundViewObj->curLayoutPrm.lutViewInfo[LUT_VIEW_INFO_FULL_VIEW];
+		pSurroundViewObj->curLayoutPrm.psingleViewLUTInfo = &pSurroundViewObj->curLayoutPrm.lutViewInfo[LUT_VIEW_INFO_FULL_VIEW_LUT];
+		pSurroundViewObj->curLayoutPrm.singleViewInputChannel = 3;
+*/
+		pSurroundViewObj->AlgorithmLink_surroundViewMake = AlgorithmLink_surroundViewMakeSingleView;
+    }
    return status;
 }
 
@@ -497,14 +500,14 @@ Int32 AlgorithmLink_surroundViewMakeTopView( void * pObj,
 
     pLutViewInfo = pLayoutPrm->lutViewInfo;
 
-
+#if 0
     ///side
 	status = makeSingleView(pInFrameCompositeBuffer->bufAddr[0][pLayoutPrm->singleViewInputChannel],
 							pOutFrameBuffer->bufAddr[0],
 							pLayoutPrm->psingleViewLUT,
 							pLayoutPrm->psingleViewInfo,
 							pLayoutPrm->psingleViewLUTInfo);
-
+#endif
 	///front
 	status = makeSingleView(pInFrameCompositeBuffer->bufAddr[0][3],
 							pOutFrameBuffer->bufAddr[0],
@@ -585,7 +588,7 @@ Int32 AlgorithmLink_surroundViewMakeTopView( void * pObj,
 
     return status;
 }
-Int32 AlgorithmLink_surroundViewMakeFullView(	void * pObj,
+Int32 AlgorithmLink_surroundViewMakeSingleView(	void * pObj,
 												AlgorithmLink_SurroundViewLayoutParams* curLayoutPrm,
 												System_VideoFrameCompositeBuffer *pInFrameCompositeBuffer,
 												System_VideoFrameBuffer *pOutFrameBuffer)
@@ -899,7 +902,7 @@ Int32 AlgorithmLink_surroundViewControl(void * pObj, void * pControlParams)
             pSurroundViewObj->curLayoutPrm.psingleViewLUTInfo = &pSurroundViewObj->curLayoutPrm.lutViewInfo[LUT_VIEW_INFO_FULL_VIEW_LUT];
             pSurroundViewObj->curLayoutPrm.singleViewInputChannel = CAMERA_FRONT;
 
-            pSurroundViewObj->AlgorithmLink_surroundViewMake = AlgorithmLink_surroundViewMakeFullView;
+            pSurroundViewObj->AlgorithmLink_surroundViewMake = AlgorithmLink_surroundViewMakeSingleView;
             break;
         case SYSTEM_CMD_FULL_REAR_VIEW:
         	Vps_printf("In SYSTEM_CMD_FULL_REAR_VIEW\n");
@@ -908,7 +911,7 @@ Int32 AlgorithmLink_surroundViewControl(void * pObj, void * pControlParams)
             pSurroundViewObj->curLayoutPrm.psingleViewLUTInfo = &pSurroundViewObj->curLayoutPrm.lutViewInfo[LUT_VIEW_INFO_FULL_VIEW_LUT];
             pSurroundViewObj->curLayoutPrm.singleViewInputChannel = CAMERA_REAR;
 
-            pSurroundViewObj->AlgorithmLink_surroundViewMake = AlgorithmLink_surroundViewMakeFullView;
+            pSurroundViewObj->AlgorithmLink_surroundViewMake = AlgorithmLink_surroundViewMakeSingleView;
             break;
         //ryuhs74@20151127 - END
 
