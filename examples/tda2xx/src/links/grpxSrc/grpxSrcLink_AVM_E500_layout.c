@@ -63,7 +63,6 @@
 #define FULL_VIEW_H				558
 
 UInt32 gGrpxSrcLinkID;
-UInt32 gFullFront = 0;
 
 Int32 GrpxSrcLink_drawAVM_E500NorButton( GrpxSrcLink_Obj *pObj )
 {
