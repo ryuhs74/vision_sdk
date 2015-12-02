@@ -3,6 +3,7 @@
  *
  *  Created on: Nov 20, 2015
  *      Author: craven
+ *       * Copyright (C) 2015 Cammsys - http://www.cammsys.net/
  */
 
 #ifndef EXAMPLES_TDA2XX_SRC_ALG_PLUGINS_FULLVIEW_BLENDVIEW_H_
@@ -12,6 +13,8 @@
 #include <include/link_api/system_common.h>
 #include <src/utils_common/include/utils_mem.h>
 #include "singleView.h"
+
+#define BLEND_VIEW_TEMP_BUF_SIZE	260*344
 
 static inline Int32 makeBlendView720P(  UInt32       *RESTRICT inPtr_main,
 										UInt32       *RESTRICT inPtr_sub,
@@ -27,8 +30,8 @@ static inline Int32 makeBlendView720P(  UInt32       *RESTRICT inPtr_main,
 {
 //	UInt32 mallocSize = childViewInfoLUT->height * (childViewInfoLUT->pitch>>1);
 
-	yuvHD720P* mainBuf = (yuvHD720P*)buf1;
-	yuvHD720P* subBuf =  (yuvHD720P*)buf2;
+	yuvHD260Pixel* mainBuf = (yuvHD260Pixel*)buf1;
+	yuvHD260Pixel* subBuf =  (yuvHD260Pixel*)buf2;
 
 	yuvHD720P* oPtr = (yuvHD720P*)outPtr;
 	UInt16 rowIdx;
@@ -38,13 +41,13 @@ static inline Int32 makeBlendView720P(  UInt32       *RESTRICT inPtr_main,
 	MaskLUT_Packed* mask = ((MaskLUT_Packed*)carMask) + (childViewInfoLUT->pitch * childViewInfoLUT->startY) + childViewInfoLUT->startX;
 
 
-	makeSingleView720P(inPtr_main,(UInt32*)mainBuf,viewLUTPtr_main,viewInfo,childViewInfoLUT);
+	makeSingleView720PBuff(inPtr_main,(UInt32*)mainBuf,viewLUTPtr_main,viewInfo,childViewInfoLUT);
 
-	makeSingleView720P(inPtr_sub,(UInt32*)subBuf,viewLUTPtr_sub,viewInfo,childViewInfoLUT);
+	makeSingleView720PBuff(inPtr_sub,(UInt32*)subBuf,viewLUTPtr_sub,viewInfo,childViewInfoLUT);
 
 	oPtr+= (viewInfo->startY + childViewInfoLUT->startY);
-	mainBuf += (viewInfo->startY + childViewInfoLUT->startY);
-	subBuf += (viewInfo->startY + childViewInfoLUT->startY);
+//	mainBuf += (viewInfo->startY + childViewInfoLUT->startY);
+//	subBuf += (viewInfo->startY + childViewInfoLUT->startY);
 
 
 	for(rowIdx = 0; rowIdx < childViewInfoLUT->height; rowIdx++)
@@ -52,8 +55,8 @@ static inline Int32 makeBlendView720P(  UInt32       *RESTRICT inPtr_main,
 		MaskLUT_Packed *maskBak;
 		for(colIdx = 0,maskBak = mask; colIdx < childViewInfoLUT->width; colIdx++, maskBak++)
 		{
-			yuyv q1 = mainBuf[rowIdx][colIdx+startX];
-			yuyv q2 = subBuf[rowIdx][colIdx+startX];
+			yuyv q1 = mainBuf[rowIdx][colIdx];
+			yuyv q2 = subBuf[rowIdx][colIdx];
 			UInt16 X = maskBak->cr_r_overlay;
 
 			oPtr[rowIdx][colIdx+startX].y = LinearInterpolation(X,q2.y,q1.y,255,8);

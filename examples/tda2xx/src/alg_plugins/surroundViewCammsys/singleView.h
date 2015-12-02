@@ -3,6 +3,7 @@
  *
  *  Created on: Nov 18, 2015
  *      Author: craven
+ *       * Copyright (C) 2015 Cammsys - http://www.cammsys.net/
  */
 
 #ifndef EXAMPLES_TDA2XX_SRC_ALG_PLUGINS_FULLVIEW_SINGLEVIEW_H_
@@ -16,8 +17,8 @@
 #endif
 #endif
 
-#define AVM_LUT_INTEGER_BITS			10
-#define AVM_LUT_FRACTION_BITS			6
+#define AVM_LUT_INTEGER_BITS			11
+#define AVM_LUT_FRACTION_BITS			5
 
 typedef struct
 {
@@ -60,6 +61,7 @@ typedef struct {
 #define HD1080P_WIDTH	1920
 typedef yuyv yuvHD720P[HD720P_WIDTH];
 typedef yuyv yuvHD1080P[HD1080P_WIDTH];
+typedef yuyv yuvHD260Pixel[260];
 
 
 #define ONE_PER_AVM_LUT_FRACTION_BITS	1<<AVM_LUT_FRACTION_BITS
@@ -73,17 +75,17 @@ typedef yuyv yuvHD1080P[HD1080P_WIDTH];
 #define BilinearInterpolation(q, lut, Q,  pitch)\
 {\
 	register UInt16 R1,R2;\
-	R1 = LinearInterpolation(_X,q[0].y,q[1].y,63,AVM_LUT_FRACTION_BITS);\
-	R2 = LinearInterpolation(_X,q[pitch].y,q[pitch+1].y,63,AVM_LUT_FRACTION_BITS);\
-	Q = LinearInterpolation(_Y,R1,R2,63,AVM_LUT_FRACTION_BITS);\
+	R1 = LinearInterpolation(_X,q[0].y,q[1].y,31,AVM_LUT_FRACTION_BITS);\
+	R2 = LinearInterpolation(_X,q[pitch].y,q[pitch+1].y,31,AVM_LUT_FRACTION_BITS);\
+	Q = LinearInterpolation(_Y,R1,R2,31,AVM_LUT_FRACTION_BITS);\
 }
 ///https://en.wikipedia.org/wiki/Bilinear_interpolation
 #define BilinearInterpolationUV(q, lut, Q, pitch)\
 {\
 	register UInt16 R1,R2;\
-	R1 = LinearInterpolation(_X,q[0].uv,q[2].uv,63,AVM_LUT_FRACTION_BITS);\
-	R2 = LinearInterpolation(_X,q[pitch].uv,q[pitch+2].uv,63,AVM_LUT_FRACTION_BITS);\
-	Q = LinearInterpolation(_Y,R1,R2,63,AVM_LUT_FRACTION_BITS);\
+	R1 = LinearInterpolation(_X,q[0].uv,q[2].uv,31,AVM_LUT_FRACTION_BITS);\
+	R2 = LinearInterpolation(_X,q[pitch].uv,q[pitch+2].uv,31,AVM_LUT_FRACTION_BITS);\
+	Q = LinearInterpolation(_Y,R1,R2,31,AVM_LUT_FRACTION_BITS);\
 }
 
 
@@ -103,6 +105,9 @@ static inline Int32 makeSingleView720P(  UInt32       *RESTRICT inPtr,
     UInt16 startX = viewInfo->startX + childViewInfoLUT->startX;
     UInt16 width = childViewInfoLUT->width + startX;
     UInt16 height = childViewInfoLUT->height;
+
+    if(width > (viewInfo->startX+viewInfo->width))
+    	width = viewInfo->startX+viewInfo->width;
 
     ViewLUT_Packed *lut = ((ViewLUT_Packed*)viewLUTPtr) + (childViewInfoLUT->pitch * childViewInfoLUT->startY);
 
@@ -134,6 +139,61 @@ static inline Int32 makeSingleView720P(  UInt32       *RESTRICT inPtr,
     return SYSTEM_LINK_STATUS_SOK;
 }
 
+/**
+ * @param brief  Top View Size 520x688 and than bland area must be smaller quad size(260x344)
+ * @param inPtr
+ * @param outPtr
+ * @param viewLUTPtr
+ * @param viewInfo
+ * @param childViewInfoLUT
+ * @return
+ */
+static inline Int32 makeSingleView720PBuff(  UInt32       *RESTRICT inPtr,
+                           	   UInt32           *RESTRICT outPtr,
+							   UInt32			*RESTRICT viewLUTPtr,
+							   AlgorithmLink_SurroundViewLutInfo			*RESTRICT viewInfo,
+							   AlgorithmLink_SurroundViewLutInfo			*RESTRICT childViewInfoLUT
+                          )
+{
+	UInt16 rowIdx;
+    UInt16 colIdx;
+
+    yuvHD720P* iPtr;
+    yuvHD260Pixel* oPtr;
+
+    UInt16 width = childViewInfoLUT->width;
+    UInt16 height = childViewInfoLUT->height;
+
+
+    ViewLUT_Packed *lut = ((ViewLUT_Packed*)viewLUTPtr) + (childViewInfoLUT->pitch * childViewInfoLUT->startY);
+
+    iPtr  = (yuvHD720P*)inPtr;
+    oPtr = ((yuvHD260Pixel*)outPtr);
+
+    for(rowIdx = 0; rowIdx < height ; rowIdx++)
+    {
+    	ViewLUT_Packed *lutbak;
+        for(colIdx = 0, lutbak = lut + childViewInfoLUT->startX; colIdx < width ; colIdx++, lutbak++)
+        {
+        	yuyv *q = &iPtr[lutbak->yInteger][lutbak->xInteger];
+
+        	BilinearInterpolation(q, lutbak, oPtr[rowIdx][colIdx].y, HD720P_WIDTH);
+        }
+
+        for(colIdx = 0, lutbak = lut + childViewInfoLUT->startX; colIdx < width ; colIdx+=2, lutbak+=2)
+        {
+        	yuyv *qu = &iPtr[lutbak->yInteger][lutbak->xInteger & 0xfffe];
+        	yuyv *qv = qu+1;
+        	///U
+        	BilinearInterpolationUV(qu, lutbak, oPtr[rowIdx][colIdx].uv, HD720P_WIDTH);
+        	///V
+        	BilinearInterpolationUV(qv, lutbak, oPtr[rowIdx][colIdx+1].uv, HD720P_WIDTH);
+        }
+
+    	lut += childViewInfoLUT->pitch;
+    }
+    return SYSTEM_LINK_STATUS_SOK;
+}
 
 #define makeSingleView makeSingleView720P
 

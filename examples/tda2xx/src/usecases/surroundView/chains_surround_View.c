@@ -24,7 +24,8 @@
  *        are synced together by sync link
  *******************************************************************************
  */
-#define SYNC_DELTA_IN_MSEC              (16)
+#define SYNC_DELTA_IN_MSEC_CAP              (30)
+#define SYNC_DELTA_IN_MSEC_SURROUND_VIEW              (50)
 
 /**
  *******************************************************************************
@@ -32,7 +33,8 @@
  *        are dropped by sync link
  *******************************************************************************
  */
-#define SYNC_DROP_THRESHOLD_IN_MSEC     (33)
+#define SYNC_DROP_THRESHOLD_IN_MSEC_CAP     (33)
+#define SYNC_DROP_THRESHOLD_IN_MSEC_SURROUND_VIEW     (150)
 
 /**
  *******************************************************************************
@@ -69,6 +71,68 @@ typedef struct {
 /**
  *******************************************************************************
  *
+ * \brief   Set DMA SW Mosaic Create Parameters
+ *
+ *          It is called in Create function.
+ *          In this function SwMs alg link params are set
+ *          The algorithm which is to run on core is set to
+ *          baseClassCreate.algId. The input whdth and height to alg are set.
+ *          Number of input buffers required by alg are also set here.
+ *
+
+ * \param   pPrm    [OUT]    VpeLink_CreateParams
+ *
+ *******************************************************************************
+*/
+static Void chains_lvdsVipMultiCam_Display_SetAlgDmaSwMsPrm(
+                    AlgorithmLink_DmaSwMsCreateParams *pPrm,
+                    UInt32 numViewCh,
+                    UInt32 displayWidth,
+                    UInt32 displayHeight
+                   )
+{
+    AlgorithmLink_DmaSwMsLayoutWinInfo *pWinInfo;
+#define MARGINE	16
+
+    pPrm->maxOutBufWidth     = displayWidth;
+    pPrm->maxOutBufHeight    = displayHeight;
+    pPrm->numOutBuf          = 4;
+    pPrm->useLocalEdma       = FALSE;
+
+    pPrm->initLayoutParams.numWin = numViewCh;
+    pPrm->initLayoutParams.outBufWidth  = pPrm->maxOutBufWidth;
+    pPrm->initLayoutParams.outBufHeight = pPrm->maxOutBufHeight;
+
+	pWinInfo = &pPrm->initLayoutParams.winInfo[0];
+
+	pWinInfo->chId = 0;
+
+	pWinInfo->inStartX = MARGINE;
+	pWinInfo->inStartY = MARGINE;
+	pWinInfo->outStartX = MARGINE;
+	pWinInfo->outStartY = MARGINE;
+
+	pWinInfo->width     =	520;
+	pWinInfo->height    =	688;
+
+	pWinInfo = &pPrm->initLayoutParams.winInfo[1];
+	pWinInfo->chId = 1;
+
+	pWinInfo->inStartX = 520 + MARGINE;
+	pWinInfo->inStartY = 0;
+	pWinInfo->outStartX = 520 + MARGINE;
+	pWinInfo->outStartY = 0;
+
+	pWinInfo->width     = 712 + MARGINE;
+	pWinInfo->height    = 558 + MARGINE;
+
+	/* winId == 0 */
+
+}
+
+/**
+ *******************************************************************************
+ *
  * \brief   Set Sync Create Parameters
  *
  *          This function is used to set the sync params.
@@ -94,9 +158,15 @@ static Void chains_surround_View_SetSyncPrm(
     {
         pPrm->chParams.channelSyncList[chId] = TRUE;
     }
-
-    pPrm->chParams.syncDelta = SYNC_DELTA_IN_MSEC;
-    pPrm->chParams.syncThreshold = SYNC_DROP_THRESHOLD_IN_MSEC;
+    if(numLvdsCh == 2)
+    {
+		pPrm->chParams.syncDelta = SYNC_DELTA_IN_MSEC_SURROUND_VIEW;
+		pPrm->chParams.syncThreshold = SYNC_DELTA_IN_MSEC_SURROUND_VIEW;
+    }else
+    {
+		pPrm->chParams.syncDelta = SYNC_DELTA_IN_MSEC_CAP;
+		pPrm->chParams.syncThreshold = SYNC_DELTA_IN_MSEC_CAP;
+    }
 }
 
 /**
@@ -116,7 +186,7 @@ static Void chains_surround_View_SetSyncPrm(
 */
 static Void chains_surround_View_SetAlgSurroundViewPrm(
                     AlgorithmLink_SurroundViewCreateParams *pPrm,
-                    UInt32 numLvdsCh,
+                    UInt32 makeViewPart,
                     UInt32 displayWidth,
                     UInt32 displayHeight
                    )
@@ -126,27 +196,39 @@ static Void chains_surround_View_SetAlgSurroundViewPrm(
     int i=0;
 
     pLutInfo = pPrm->initLayoutParams.lutViewInfo;
+    pPrm->initLayoutParams.makeViewPart = makeViewPart;
 
     pPrm->maxOutBufWidth     = displayWidth;
     pPrm->maxOutBufHeight    = displayHeight;
     pPrm->numOutBuf          = 4;
     pPrm->useLocalEdma       = FALSE;
 
-    pPrm->initLayoutParams.numWin = numLvdsCh;
+    pPrm->initLayoutParams.numWin = 4;
     pPrm->initLayoutParams.outBufWidth  = pPrm->maxOutBufWidth;
     pPrm->initLayoutParams.outBufHeight = pPrm->maxOutBufHeight;
 
     pPrm->initLayoutParams.Basic_frontFullView = LUTAlloc(Basic_frontFullView);
+	UTILS_assert(pPrm->initLayoutParams.Basic_frontFullView);
     pPrm->initLayoutParams.Basic_frontNT = LUTAlloc(Basic_frontNT);
+	UTILS_assert(pPrm->initLayoutParams.Basic_frontNT);
     pPrm->initLayoutParams.Basic_frontView = LUTAlloc(Basic_frontView);
+	UTILS_assert(pPrm->initLayoutParams.Basic_frontView);
     pPrm->initLayoutParams.Basic_leftNT = LUTAlloc(Basic_leftNT);
+	UTILS_assert(pPrm->initLayoutParams.Basic_leftNT);
     pPrm->initLayoutParams.Basic_leftSideView = LUTAlloc(Basic_leftSideView);
+	UTILS_assert(pPrm->initLayoutParams.Basic_leftSideView);
     pPrm->initLayoutParams.Basic_rearFullView = LUTAlloc(Basic_rearFullView);
+	UTILS_assert(pPrm->initLayoutParams.Basic_rearFullView);
     pPrm->initLayoutParams.Basic_rearNT = LUTAlloc(Basic_rearNT);
+	UTILS_assert(pPrm->initLayoutParams.Basic_rearNT);
     pPrm->initLayoutParams.Basic_rearView = LUTAlloc(Basic_rearView);
+	UTILS_assert(pPrm->initLayoutParams.Basic_rearView);
     pPrm->initLayoutParams.Basic_rightNT = LUTAlloc(Basic_rightNT);
+	UTILS_assert(pPrm->initLayoutParams.Basic_rightNT);
     pPrm->initLayoutParams.Basic_rightSideView = LUTAlloc(Basic_rightSideView);
+	UTILS_assert(pPrm->initLayoutParams.Basic_rightSideView);
     pPrm->initLayoutParams.cmaskNT = LUTAlloc(cmaskNT);
+	UTILS_assert(pPrm->initLayoutParams.cmaskNT);
 
 
     pLutInfo[LUT_VIEW_INFO_FULL_VIEW].startX 	= 16;
@@ -154,12 +236,6 @@ static Void chains_surround_View_SetAlgSurroundViewPrm(
     pLutInfo[LUT_VIEW_INFO_FULL_VIEW].width 	= 1280;
     pLutInfo[LUT_VIEW_INFO_FULL_VIEW].height	= 720;
     pLutInfo[LUT_VIEW_INFO_FULL_VIEW].pitch		= 1280;
-
-    pLutInfo[LUT_VIEW_INFO_FULL_VIEW_LUT].startX 	= 0;
-    pLutInfo[LUT_VIEW_INFO_FULL_VIEW_LUT].startY 	= 0;
-    pLutInfo[LUT_VIEW_INFO_FULL_VIEW_LUT].width 	= 1248;
-    pLutInfo[LUT_VIEW_INFO_FULL_VIEW_LUT].height	= 558;
-    pLutInfo[LUT_VIEW_INFO_FULL_VIEW_LUT].pitch		= 1248;
 
     pLutInfo[LUT_VIEW_INFO_SIDE_VIEW].startX 	= 550;
     pLutInfo[LUT_VIEW_INFO_SIDE_VIEW].startY 	= 16;
@@ -190,10 +266,32 @@ static Void chains_surround_View_SetAlgSurroundViewPrm(
         pLutInfo[LUT_VIEW_INFO_TOP_A00+i].pitch			= 520;
     }
 
-    pPrm->initLayoutParams.psingleViewLUT = pPrm->initLayoutParams.Basic_frontView;
-    pPrm->initLayoutParams.psingleViewInfo = &pLutInfo[LUT_VIEW_INFO_SIDE_VIEW];
-    pPrm->initLayoutParams.psingleViewLUTInfo = &pLutInfo[LUT_VIEW_INFO_SIDE_VIEW_LUT];
-    pPrm->initLayoutParams.singleViewInputChannel = 3;
+    if(makeViewPart == 0) ///left View in SurroundView
+    {
+        pLutInfo[LUT_VIEW_INFO_FULL_VIEW_LUT].startX 	= 0;
+        pLutInfo[LUT_VIEW_INFO_FULL_VIEW_LUT].startY 	= 0;
+        pLutInfo[LUT_VIEW_INFO_FULL_VIEW_LUT].width 	= 520;
+        pLutInfo[LUT_VIEW_INFO_FULL_VIEW_LUT].height	= 558;
+        pLutInfo[LUT_VIEW_INFO_FULL_VIEW_LUT].pitch		= 1248;
+
+		pPrm->initLayoutParams.psingleViewLUT = pPrm->initLayoutParams.Basic_frontFullView;
+		pPrm->initLayoutParams.psingleViewInfo = &pLutInfo[LUT_VIEW_INFO_FULL_VIEW];
+		pPrm->initLayoutParams.psingleViewLUTInfo = &pLutInfo[LUT_VIEW_INFO_FULL_VIEW_LUT];
+		pPrm->initLayoutParams.singleViewInputChannel = 3;
+    }else
+    {
+        pLutInfo[LUT_VIEW_INFO_FULL_VIEW_LUT].startX 	= 520;
+        pLutInfo[LUT_VIEW_INFO_FULL_VIEW_LUT].startY 	= 0;
+        pLutInfo[LUT_VIEW_INFO_FULL_VIEW_LUT].width 	= 1248-520;
+        pLutInfo[LUT_VIEW_INFO_FULL_VIEW_LUT].height	= 558;
+        pLutInfo[LUT_VIEW_INFO_FULL_VIEW_LUT].pitch		= 1248;
+
+
+		pPrm->initLayoutParams.psingleViewLUT = pPrm->initLayoutParams.Basic_frontView;
+		pPrm->initLayoutParams.psingleViewInfo = &pLutInfo[LUT_VIEW_INFO_SIDE_VIEW];
+		pPrm->initLayoutParams.psingleViewLUTInfo = &pLutInfo[LUT_VIEW_INFO_SIDE_VIEW_LUT];
+		pPrm->initLayoutParams.singleViewInputChannel = 3;
+    }
 }
 
 /**
@@ -250,8 +348,28 @@ Void chains_surround_View_SetAppPrms(chains_surround_ViewObj *pUcObj, Void *appO
         );
 
     chains_surround_View_SetAlgSurroundViewPrm(
-                            &pUcObj->Alg_SurroundViewPrm,
-                            pObj->numLvdsCh,
+                            &pUcObj->Alg_SurroundViewPrm_0,
+                            0,	///left View
+                            CAPTURE_SENSOR_WIDTH,
+                            CAPTURE_SENSOR_HEIGHT
+                            );
+
+    chains_surround_View_SetAlgSurroundViewPrm(
+                            &pUcObj->Alg_SurroundViewPrm_1,
+                            1,	///right View
+                            CAPTURE_SENSOR_WIDTH,
+                            CAPTURE_SENSOR_HEIGHT
+                            );
+
+
+    chains_surround_View_SetSyncPrm(
+                &pUcObj->SyncSurroundViewPrm,
+                2
+        );
+
+    chains_lvdsVipMultiCam_Display_SetAlgDmaSwMsPrm(
+                            &pUcObj->Alg_DmaSwMsPrm,
+                            2,
                             CAPTURE_SENSOR_WIDTH,
                             CAPTURE_SENSOR_HEIGHT
                             );
@@ -274,6 +392,8 @@ Void chains_surround_View_SetAppPrms(chains_surround_ViewObj *pUcObj, Void *appO
         pObj->displayHeight
         );
 }
+
+
 
 /**
  *******************************************************************************
@@ -444,47 +564,54 @@ Void Chains_surround_View(Chains_Ctrl *chainsCfg)
             	*/
             case '3':
             	Vps_printf("In chains_main, SYSTEM_CMD_FRONT_SIDE_VIEW\n");
-            	System_linkControl(svChainsObj.ucObj.Alg_SurroundViewLinkID , SYSTEM_CMD_FRONT_SIDE_VIEW, NULL, 0, TRUE); //gGrpxSrcLinkID °´Ã¼°¡ µÎ°³.
+            	System_linkControl(svChainsObj.ucObj.Alg_SurroundViewLink_0_ID , SYSTEM_CMD_FRONT_SIDE_VIEW, NULL, 0, TRUE); //gGrpxSrcLinkID ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½Î°ï¿½.
+            	System_linkControl(svChainsObj.ucObj.Alg_SurroundViewLink_1_ID , SYSTEM_CMD_FRONT_SIDE_VIEW, NULL, 0, TRUE); //gGrpxSrcLinkID ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½Î°ï¿½.
             	Vps_printf("   CMD Send chains_main\n");
             	break;
             case '4':
             	Vps_printf("In chains_main, SYSTEM_CMD_REAR_SIDE_VIEW\n");
-            	System_linkControl(svChainsObj.ucObj.Alg_SurroundViewLinkID , SYSTEM_CMD_REAR_SIDE_VIEW, NULL, 0, TRUE); //gGrpxSrcLinkID °´Ã¼°¡ µÎ°³.
+            	System_linkControl(svChainsObj.ucObj.Alg_SurroundViewLink_0_ID , SYSTEM_CMD_REAR_SIDE_VIEW, NULL, 0, TRUE); //gGrpxSrcLinkID ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½Î°ï¿½.
+            	System_linkControl(svChainsObj.ucObj.Alg_SurroundViewLink_1_ID , SYSTEM_CMD_REAR_SIDE_VIEW, NULL, 0, TRUE); //gGrpxSrcLinkID ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½Î°ï¿½.
             	Vps_printf("   CMD Send chains_main\n");
             	break;
             case '5':
             	Vps_printf("In chains_main, SYSTEM_CMD_RIGH_SIDE_VIEW\n");
-				System_linkControl(svChainsObj.ucObj.Alg_SurroundViewLinkID , SYSTEM_CMD_RIGH_SIDE_VIEW, NULL, 0, TRUE); //gGrpxSrcLinkID °´Ã¼°¡ µÎ°³.
+				System_linkControl(svChainsObj.ucObj.Alg_SurroundViewLink_0_ID , SYSTEM_CMD_RIGH_SIDE_VIEW, NULL, 0, TRUE); //gGrpxSrcLinkID ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½Î°ï¿½.
+				System_linkControl(svChainsObj.ucObj.Alg_SurroundViewLink_1_ID , SYSTEM_CMD_RIGH_SIDE_VIEW, NULL, 0, TRUE); //gGrpxSrcLinkID ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½Î°ï¿½.
 				Vps_printf("   CMD Send chains_main\n");
             	break;
             case '6':
             	Vps_printf("In chains_main, SYSTEM_CMD_LEFT_SIDE_VIEW\n");
-				System_linkControl(svChainsObj.ucObj.Alg_SurroundViewLinkID , SYSTEM_CMD_LEFT_SIDE_VIEW, NULL, 0, TRUE); //gGrpxSrcLinkID °´Ã¼°¡ µÎ°³.
+				System_linkControl(svChainsObj.ucObj.Alg_SurroundViewLink_0_ID , SYSTEM_CMD_LEFT_SIDE_VIEW, NULL, 0, TRUE); //gGrpxSrcLinkID ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½Î°ï¿½.
+				System_linkControl(svChainsObj.ucObj.Alg_SurroundViewLink_1_ID , SYSTEM_CMD_LEFT_SIDE_VIEW, NULL, 0, TRUE); //gGrpxSrcLinkID ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½Î°ï¿½.
 				Vps_printf("   CMD Send chains_main\n");
                 break;
             case '7':
             	Vps_printf("In chains_main, SYSTEM_CMD_FULL_FRONT_VIEW\n");
-				System_linkControl(svChainsObj.ucObj.Alg_SurroundViewLinkID , SYSTEM_CMD_FULL_FRONT_VIEW, NULL, 0, TRUE); //gGrpxSrcLinkID °´Ã¼°¡ µÎ°³.
+				System_linkControl(svChainsObj.ucObj.Alg_SurroundViewLink_0_ID , SYSTEM_CMD_FULL_FRONT_VIEW, NULL, 0, TRUE); //gGrpxSrcLinkID ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½Î°ï¿½.
+				System_linkControl(svChainsObj.ucObj.Alg_SurroundViewLink_1_ID , SYSTEM_CMD_FULL_FRONT_VIEW, NULL, 0, TRUE); //gGrpxSrcLinkID ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½Î°ï¿½.
 				Vps_printf("   CMD Send chains_main\n");
                 break;
             case '8':
             	Vps_printf("In chains_main, SYSTEM_CMD_FULL_REAR_VIEW\n");
-				System_linkControl(svChainsObj.ucObj.Alg_SurroundViewLinkID , SYSTEM_CMD_FULL_REAR_VIEW, NULL, 0, TRUE); //gGrpxSrcLinkID °´Ã¼°¡ µÎ°³.
+				System_linkControl(svChainsObj.ucObj.Alg_SurroundViewLink_0_ID , SYSTEM_CMD_FULL_REAR_VIEW, NULL, 0, TRUE); //gGrpxSrcLinkID ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½Î°ï¿½.
+				System_linkControl(svChainsObj.ucObj.Alg_SurroundViewLink_1_ID , SYSTEM_CMD_FULL_REAR_VIEW, NULL, 0, TRUE); //gGrpxSrcLinkID ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½Î°ï¿½.
 				Vps_printf("   CMD Send chains_main\n");
                 break;
             case '9':
             	Vps_printf("In chains_main, SYSTEM_CMD_PRINT_STATISTICS\n");
-				System_linkControl(svChainsObj.ucObj.Alg_SurroundViewLinkID , SYSTEM_CMD_PRINT_STATISTICS, NULL, 0, TRUE); //gGrpxSrcLinkID °´Ã¼°¡ µÎ°³.
+				System_linkControl(svChainsObj.ucObj.Alg_SurroundViewLink_0_ID , SYSTEM_CMD_PRINT_STATISTICS, NULL, 0, TRUE); //gGrpxSrcLinkID ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½Î°ï¿½.
+				System_linkControl(svChainsObj.ucObj.Alg_SurroundViewLink_1_ID , SYSTEM_CMD_PRINT_STATISTICS, NULL, 0, TRUE); //gGrpxSrcLinkID ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½Î°ï¿½.
 				Vps_printf("   CMD Send chains_main\n");
                 break;
             case 'a':
             	Vps_printf("In chains_main, SYSTEM_CMD_PRINT_STATISTICS\n");
-				System_linkControl(svChainsObj.ucObj.CaptureLinkID , SYSTEM_CMD_PRINT_STATISTICS, NULL, 0, TRUE); //gGrpxSrcLinkID °´Ã¼°¡ µÎ°³.
+				System_linkControl(svChainsObj.ucObj.CaptureLinkID , SYSTEM_CMD_PRINT_STATISTICS, NULL, 0, TRUE); //gGrpxSrcLinkID ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½Î°ï¿½.
 				Vps_printf("   CMD Send chains_main\n");
 				break;
             case 'b':
             	Vps_printf("In chains_main, SYSTEM_CMD_STOP To CaptureLinkID\n");
-            	System_linkControl(svChainsObj.ucObj.CaptureLinkID , SYSTEM_CMD_STOP, NULL, 0, TRUE); //gGrpxSrcLinkID °´Ã¼°¡ µÎ°³.
+            	System_linkControl(svChainsObj.ucObj.CaptureLinkID , SYSTEM_CMD_STOP, NULL, 0, TRUE); //gGrpxSrcLinkID ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½Î°ï¿½.
             	Vps_printf("   CMD Send chains_main\n");
             	break;
             default:

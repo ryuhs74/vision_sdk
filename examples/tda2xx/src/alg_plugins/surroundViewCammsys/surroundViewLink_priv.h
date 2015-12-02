@@ -1,7 +1,7 @@
 /*
  *******************************************************************************
  *
- * Copyright (C) 2013 Texas Instruments Incorporated - http://www.ti.com/
+ * Copyright (C) 2015 Cammsys - http://www.cammsys.net/
  * ALL RIGHTS RESERVED
  *
  *******************************************************************************
@@ -27,7 +27,7 @@
  *         - All the local data structures
  *         - Algorithm plug in function interfaces
  *
- * \version 0.0 (Sept 2013) : [KC] First version
+ * \version 0.0 (Dec 2015) : [Raven] First version
  *
  *******************************************************************************
  */
