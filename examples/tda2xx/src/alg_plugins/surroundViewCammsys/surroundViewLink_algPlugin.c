@@ -514,6 +514,7 @@ Int32 AlgorithmLink_surroundViewMakeTopView( void * pObj,
         pLutInfo[LUT_VIEW_INFO_SIDE_VIEW_LUT].pitch		= 712;
 
     */
+#if SURROUND_VIEW_ONE_CORE
 #if 1	///for speed
     AlgorithmLink_SurroundViewLutInfo sideViewForLut[4];// = pLayoutPrm->lutViewInfo;
 
@@ -577,6 +578,7 @@ Int32 AlgorithmLink_surroundViewMakeTopView( void * pObj,
 							pLayoutPrm->psingleViewLUTInfo);
 
 #endif
+#endif 	///#if SURROUND_VIEW_ONE_CORE
 	///front
 	status = makeSingleView(pInFrameCompositeBuffer->bufAddr[0][3],
 							pOutFrameBuffer->bufAddr[0],
@@ -661,13 +663,33 @@ Int32 AlgorithmLink_surroundViewMakeSingleView(	void * pObj,
 												System_VideoFrameCompositeBuffer *pInFrameCompositeBuffer,
 												System_VideoFrameBuffer *pOutFrameBuffer)
 {
+#define DEVIDE_SINGLE_VIEW	4
     Int32 status    = SYSTEM_LINK_STATUS_SOK;
 
-	status = makeSingleView(pInFrameCompositeBuffer->bufAddr[0][curLayoutPrm->singleViewInputChannel],
-							pOutFrameBuffer->bufAddr[0],
-							curLayoutPrm->psingleViewLUT,
-							curLayoutPrm->psingleViewInfo,
-							curLayoutPrm->psingleViewLUTInfo);
+    AlgorithmLink_SurroundViewLutInfo indViewforLUT[DEVIDE_SINGLE_VIEW] = {0};
+    int i=0;
+    int devideWidth = curLayoutPrm->psingleViewLUTInfo->width/DEVIDE_SINGLE_VIEW;
+
+
+    for(i=0; i<DEVIDE_SINGLE_VIEW; i++)
+    {
+    	indViewforLUT[i].pitch = curLayoutPrm->psingleViewLUTInfo->pitch;
+    	indViewforLUT[i].startY = curLayoutPrm->psingleViewLUTInfo->startY;
+    	indViewforLUT[i].height = curLayoutPrm->psingleViewLUTInfo->height;
+
+
+    	indViewforLUT[i].startX = curLayoutPrm->psingleViewLUTInfo->startX + (devideWidth * i);
+    	indViewforLUT[i].width = devideWidth;
+
+
+    	status = makeSingleView(pInFrameCompositeBuffer->bufAddr[0][curLayoutPrm->singleViewInputChannel],
+    							pOutFrameBuffer->bufAddr[0],
+    							curLayoutPrm->psingleViewLUT,
+    							curLayoutPrm->psingleViewInfo,
+    							&indViewforLUT[i]);
+    }
+
+
 
     return status;
 }
