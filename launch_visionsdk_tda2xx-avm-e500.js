@@ -56,8 +56,8 @@ function updateScriptVars(printEnable)
     if(releaseMode)
     {
         A15_0_exe = "vision_sdk_a15_0_debug.xa15fg"
-        IP1_0_exe = "vision_sdk_ipu1_0_release.xem4"
-        IP1_1_exe = "vision_sdk_ipu1_1_release.xem4"
+        IP1_0_exe = "vision_sdk_ipu1_0_debug.xem4"
+        IP1_1_exe = "vision_sdk_ipu1_1_debug.xem4"
         DSP_0_exe = "vision_sdk_c66xdsp_1_release.xe66"
         DSP_1_exe = "vision_sdk_c66xdsp_2_release.xe66"
         EVE_0_exe = "vision_sdk_arp32_1_release.xearp32F"
