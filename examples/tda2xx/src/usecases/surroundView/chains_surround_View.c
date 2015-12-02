@@ -208,16 +208,27 @@ static Void chains_surround_View_SetAlgSurroundViewPrm(
     pPrm->initLayoutParams.outBufHeight = pPrm->maxOutBufHeight;
 
     pPrm->initLayoutParams.Basic_frontFullView = LUTAlloc(Basic_frontFullView);
+	UTILS_assert(pPrm->initLayoutParams.Basic_frontFullView);
     pPrm->initLayoutParams.Basic_frontNT = LUTAlloc(Basic_frontNT);
+	UTILS_assert(pPrm->initLayoutParams.Basic_frontNT);
     pPrm->initLayoutParams.Basic_frontView = LUTAlloc(Basic_frontView);
+	UTILS_assert(pPrm->initLayoutParams.Basic_frontView);
     pPrm->initLayoutParams.Basic_leftNT = LUTAlloc(Basic_leftNT);
+	UTILS_assert(pPrm->initLayoutParams.Basic_leftNT);
     pPrm->initLayoutParams.Basic_leftSideView = LUTAlloc(Basic_leftSideView);
+	UTILS_assert(pPrm->initLayoutParams.Basic_leftSideView);
     pPrm->initLayoutParams.Basic_rearFullView = LUTAlloc(Basic_rearFullView);
+	UTILS_assert(pPrm->initLayoutParams.Basic_rearFullView);
     pPrm->initLayoutParams.Basic_rearNT = LUTAlloc(Basic_rearNT);
+	UTILS_assert(pPrm->initLayoutParams.Basic_rearNT);
     pPrm->initLayoutParams.Basic_rearView = LUTAlloc(Basic_rearView);
+	UTILS_assert(pPrm->initLayoutParams.Basic_rearView);
     pPrm->initLayoutParams.Basic_rightNT = LUTAlloc(Basic_rightNT);
+	UTILS_assert(pPrm->initLayoutParams.Basic_rightNT);
     pPrm->initLayoutParams.Basic_rightSideView = LUTAlloc(Basic_rightSideView);
+	UTILS_assert(pPrm->initLayoutParams.Basic_rightSideView);
     pPrm->initLayoutParams.cmaskNT = LUTAlloc(cmaskNT);
+	UTILS_assert(pPrm->initLayoutParams.cmaskNT);
 
 
     pLutInfo[LUT_VIEW_INFO_FULL_VIEW].startX 	= 16;
@@ -276,10 +287,10 @@ static Void chains_surround_View_SetAlgSurroundViewPrm(
         pLutInfo[LUT_VIEW_INFO_FULL_VIEW_LUT].pitch		= 1248;
 
 
-		pPrm->initLayoutParams.psingleViewLUT = pPrm->initLayoutParams.Basic_frontView;
+		pPrm->initLayoutParams.psingleViewLUT = pPrm->initLayoutParams.Basic_leftSideView;
 		pPrm->initLayoutParams.psingleViewInfo = &pLutInfo[LUT_VIEW_INFO_SIDE_VIEW];
 		pPrm->initLayoutParams.psingleViewLUTInfo = &pLutInfo[LUT_VIEW_INFO_SIDE_VIEW_LUT];
-		pPrm->initLayoutParams.singleViewInputChannel = 3;
+		pPrm->initLayoutParams.singleViewInputChannel = 2;
     }
 }
 
