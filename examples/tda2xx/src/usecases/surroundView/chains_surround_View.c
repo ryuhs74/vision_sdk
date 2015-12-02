@@ -287,10 +287,10 @@ static Void chains_surround_View_SetAlgSurroundViewPrm(
         pLutInfo[LUT_VIEW_INFO_FULL_VIEW_LUT].pitch		= 1248;
 
 
-		pPrm->initLayoutParams.psingleViewLUT = pPrm->initLayoutParams.Basic_leftSideView;
+		pPrm->initLayoutParams.psingleViewLUT = pPrm->initLayoutParams.Basic_frontView;
 		pPrm->initLayoutParams.psingleViewInfo = &pLutInfo[LUT_VIEW_INFO_SIDE_VIEW];
 		pPrm->initLayoutParams.psingleViewLUTInfo = &pLutInfo[LUT_VIEW_INFO_SIDE_VIEW_LUT];
-		pPrm->initLayoutParams.singleViewInputChannel = 2;
+		pPrm->initLayoutParams.singleViewInputChannel = 3;
     }
 }
 

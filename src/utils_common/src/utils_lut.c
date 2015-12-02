@@ -51,24 +51,27 @@ void* LUTAlloc(LUT_INDEX index )
 	memcpy(lut_ddr,lut,size);
 
 #if LUT_CHECK
+	if(index != cmaskNT)
 	{
 		int k = 0;
 		ViewLUT_Packed* lut = (ViewLUT_Packed*)lut_ddr;
+		int xMax = 0, yMax = 0, xkMax = 0, ykMax = 0;
 
+		Vps_printf("0,0 (%d, %d) size[%d]\n", lut->xInteger, lut->yInteger,size>>1);
 		for (k=0; k<(size>>1); k++, lut++)
 		{
-			if((*lut).xInteger >1280)
-				Vps_printf("\n %d LUT X Warning[%d]\n", k, (*lut).xInteger);
-			if((*lut).yInteger >720)
-				Vps_printf("\n %d LUT Y Warning[%d]\n", k, (*lut).yInteger);
-
-			Vps_printf("(%d, %d)",(*lut).xInteger, (*lut).yInteger);
-
-			if(k%32 == 0)
+			if(lut->xInteger > xMax)
 			{
-				Vps_printf("\n");
+				xMax = lut->xInteger;
+				xkMax = k;
+			}
+			if(lut->yInteger > yMax)
+			{
+				yMax = lut->yInteger;
+				ykMax = k;
 			}
 		}
+		Vps_printf("xMax [%d], yMax[%d] xk[%d] yk[%d]\n", xMax, yMax, xkMax, ykMax);
 	}
 #endif
 
