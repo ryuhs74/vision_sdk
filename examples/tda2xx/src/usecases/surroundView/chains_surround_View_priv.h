@@ -25,6 +25,7 @@
 #include <include/link_api/vpeLink.h>
 #include <include/link_api/syncLink.h>
 #include <include/link_api/algorithmLink_surroundView.h>
+#include <include/link_api/algorithmLink_dmaSwMs.h>
 #include <include/link_api/mergeLink.h>
 #include <include/link_api/grpxSrcLink.h>
 #include <include/link_api/displayLink.h>
@@ -34,27 +35,48 @@
 
 typedef struct {
        UInt32    CaptureLinkID;
-       UInt32    DupLinkID;
        UInt32    SyncLinkID;
+       UInt32    DupLinkID;
+
        UInt32    IPCOut_IPU1_0_DSP_0_0LinkID;
        UInt32    IPCIn_DSP_0_IPU1_0_0LinkID;
-       UInt32    Alg_SurroundViewLinkID;
+       UInt32    Alg_SurroundViewLink_0_ID;
        UInt32    IPCOut_DSP_0_IPU1_0_0LinkID;
        UInt32    IPCIn_IPU1_0_DSP_0_0LinkID;
+
+       UInt32    IPCOut_IPU1_0_DSP_1_0LinkID;
+       UInt32    IPCIn_DSP_1_IPU1_0_0LinkID;
+       UInt32    Alg_SurroundViewLink_1_ID;
+       UInt32    IPCOut_DSP_1_IPU1_0_0LinkID;
+       UInt32    IPCIn_IPU1_0_DSP_1_0LinkID;
+
        UInt32    MergeLinkID;
+
+       UInt32    SyncLinkSurroundViewID;
+       UInt32    Alg_DmaSwMsLinkID;
        UInt32    Display_videoLinkID;
        UInt32    GrpxSrcLinkID;
        UInt32    Display_GrpxLinkID;
 
        CaptureLink_CreateParams                CapturePrm;
-       DupLink_CreateParams                    DupPrm;
        SyncLink_CreateParams                   SyncPrm;
+       DupLink_CreateParams                    DupPrm;
+
        IpcLink_CreateParams                    IPCOut_IPU1_0_DSP_0_0Prm;
        IpcLink_CreateParams                    IPCIn_DSP_0_IPU1_0_0Prm;
-       AlgorithmLink_SurroundViewCreateParams       Alg_SurroundViewPrm;
+       AlgorithmLink_SurroundViewCreateParams       Alg_SurroundViewPrm_0;
        IpcLink_CreateParams                    IPCOut_DSP_0_IPU1_0_0Prm;
        IpcLink_CreateParams                    IPCIn_IPU1_0_DSP_0_0Prm;
+
+       IpcLink_CreateParams                    IPCOut_IPU1_0_DSP_1_0Prm;
+       IpcLink_CreateParams                    IPCIn_DSP_1_IPU1_0_0Prm;
+       AlgorithmLink_SurroundViewCreateParams       Alg_SurroundViewPrm_1;
+       IpcLink_CreateParams                    IPCOut_DSP_1_IPU1_0_0Prm;
+       IpcLink_CreateParams                    IPCIn_IPU1_0_DSP_1_0Prm;
+
        MergeLink_CreateParams                  MergePrm;
+       SyncLink_CreateParams                   SyncSurroundViewPrm;
+       AlgorithmLink_DmaSwMsCreateParams       Alg_DmaSwMsPrm;
        DisplayLink_CreateParams                Display_videoPrm;
        GrpxSrcLink_CreateParams                GrpxSrcPrm;
        DisplayLink_CreateParams                Display_GrpxPrm;

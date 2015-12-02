@@ -184,6 +184,9 @@ typedef struct
     AlgorithmLink_ControlParams baseClassControl;
     /**< Base class control params */
 
+    UInt32 makeViewPart;
+	/**< VIEW part , 0 = left View, 1 = right View */
+
     UInt32 numWin;
     /**< Number of windows in the SW Mosaic */
 
