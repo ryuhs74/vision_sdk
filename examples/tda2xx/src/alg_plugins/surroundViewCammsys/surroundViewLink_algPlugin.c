@@ -503,15 +503,79 @@ Int32 AlgorithmLink_surroundViewMakeTopView( void * pObj,
     Int32 status    = SYSTEM_LINK_STATUS_SOK;
     AlgorithmLink_SurroundViewLutInfo *pLutViewInfo;// = pLayoutPrm->lutViewInfo;
 
+
     pLutViewInfo = pLayoutPrm->lutViewInfo;
 
-#if 0
+    /*
+        pLutInfo[LUT_VIEW_INFO_SIDE_VIEW_LUT].startX 	= 0;
+        pLutInfo[LUT_VIEW_INFO_SIDE_VIEW_LUT].startY 	= 0;
+        pLutInfo[LUT_VIEW_INFO_SIDE_VIEW_LUT].width 	= 712;
+        pLutInfo[LUT_VIEW_INFO_SIDE_VIEW_LUT].height	= 508;
+        pLutInfo[LUT_VIEW_INFO_SIDE_VIEW_LUT].pitch		= 712;
+
+    */
+#if 1	///for speed
+    AlgorithmLink_SurroundViewLutInfo sideViewForLut[4];// = pLayoutPrm->lutViewInfo;
+
+    sideViewForLut[0].pitch = 712;
+    sideViewForLut[1].pitch = 712;
+    sideViewForLut[2].pitch = 712;
+    sideViewForLut[3].pitch = 712;
+
+    sideViewForLut[0].startX = 0;
+    sideViewForLut[1].startX = 178;
+    sideViewForLut[2].startX = 178*2;
+    sideViewForLut[3].startX = 178*3;
+
+    sideViewForLut[0].startY = 0;
+    sideViewForLut[1].startY = 0;
+    sideViewForLut[2].startY = 0;
+    sideViewForLut[3].startY = 0;
+
+    sideViewForLut[0].width = 178;
+    sideViewForLut[1].width = 178;
+    sideViewForLut[2].width = 178;
+    sideViewForLut[3].width = 178;
+
+    sideViewForLut[0].height = 508;
+    sideViewForLut[1].height = 508;
+    sideViewForLut[2].height = 508;
+    sideViewForLut[3].height = 508;
+
+	status = makeSingleView(pInFrameCompositeBuffer->bufAddr[0][pLayoutPrm->singleViewInputChannel],
+							pOutFrameBuffer->bufAddr[0],
+							pLayoutPrm->psingleViewLUT,
+							&pLutViewInfo[LUT_VIEW_INFO_SIDE_VIEW],
+							&sideViewForLut[0]);
+
+
+	status = makeSingleView(pInFrameCompositeBuffer->bufAddr[0][pLayoutPrm->singleViewInputChannel],
+							pOutFrameBuffer->bufAddr[0],
+							pLayoutPrm->psingleViewLUT,
+							&pLutViewInfo[LUT_VIEW_INFO_SIDE_VIEW],
+							&sideViewForLut[1]);
+
+	status = makeSingleView(pInFrameCompositeBuffer->bufAddr[0][pLayoutPrm->singleViewInputChannel],
+							pOutFrameBuffer->bufAddr[0],
+							pLayoutPrm->psingleViewLUT,
+							&pLutViewInfo[LUT_VIEW_INFO_SIDE_VIEW],
+							&sideViewForLut[2]);
+
+	status = makeSingleView(pInFrameCompositeBuffer->bufAddr[0][pLayoutPrm->singleViewInputChannel],
+							pOutFrameBuffer->bufAddr[0],
+							pLayoutPrm->psingleViewLUT,
+							&pLutViewInfo[LUT_VIEW_INFO_SIDE_VIEW],
+							&sideViewForLut[3]);
+
+#else
+
     ///side
 	status = makeSingleView(pInFrameCompositeBuffer->bufAddr[0][pLayoutPrm->singleViewInputChannel],
 							pOutFrameBuffer->bufAddr[0],
 							pLayoutPrm->psingleViewLUT,
 							pLayoutPrm->psingleViewInfo,
 							pLayoutPrm->psingleViewLUTInfo);
+
 #endif
 	///front
 	status = makeSingleView(pInFrameCompositeBuffer->bufAddr[0][3],
