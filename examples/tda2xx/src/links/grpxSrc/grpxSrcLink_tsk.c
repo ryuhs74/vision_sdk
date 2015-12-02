@@ -38,6 +38,11 @@
 #pragma DATA_SECTION(gGrpxSrcLink_tskStack, ".bss:taskStackSection")
 UInt8 gGrpxSrcLink_tskStack[GRPX_SRC_LINK_OBJ_MAX][GRPX_SRC_LINK_TSK_STACK_SIZE];
 
+static VIEW_MODE gCurViewmode;
+Int32 GrpxSrcLink_drawAVM_E500Button(GrpxSrcLink_Obj *pObj);
+Int32 Draw2D_AVME500_TopView( GrpxSrcLink_Obj *pObj );
+Int32 Draw2D_AVME500_FullView( GrpxSrcLink_Obj *pObj );
+
 /**
  *******************************************************************************
  * \brief Link object, stores all link related information
@@ -288,8 +293,8 @@ Int32 GrpxSrcLink_drvCreate(GrpxSrcLink_Obj * pObj, GrpxSrcLink_CreateParams * p
 
     if(pObj->createArgs.ultrasonicParams.enable)
     {
-        status = GrpxSrcLink_drawUltrasonicResultsCreate(pObj);
-        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+        //status = GrpxSrcLink_drawUltrasonicResultsCreate(pObj);
+        //UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
     }
 
     UTILS_MEMLOG_USED_END(pObj->memUsed);
@@ -409,9 +414,6 @@ Void GrpxSrcLink_displayStats(GrpxSrcLink_Obj * pObj)
  *
  *******************************************************************************
  */
-Int32 nNext = 0;
-Int32 GrpxSrcLink_drawAVM_E500NorButton(GrpxSrcLink_Obj *pObj); //ryuhs74@20151106 - Test
-
 Int32 GrpxSrcLink_runDisplayStats(GrpxSrcLink_Obj *pObj)
 {
     UInt32 cmd;
@@ -445,63 +447,48 @@ Int32 GrpxSrcLink_runDisplayStats(GrpxSrcLink_Obj *pObj)
             status = GrpxSrcLink_getSystemLoad(pObj);
             UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
-#if 0 //ryuhs74@220151103 - Not Used AVM-E500
+#if 1 //ryuhs74@220151103 - Not Used AVM-E500
             if (pObj->createArgs.surroundViewEdgeDetectLayoutEnable ||
                 pObj->createArgs.surroundViewDOFLayoutEnable ||
                 (pObj->createArgs.surroundViewPdTsrLayoutEnable &&
                  pObj->createArgs.surroundViewLdLayoutEnable)
                 )
             {
-                GrpxSrcLink_displaySurroundViewEdgeDetectStats(pObj);
+                //GrpxSrcLink_displaySurroundViewEdgeDetectStats(pObj);
             }
             else if (pObj->createArgs.opticalFlowLayoutEnable)
             {
-                GrpxSrcLink_displayOpticalFlowDetectStats(pObj);
+                //GrpxSrcLink_displayOpticalFlowDetectStats(pObj);
             }
             else if (pObj->createArgs.pdTsrLdLayoutEnable)
             {
-                GrpxSrcLink_displayPdTsrLdStats(pObj);
+                //GrpxSrcLink_displayPdTsrLdStats(pObj);
             }
             else if (pObj->createArgs.pdTsrLdSofLayoutEnable)
             {
-                GrpxSrcLink_displayPdTsrLdSofStats(pObj);
+                //GrpxSrcLink_displayPdTsrLdSofStats(pObj);
             }
             else if (pObj->createArgs.pdTsrLdSofStereoLayoutEnable)
             {
-                GrpxSrcLink_displayPdTsrLdSofStereoStats(pObj);
+                //GrpxSrcLink_displayPdTsrLdSofStereoStats(pObj);
             }
             else if (pObj->createArgs.stereoDisparityLayoutEnable)
             {
-                GrpxSrcLink_displayStereoDisparityStats(pObj);
+                //GrpxSrcLink_displayStereoDisparityStats(pObj);
             }
             else if (pObj->createArgs.tda3xxSvFsRotLayoutEnable)
             {
-                GrpxSrcLink_displaySurroundViewSOFStats(pObj);
+                //GrpxSrcLink_displaySurroundViewSOFStats(pObj);
             }
             else if (pObj->createArgs.surroundViewStandaloneLayoutEnable)
             {
-                GrpxSrcLink_displaySurroundViewStandaloneStats(pObj);
+                //GrpxSrcLink_displaySurroundViewStandaloneStats(pObj);
             }
             else
             {
-            	GrpxSrcLink_displayStats(pObj);
+            	//GrpxSrcLink_displayStats(pObj);
             }
 #endif
-            {
-            	/*
-				 GrpxSrcLink_DrawE500Layout(pObj);
-
-				 if( gisFileSave == 1){
-					 GrpxSrcDraw_Warring_Txt(pObj, "Capture File Save");
-				 } else if( gisFileSave == 0){
-					 GrpxSrcDraw_Warring_Txt(pObj, NULL);
-					 gisFileSave = 3;
-				 }
-				 */
-            	GrpxSrcLink_drawAVM_E500Button(pObj);
-            	pObj->createArgs.sViewmode.prvVient =  pObj->createArgs.sViewmode.viewnt;
-            }
-
             pObj->statsDisplayObj.startTime = Utils_getCurTimeInMsec();
 
             if(pObj->isLinkStarted && !pObj->isNewDataCmdSendOut)
@@ -524,6 +511,25 @@ Int32 GrpxSrcLink_runDisplayStats(GrpxSrcLink_Obj *pObj)
     return status;
 }
 
+Int32 GrpxSrcLink_runDisplayE500Stats(GrpxSrcLink_Obj *pObj)
+{
+    Int32  status = SYSTEM_LINK_STATUS_SOK;
+
+
+	if( pObj->createArgs.sViewmode.viewmode == TOP_VIEW && gCurViewmode != TOP_VIEW){ //ryuhs74@20151103 - AVM Top View
+		Draw2D_AVME500_TopView( pObj );
+	} else if( pObj->createArgs.sViewmode.viewmode == FULL_VIEW && gCurViewmode != FULL_VIEW){ //ryuhs74@20151103 - AVM Full View
+		Draw2D_AVME500_FullView( pObj );
+	}
+
+	GrpxSrcLink_drawAVM_E500Button(pObj);
+
+	pObj->createArgs.sViewmode.prvVient =  pObj->createArgs.sViewmode.viewnt;
+	System_sendLinkCmd(pObj->createArgs.outQueParams.nextLink, SYSTEM_CMD_NEW_DATA, NULL);
+	gCurViewmode = pObj->createArgs.sViewmode.viewmode;
+
+    return status;
+}
 /**
  *******************************************************************************
  *
@@ -613,7 +619,7 @@ Int32 GrpxSrcLink_drvProcessData(GrpxSrcLink_Obj * pObj)
     }
     if(pObj->createArgs.ultrasonicParams.enable)
     {
-        status = GrpxSrcLink_drawUltrasonicResultsRun(pObj);
+        //status = GrpxSrcLink_drawUltrasonicResultsRun(pObj);
     }
     if (pObj->stringPrintInfo.stringPrintState !=
         GRAPHICS_SRC_LINK_STRPRINT_INACTIVE)
@@ -666,8 +672,8 @@ Int32 GrpxSrcLink_drvDelete(GrpxSrcLink_Obj *pObj)
 
     if(pObj->createArgs.ultrasonicParams.enable)
     {
-        status = GrpxSrcLink_drawUltrasonicResultsDelete(pObj);
-        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+        //status = GrpxSrcLink_drawUltrasonicResultsDelete(pObj);
+        //UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
     }
 
     Utils_memFrameFree(&pOutObj->format,
@@ -760,6 +766,7 @@ Void GrpxSrcLink_tskMain(struct Utils_TskHndl * pTsk, Utils_MsgHndl * pMsg)
 					 Vps_printf("CMD Call SYSTEM_CMD_FRONT_SIDE_VIEW viewmode : %d, viewnt: %d\n",
 							 pObj->createArgs.sViewmode.viewmode,
 							 pObj->createArgs.sViewmode.viewnt);
+					 GrpxSrcLink_runDisplayE500Stats(pObj);
 					 Utils_tskAckOrFreeMsg(pMsg, SYSTEM_LINK_STATUS_SOK);
                  }
 					 break;
@@ -770,6 +777,7 @@ Void GrpxSrcLink_tskMain(struct Utils_TskHndl * pTsk, Utils_MsgHndl * pMsg)
                 	 Vps_printf("CMD Call SYSTEM_CMD_REAR_SIDE_VIEW viewmode : %d, viewnt: %d\n",
                 	 							 pObj->createArgs.sViewmode.viewmode,
                 	 							 pObj->createArgs.sViewmode.viewnt);
+                	 GrpxSrcLink_runDisplayE500Stats(pObj);
                 	 Utils_tskAckOrFreeMsg(pMsg, SYSTEM_LINK_STATUS_SOK);
                  }
                 	 break;
@@ -780,6 +788,7 @@ Void GrpxSrcLink_tskMain(struct Utils_TskHndl * pTsk, Utils_MsgHndl * pMsg)
                 	 Vps_printf("CMD Call SYSTEM_CMD_RIGH_SIDE_VIEW viewmode : %d, viewnt: %d\n",
                 			 pObj->createArgs.sViewmode.viewmode,
 							 pObj->createArgs.sViewmode.viewnt);
+                	 GrpxSrcLink_runDisplayE500Stats(pObj);
                 	 Utils_tskAckOrFreeMsg(pMsg, SYSTEM_LINK_STATUS_SOK);
                  }
                 	 break;
@@ -791,6 +800,7 @@ Void GrpxSrcLink_tskMain(struct Utils_TskHndl * pTsk, Utils_MsgHndl * pMsg)
                 	 Vps_printf("CMD Call SYSTEM_CMD_LEFT_SIDE_VIEW viewmode : %d, viewnt: %d\n",
                 			 pObj->createArgs.sViewmode.viewmode,
 							 pObj->createArgs.sViewmode.viewnt);
+                	 GrpxSrcLink_runDisplayE500Stats(pObj);
                 	 Utils_tskAckOrFreeMsg(pMsg, SYSTEM_LINK_STATUS_SOK);
                  }
                 	 break;
@@ -801,6 +811,7 @@ Void GrpxSrcLink_tskMain(struct Utils_TskHndl * pTsk, Utils_MsgHndl * pMsg)
                 	 Vps_printf("CMD Call SYSTEM_CMD_FULL_FRONT_VIEW viewmode : %d, viewnt: %d\n",
                 			 pObj->createArgs.sViewmode.viewmode,
 							 pObj->createArgs.sViewmode.viewnt);
+                	 GrpxSrcLink_runDisplayE500Stats(pObj);
                 	 Utils_tskAckOrFreeMsg(pMsg, SYSTEM_LINK_STATUS_SOK);
                  }
                 	 break;
@@ -811,6 +822,7 @@ Void GrpxSrcLink_tskMain(struct Utils_TskHndl * pTsk, Utils_MsgHndl * pMsg)
                 	 Vps_printf("CMD Call SYSTEM_CMD_FULL_REAR_VIEW viewmode : %d, viewnt: %d\n",
                 			 pObj->createArgs.sViewmode.viewmode,
 							 pObj->createArgs.sViewmode.viewnt);
+                	 GrpxSrcLink_runDisplayE500Stats(pObj);
                 	 Utils_tskAckOrFreeMsg(pMsg, SYSTEM_LINK_STATUS_SOK);
                  }
                 	 break;
@@ -932,6 +944,8 @@ Int32 GrpxSrcLink_init()
     GrpxSrcLink_Obj *pObj;
     char tskName[GRPX_SRC_LINK_STR_SZ];
     UInt32 procId = System_getSelfProcId();
+
+    gCurViewmode = TOP_VIEW;
 
     for (grpxSrcId = 0; grpxSrcId < GRPX_SRC_LINK_OBJ_MAX; grpxSrcId++)
     {

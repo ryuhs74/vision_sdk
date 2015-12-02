@@ -31,7 +31,7 @@ static uint32_t RxBufPos = 0;
 
 //ryuhs74@20151104 - Add Put CMD To GrpxSrcLink
 //void GrpxSrcLink_putCmd( uint8_t _cmd );
-void E500ViewMode_putCmd( uint8_t _cmd );
+//void E500ViewMode_putCmd( uint8_t _cmd );
 
 
 static int LOCAL_UART_isReceivedAll(uint8_t *buf, uint16_t len)
@@ -89,7 +89,8 @@ extern int gisCapture;
 extern UInt32 gdone;
 extern UInt32 gGrpxSrcLinkID;
 UInt32 gFullFront = 0;
-extern UInt32 gE500LUTLinkID;
+extern UInt32 gE500AlgLinkID_0;
+extern UInt32 gE500AlgLinkID_1;
 
 void GrpxLink_putCmd( uint8_t _cmd )
 {
@@ -154,36 +155,41 @@ void AlgLink_putCmd( uint8_t _cmd )
 	AlgorithmLink_ControlParams AlgLinkControlPrm;
 
 	if( _cmd == IRDA_KEY_UP ){
-		Vps_printf("In E500ViewMode_putCmd, IRDA_KEY_UP");
+		Vps_printf("In AlgLink_putCmd, IRDA_KEY_UP");
 		AlgLinkControlPrm.controlCmd = SYSTEM_CMD_FRONT_SIDE_VIEW;
-		status = System_linkControl( gE500LUTLinkID, ALGORITHM_LINK_CMD_CONFIG, &AlgLinkControlPrm, sizeof(AlgLinkControlPrm), TRUE);
-		Vps_printf("   CMD Send %s E500ViewMode_putCmd\n", ( status == 0x0)?"Success":"Fail");
+		status = System_linkControl( gE500AlgLinkID_0, ALGORITHM_LINK_CMD_CONFIG, &AlgLinkControlPrm, sizeof(AlgLinkControlPrm), TRUE);
+		status = System_linkControl( gE500AlgLinkID_1, ALGORITHM_LINK_CMD_CONFIG, &AlgLinkControlPrm, sizeof(AlgLinkControlPrm), TRUE);
+		Vps_printf("   CMD Send %s AlgLink_putCmd\n", ( status == 0x0)?"Success":"Fail");
 	} else if( _cmd == IRDA_KEY_DOWN ){
-		Vps_printf("In E500ViewMode_putCmd, IRDA_KEY_DOWN");
+		Vps_printf("In AlgLink_putCmd, IRDA_KEY_DOWN");
 		AlgLinkControlPrm.controlCmd = SYSTEM_CMD_REAR_SIDE_VIEW;
-		status = System_linkControl( gE500LUTLinkID, ALGORITHM_LINK_CMD_CONFIG, &AlgLinkControlPrm, sizeof(AlgLinkControlPrm), TRUE);
-		Vps_printf("   CMD Send %s E500ViewMode_putCmd\n", ( status == 0x0)?"Success":"Fail");
+		status = System_linkControl( gE500AlgLinkID_0, ALGORITHM_LINK_CMD_CONFIG, &AlgLinkControlPrm, sizeof(AlgLinkControlPrm), TRUE);
+		status = System_linkControl( gE500AlgLinkID_1, ALGORITHM_LINK_CMD_CONFIG, &AlgLinkControlPrm, sizeof(AlgLinkControlPrm), TRUE);
+		Vps_printf("   CMD Send %s AlgLink_putCmd\n", ( status == 0x0)?"Success":"Fail");
 	} else if( _cmd == IRDA_KEY_RIGHT ){
-		Vps_printf("In E500ViewMode_putCmd, IRDA_KEY_RIGHT");
+		Vps_printf("In AlgLink_putCmd, IRDA_KEY_RIGHT");
 		AlgLinkControlPrm.controlCmd = SYSTEM_CMD_RIGH_SIDE_VIEW;
-		status = System_linkControl( gE500LUTLinkID, ALGORITHM_LINK_CMD_CONFIG, &AlgLinkControlPrm, sizeof(AlgLinkControlPrm), TRUE);
-		Vps_printf("   CMD Send %s E500ViewMode_putCmd\n", ( status == 0x0)?"Success":"Fail");
+		status = System_linkControl( gE500AlgLinkID_0, ALGORITHM_LINK_CMD_CONFIG, &AlgLinkControlPrm, sizeof(AlgLinkControlPrm), TRUE);
+		status = System_linkControl( gE500AlgLinkID_1, ALGORITHM_LINK_CMD_CONFIG, &AlgLinkControlPrm, sizeof(AlgLinkControlPrm), TRUE);
+		Vps_printf("   CMD Send %s AlgLink_putCmd\n", ( status == 0x0)?"Success":"Fail");
 	} else if( _cmd == IRDA_KEY_LEFT ){
-		Vps_printf("In E500ViewMode_putCmd, IRDA_KEY_LEFT");
+		Vps_printf("In AlgLink_putCmd, IRDA_KEY_LEFT");
 		AlgLinkControlPrm.controlCmd = SYSTEM_CMD_LEFT_SIDE_VIEW;
-		status = System_linkControl( gE500LUTLinkID, ALGORITHM_LINK_CMD_CONFIG, &AlgLinkControlPrm, sizeof(AlgLinkControlPrm), TRUE);
-		Vps_printf("   CMD Send %s E500ViewMode_putCmd\n", ( status == 0x0)?"Success":"Fail");
+		status = System_linkControl( gE500AlgLinkID_0, ALGORITHM_LINK_CMD_CONFIG, &AlgLinkControlPrm, sizeof(AlgLinkControlPrm), TRUE);
+		status = System_linkControl( gE500AlgLinkID_1, ALGORITHM_LINK_CMD_CONFIG, &AlgLinkControlPrm, sizeof(AlgLinkControlPrm), TRUE);
+		Vps_printf("   CMD Send %s AlgLink_putCmd\n", ( status == 0x0)?"Success":"Fail");
 	}else if( _cmd == IRDA_KEY_FULL ){
 		if( gFullFront == 0 )//Front Full View
 		{
-			Vps_printf("In E500ViewMode_putCmd, IRDA_KEY_FULL");
+			Vps_printf("In AlgLink_putCmd, IRDA_KEY_FULL");
 			AlgLinkControlPrm.controlCmd = SYSTEM_CMD_FULL_FRONT_VIEW;
 		} else {
-			Vps_printf("In E500ViewMode_putCmd, IRDA_KEY_FULL");
+			Vps_printf("In AlgLink_putCmd, IRDA_KEY_FULL");
 			AlgLinkControlPrm.controlCmd = SYSTEM_CMD_FULL_REAR_VIEW;
 		}
-		status = System_linkControl( gE500LUTLinkID, ALGORITHM_LINK_CMD_CONFIG, &AlgLinkControlPrm, sizeof(AlgLinkControlPrm), TRUE);
-		Vps_printf("   CMD Send %s E500ViewMode_putCmd\n", ( status == 0x0)?"Success":"Fail");
+		status = System_linkControl( gE500AlgLinkID_0, ALGORITHM_LINK_CMD_CONFIG, &AlgLinkControlPrm, sizeof(AlgLinkControlPrm), TRUE);
+		status = System_linkControl( gE500AlgLinkID_1, ALGORITHM_LINK_CMD_CONFIG, &AlgLinkControlPrm, sizeof(AlgLinkControlPrm), TRUE);
+		Vps_printf("   CMD Send %s AlgLink_putCmd\n", ( status == 0x0)?"Success":"Fail");
 	}
 #endif
 }

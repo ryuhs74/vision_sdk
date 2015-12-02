@@ -140,7 +140,7 @@ Void chains_lvdsVipSurroundViewStandalone_SetPrms(chains_lvdsVipSurroundViewStan
 }
 
 extern UInt32 gGrpxSrcLinkID;
-extern UInt32 gE500LUTLinkID;
+//extern UInt32 gE500LUTLinkID;
 Void chains_lvdsVipSurroundViewStandalone_ConnectLinks(chains_lvdsVipSurroundViewStandaloneObj *pObj){
 #ifdef CAMMSYS_LUT_AVME500
        //Capture -> Sync_sv_org
@@ -221,7 +221,7 @@ Void chains_lvdsVipSurroundViewStandalone_ConnectLinks(chains_lvdsVipSurroundVie
 
 
        gGrpxSrcLinkID = pObj->GrpxSrcLinkID; //ryuyhs74220151105 - CMD 를 위해 연결
-       gE500LUTLinkID = pObj->Alg_DmaSwMsLinkID;
+       //gE500LUTLinkID = pObj->Alg_DmaSwMsLinkID;
 #else
        //Capture -> Dup_sv_org
        pObj->CapturePrm.outQueParams.nextLink = pObj->Dup_sv_orgLinkID;
