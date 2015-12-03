@@ -16,6 +16,8 @@
 
 #define BLEND_VIEW_TEMP_BUF_SIZE	260*344
 
+#define ONE_PER_AVM_BLEND_FRACTION_BITS	256
+
 static inline Int32 makeBlendView720P(  UInt32       *RESTRICT inPtr_main,
 										UInt32       *RESTRICT inPtr_sub,
 										UInt32       *RESTRICT buf1,
@@ -59,8 +61,8 @@ static inline Int32 makeBlendView720P(  UInt32       *RESTRICT inPtr_main,
 			yuyv q2 = subBuf[rowIdx][colIdx];
 			UInt16 X = maskBak->cr_r_overlay;
 
-			oPtr[rowIdx][colIdx+startX].y = LinearInterpolation(X,q2.y,q1.y,255,8);
-			oPtr[rowIdx][colIdx+startX].uv = LinearInterpolation(X,q2.uv,q1.uv,255,8);
+			oPtr[rowIdx][colIdx+startX].y = LinearInterpolation(X,q2.y,q1.y,ONE_PER_AVM_BLEND_FRACTION_BITS,8);
+			oPtr[rowIdx][colIdx+startX].uv = LinearInterpolation(X,q2.uv,q1.uv,ONE_PER_AVM_BLEND_FRACTION_BITS,8);
 		}
 		mask += childViewInfoLUT->pitch;
 	}
