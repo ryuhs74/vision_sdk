@@ -17,8 +17,9 @@
 #endif
 #endif
 
+#define AVM_LUT_MAX_BIT					16
 #define AVM_LUT_INTEGER_BITS			11
-#define AVM_LUT_FRACTION_BITS			5
+#define AVM_LUT_FRACTION_BITS			(AVM_LUT_MAX_BIT - AVM_LUT_INTEGER_BITS)
 
 typedef struct
 {
@@ -64,15 +65,34 @@ typedef yuyv yuvHD1080P[HD1080P_WIDTH];
 typedef yuyv yuvHD260Pixel[260];
 
 
-#define ONE_PER_AVM_LUT_FRACTION_BITS	32
+#define ONE_PER_AVM_LUT_FRACTION_BITS	(1<<AVM_LUT_FRACTION_BITS)
 
 #define LinearInterpolation(x,q1,q2,perFraction,fractionBits)\
 	((perFraction-x)*q1 + x*q2)>>fractionBits
 
+#define _LinearInterpolation(x,q1,q2,perFraction)\
+	((perFraction-x)*q1 + x*q2)
 #define _X	lut->xFraction
 #define _Y lut->yFraction
 ///https://en.wikipedia.org/wiki/Bilinear_interpolation
+
 #if 1
+#define BilinearInterpolation(q, lut, Q,  pitch)\
+{\
+	register Int32 R1,R2;\
+	R1 = _LinearInterpolation(_X,q[0].y,q[1].y,ONE_PER_AVM_LUT_FRACTION_BITS);\
+	R2 = _LinearInterpolation(_X,q[pitch].y,q[pitch+1].y,ONE_PER_AVM_LUT_FRACTION_BITS);\
+	Q = _LinearInterpolation(_Y,R1,R2,ONE_PER_AVM_LUT_FRACTION_BITS)>>(AVM_LUT_FRACTION_BITS<<1);\
+}
+///https://en.wikipedia.org/wiki/Bilinear_interpolation
+#define BilinearInterpolationUV(q, lut, Q, pitch)\
+{\
+	register Int32 R1,R2;\
+	R1 = _LinearInterpolation(_X,q[0].uv,q[2].uv,ONE_PER_AVM_LUT_FRACTION_BITS);\
+	R2 = _LinearInterpolation(_X,q[pitch].uv,q[pitch+2].uv,ONE_PER_AVM_LUT_FRACTION_BITS);\
+	Q = _LinearInterpolation(_Y,R1,R2,ONE_PER_AVM_LUT_FRACTION_BITS)>>(AVM_LUT_FRACTION_BITS<<1);\
+}
+#elif 0
 #define BilinearInterpolation(q, lut, Q,  pitch)\
 {\
 	register UInt16 R1,R2;\
