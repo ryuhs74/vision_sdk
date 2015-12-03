@@ -42,6 +42,8 @@ static VIEW_MODE gCurViewmode;
 Int32 GrpxSrcLink_drawAVM_E500Button(GrpxSrcLink_Obj *pObj);
 Int32 Draw2D_AVME500_TopView( GrpxSrcLink_Obj *pObj );
 Int32 Draw2D_AVME500_FullView( GrpxSrcLink_Obj *pObj );
+void GrpxSrcLink_displayTxt(GrpxSrcLink_Obj *pObj, char* pStr, UInt32 isDisplay);
+void GrpxSrcLink_Clear_E500UI(GrpxSrcLink_Obj *pObj);
 
 /**
  *******************************************************************************
@@ -825,6 +827,26 @@ Void GrpxSrcLink_tskMain(struct Utils_TskHndl * pTsk, Utils_MsgHndl * pMsg)
                 	 GrpxSrcLink_runDisplayE500Stats(pObj);
                 	 Utils_tskAckOrFreeMsg(pMsg, SYSTEM_LINK_STATUS_SOK);
                  }
+                	 break;
+                 case SYSTEM_CMD_FILE_SAVE_START:
+                	 GrpxSrcLink_displayTxt(pObj, "File Save Start", 1);
+                	 System_sendLinkCmd(pObj->createArgs.outQueParams.nextLink, SYSTEM_CMD_NEW_DATA, NULL);
+                	 Utils_tskAckOrFreeMsg(pMsg, SYSTEM_LINK_STATUS_SOK);
+                	 break;
+                 case SYSTEM_CMD_FILE_SAVE_DONE:
+                	 GrpxSrcLink_displayTxt(pObj, "File Save Start", 0);
+                	 System_sendLinkCmd(pObj->createArgs.outQueParams.nextLink, SYSTEM_CMD_NEW_DATA, NULL);
+                	 Utils_tskAckOrFreeMsg(pMsg, SYSTEM_LINK_STATUS_SOK);
+                	 break;
+                 case SYSTEM_CMD_CLEAR_E500_UI:
+                	 GrpxSrcLink_Clear_E500UI(pObj);
+                	 System_sendLinkCmd(pObj->createArgs.outQueParams.nextLink, SYSTEM_CMD_NEW_DATA, NULL);
+                	 Utils_tskAckOrFreeMsg(pMsg, SYSTEM_LINK_STATUS_SOK);
+                	 break;
+                 case SYSTEM_CMD_REDRAW_E500_UI:
+                	 GrpxSrcLink_drawAVM_E500Layout(pObj);
+                	 System_sendLinkCmd(pObj->createArgs.outQueParams.nextLink, SYSTEM_CMD_NEW_DATA, NULL);
+                	 Utils_tskAckOrFreeMsg(pMsg, SYSTEM_LINK_STATUS_SOK);
                 	 break;
                 	 //ryuhs74@20151103 - Add AVM-E500 Draw Layout END
                  default:

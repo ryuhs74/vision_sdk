@@ -92,6 +92,8 @@ UInt32 gFullFront = 0;
 extern UInt32 gE500AlgLinkID_0;
 extern UInt32 gE500AlgLinkID_1;
 
+UInt32 TestFileSave = 0;
+
 void GrpxLink_putCmd( uint8_t _cmd )
 {
 #if 1
@@ -135,16 +137,21 @@ void GrpxLink_putCmd( uint8_t _cmd )
 			Vps_printf("   CMD Send %s gGrpxSrcLinkID\n", ( status == 0x0)?"Success":"Fail");
 		}
 	} else if( _cmd == IRDA_KEY_PWR ){
-		_cmd = SYSTEM_CMD_FILE_SAVE;
-		Vps_printf("In GrpxSrcLink_putCmd, IRDA_KEY_PWR, File Save, CMD : %d", _cmd);
-		status = System_linkControl(gGrpxSrcLinkID, _cmd, NULL, 0, TRUE); //gGrpxSrcLinkID °´Ã¼°¡ µÎ°³.
-		Vps_printf("   CMD Send %s gGrpxSrcLinkID\n", ( status == 0x0)?"Success":"Fail");
+		if( TestFileSave == 0){
+			TestFileSave = 1;
+			_cmd = SYSTEM_CMD_FILE_SAVE_START;
+			Vps_printf("In GrpxSrcLink_putCmd, IRDA_KEY_PWR, File Save, CMD : %d", _cmd);
+			status = System_linkControl(gGrpxSrcLinkID, _cmd, NULL, 0, TRUE); //gGrpxSrcLinkID °´Ã¼°¡ µÎ°³.
+			Vps_printf("   CMD Send %s gGrpxSrcLinkID\n", ( status == 0x0)?"Success":"Fail");
+		} else {
+			TestFileSave = 0;
+			_cmd = SYSTEM_CMD_FILE_SAVE_DONE;
+			Vps_printf("In GrpxSrcLink_putCmd, IRDA_KEY_PWR, File Save Done, CMD : %d", _cmd);
+			status = System_linkControl(gGrpxSrcLinkID, _cmd, NULL, 0, TRUE); //gGrpxSrcLinkID °´Ã¼°¡ µÎ°³.
+			Vps_printf("   CMD Send %s gGrpxSrcLinkID\n", ( status == 0x0)?"Success":"Fail");
+		}
 	}
-
-
-
-
-#endif
+	#endif
 }
 
 void AlgLink_putCmd( uint8_t _cmd )
@@ -260,8 +267,9 @@ static int UART_ParseCmd(uint8_t *rxBuf)
 		{
 		case IRDA_KEY_PWR: //File Save - IRDA_KEY_PWR = (0x09)
 			//gisCapture = 1;
-			Vps_printf(	"**********************************gisCapture : %d\n",
-						gisCapture);
+			//Vps_printf(	"**********************************gisCapture : %d\n",
+			//			gisCapture);
+			GrpxLink_putCmd(GET_ARG1(rxBuf));
 			break;
 		case IRDA_KEY_UP : //Front - IRDA_KEY_UP = (0x0F)
 		case IRDA_KEY_DOWN : //Rear - IRDA_KEY_DOWN = (0x0E)

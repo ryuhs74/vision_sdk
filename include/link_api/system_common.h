@@ -183,7 +183,13 @@
 
 #define SYSTEM_CMD_FULL_REAR_VIEW (0x00000013)
 
-#define SYSTEM_CMD_FILE_SAVE (0x00000014)
+#define SYSTEM_CMD_FILE_SAVE_START (0x00000014)
+
+#define SYSTEM_CMD_FILE_SAVE_DONE (0x00000015)
+
+#define SYSTEM_CMD_CLEAR_E500_UI (0x00000016)
+
+#define SYSTEM_CMD_REDRAW_E500_UI (0x00000017)
 /**
  *******************************************************************************
  *
