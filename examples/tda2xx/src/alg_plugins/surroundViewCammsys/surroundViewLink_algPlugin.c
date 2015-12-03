@@ -413,7 +413,7 @@ Int32 AlgorithmLink_surroundViewCreate(void * pObj, void * pCreateParams)
 
 	    pSurroundViewObj->curLayoutPrm.buf1 =
 	            Utils_memAlloc(
-	            		UTILS_HEAPID_L2_LOCAL,
+	            		UTILS_HEAPID_OCMC_SR,
 	                    BLEND_VIEW_TEMP_BUF_SIZE ,
 	                    ALGORITHMLINK_FRAME_ALIGN
 	                );
@@ -421,7 +421,7 @@ Int32 AlgorithmLink_surroundViewCreate(void * pObj, void * pCreateParams)
 
 	    pSurroundViewObj->curLayoutPrm.buf2 =
 	            Utils_memAlloc(
-	            		UTILS_HEAPID_L2_LOCAL,
+	            		UTILS_HEAPID_OCMC_SR,
 	                    BLEND_VIEW_TEMP_BUF_SIZE ,
 	                    ALGORITHMLINK_FRAME_ALIGN
 	                );
@@ -1102,18 +1102,19 @@ Int32 AlgorithmLink_surroundViewDelete(void * pObj)
                     pSystemVideoFrameBuffer->bufAddr[0],
                     pSurroundViewObj->outBufSize
                     );
+
         UTILS_assert(status==SYSTEM_LINK_STATUS_SOK);
     }
 
     if(pSurroundViewObj->curLayoutPrm.makeViewPart == 0)
     {
-		Utils_memFree(	UTILS_HEAPID_DDR_CACHED_SR,
+		Utils_memFree(	UTILS_HEAPID_OCMC_SR,
 						pSurroundViewObj->curLayoutPrm.buf1,
-						pSurroundViewObj->outBufSize);
+						BLEND_VIEW_TEMP_BUF_SIZE);
 
-		Utils_memFree(	UTILS_HEAPID_DDR_CACHED_SR,
+		Utils_memFree(	UTILS_HEAPID_OCMC_SR,
 						pSurroundViewObj->curLayoutPrm.buf2,
-					pSurroundViewObj->outBufSize);
+						BLEND_VIEW_TEMP_BUF_SIZE);
     }
     UTILS_assert(status==SYSTEM_LINK_STATUS_SOK);
 
