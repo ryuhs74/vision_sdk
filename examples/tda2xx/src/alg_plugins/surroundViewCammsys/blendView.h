@@ -57,8 +57,8 @@ static inline Int32 makeBlendView720P(  UInt32       *RESTRICT inPtr_main,
 		MaskLUT_Packed *maskBak;
 		for(colIdx = 0,maskBak = mask; colIdx < childViewInfoLUT->width; colIdx++, maskBak++)
 		{
-			yuyv q1 = mainBuf[rowIdx][colIdx];
-			yuyv q2 = subBuf[rowIdx][colIdx];
+			YUYV q1 = mainBuf[rowIdx][colIdx];
+			YUYV q2 = subBuf[rowIdx][colIdx];
 			UInt16 X = maskBak->cr_r_overlay;
 
 			oPtr[rowIdx][colIdx+startX].y = LinearInterpolation(X,q2.y,q1.y,ONE_PER_AVM_BLEND_FRACTION_BITS,8);

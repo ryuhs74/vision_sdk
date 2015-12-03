@@ -25,24 +25,18 @@ typedef struct
 {
 	UInt8 y;
 	UInt8 uv;
-}yuyv;
-typedef struct
-{
-	UInt8 y1;
-	UInt8 u;
-	UInt8 y2;
-	UInt8 v;
 }YUYV;
-#if 0
+
 typedef struct
 {
-	UInt16 width;
-	UInt16 height;
-	UInt16 startX;
-	UInt16 startY;
-	UInt16 pitch;
-}ViewInfo;
-#endif
+	UInt8 u;
+	UInt8 v;
+}UV;
+
+typedef struct
+{
+	UInt8 y;
+}Y;
 
 typedef struct {
 	unsigned short xFraction:AVM_LUT_FRACTION_BITS;
@@ -60,9 +54,9 @@ typedef struct {
 
 #define HD720P_WIDTH	1280
 #define HD1080P_WIDTH	1920
-typedef yuyv yuvHD720P[HD720P_WIDTH];
-typedef yuyv yuvHD1080P[HD1080P_WIDTH];
-typedef yuyv yuvHD260Pixel[260];
+typedef YUYV yuvHD720P[HD720P_WIDTH];
+typedef YUYV yuvHD1080P[HD1080P_WIDTH];
+typedef YUYV yuvHD260Pixel[260];
 
 
 #define ONE_PER_AVM_LUT_FRACTION_BITS	(1<<AVM_LUT_FRACTION_BITS)
@@ -72,54 +66,19 @@ typedef yuyv yuvHD260Pixel[260];
 
 #define _LinearInterpolation(x,q1,q2,perFraction)\
 	((perFraction-x)*q1 + x*q2)
+
+
 #define _X	lut->xFraction
 #define _Y lut->yFraction
-///https://en.wikipedia.org/wiki/Bilinear_interpolation
 
-#if 1
-#define BilinearInterpolation(q, lut, Q,  pitch)\
+///https://en.wikipedia.org/wiki/Bilinear_interpolation
+#define BilinearInterpolation(q1,q2,q3,q4, lut, Q)\
 {\
 	register Int32 R1,R2;\
-	R1 = _LinearInterpolation(_X,q[0].y,q[1].y,ONE_PER_AVM_LUT_FRACTION_BITS);\
-	R2 = _LinearInterpolation(_X,q[pitch].y,q[pitch+1].y,ONE_PER_AVM_LUT_FRACTION_BITS);\
+	R1 = _LinearInterpolation(_X,q1,q2,ONE_PER_AVM_LUT_FRACTION_BITS);\
+	R2 = _LinearInterpolation(_X,q3,q4,ONE_PER_AVM_LUT_FRACTION_BITS);\
 	Q = _LinearInterpolation(_Y,R1,R2,ONE_PER_AVM_LUT_FRACTION_BITS)>>(AVM_LUT_FRACTION_BITS<<1);\
 }
-///https://en.wikipedia.org/wiki/Bilinear_interpolation
-#define BilinearInterpolationUV(q, lut, Q, pitch)\
-{\
-	register Int32 R1,R2;\
-	R1 = _LinearInterpolation(_X,q[0].uv,q[2].uv,ONE_PER_AVM_LUT_FRACTION_BITS);\
-	R2 = _LinearInterpolation(_X,q[pitch].uv,q[pitch+2].uv,ONE_PER_AVM_LUT_FRACTION_BITS);\
-	Q = _LinearInterpolation(_Y,R1,R2,ONE_PER_AVM_LUT_FRACTION_BITS)>>(AVM_LUT_FRACTION_BITS<<1);\
-}
-#elif 0
-#define BilinearInterpolation(q, lut, Q,  pitch)\
-{\
-	register UInt16 R1,R2;\
-	R1 = LinearInterpolation(_X,q[0].y,q[1].y,ONE_PER_AVM_LUT_FRACTION_BITS,AVM_LUT_FRACTION_BITS);\
-	R2 = LinearInterpolation(_X,q[pitch].y,q[pitch+1].y,ONE_PER_AVM_LUT_FRACTION_BITS,AVM_LUT_FRACTION_BITS);\
-	Q = LinearInterpolation(_Y,R1,R2,ONE_PER_AVM_LUT_FRACTION_BITS,AVM_LUT_FRACTION_BITS);\
-}
-///https://en.wikipedia.org/wiki/Bilinear_interpolation
-#define BilinearInterpolationUV(q, lut, Q, pitch)\
-{\
-	register UInt16 R1,R2;\
-	R1 = LinearInterpolation(_X,q[0].uv,q[2].uv,ONE_PER_AVM_LUT_FRACTION_BITS,AVM_LUT_FRACTION_BITS);\
-	R2 = LinearInterpolation(_X,q[pitch].uv,q[pitch+2].uv,ONE_PER_AVM_LUT_FRACTION_BITS,AVM_LUT_FRACTION_BITS);\
-	Q = LinearInterpolation(_Y,R1,R2,ONE_PER_AVM_LUT_FRACTION_BITS,AVM_LUT_FRACTION_BITS);\
-}
-#else
-#define BilinearInterpolation(q, lut, Q,  pitch)\
-{\
-	Q = q[0].y;\
-}
-///https://en.wikipedia.org/wiki/Bilinear_interpolation
-#define BilinearInterpolationUV(q, lut, Q, pitch)\
-{\
-	Q = q[0].uv;\
-}
-
-#endif
 
 static inline Int32 makeSingleView720P(  UInt32       *RESTRICT inPtr,
                            	   UInt32           *RESTRICT outPtr,
@@ -151,19 +110,18 @@ static inline Int32 makeSingleView720P(  UInt32       *RESTRICT inPtr,
     	ViewLUT_Packed *lutbak;
         for(colIdx = startX, lutbak = lut + childViewInfoLUT->startX; colIdx < width ; colIdx++, lutbak++)
         {
-        	yuyv *q = &iPtr[lutbak->yInteger][lutbak->xInteger];
+        	YUYV *q = &iPtr[lutbak->yInteger][lutbak->xInteger];
 
-        	BilinearInterpolation(q, lutbak, oPtr[rowIdx][colIdx].y, HD720P_WIDTH);
+        	BilinearInterpolation(q[0].y, q[1].y, q[HD720P_WIDTH].y, q[HD720P_WIDTH+1].y, lutbak, oPtr[rowIdx][colIdx].y);
         }
 
         for(colIdx = startX, lutbak = lut + childViewInfoLUT->startX; colIdx < width ; colIdx+=2, lutbak+=2)
         {
-        	yuyv *qu = &iPtr[lutbak->yInteger][lutbak->xInteger & 0xfffe];
-        	yuyv *qv = qu+1;
+        	YUYV *qu = &iPtr[lutbak->yInteger][lutbak->xInteger & 0xfffe];
         	///U
-        	BilinearInterpolationUV(qu, lutbak, oPtr[rowIdx][colIdx].uv, HD720P_WIDTH);
+        	BilinearInterpolation(qu[0].uv, qu[2].uv, qu[HD720P_WIDTH].uv, qu[HD720P_WIDTH+2].uv, lutbak, oPtr[rowIdx][colIdx].uv);
         	///V
-        	BilinearInterpolationUV(qv, lutbak, oPtr[rowIdx][colIdx+1].uv, HD720P_WIDTH);
+        	BilinearInterpolation(qu[1].uv, qu[3].uv, qu[HD720P_WIDTH+1].uv, qu[HD720P_WIDTH+3].uv, lutbak, oPtr[rowIdx][colIdx+1].uv);
         }
 
     	lut += childViewInfoLUT->pitch;
@@ -207,19 +165,18 @@ static inline Int32 makeSingleView720PBuff(  UInt32       *RESTRICT inPtr,
     	ViewLUT_Packed *lutbak;
         for(colIdx = 0, lutbak = lut + childViewInfoLUT->startX; colIdx < width ; colIdx++, lutbak++)
         {
-        	yuyv *q = &iPtr[lutbak->yInteger][lutbak->xInteger];
+        	YUYV *q = &iPtr[lutbak->yInteger][lutbak->xInteger];
 
-        	BilinearInterpolation(q, lutbak, oPtr[rowIdx][colIdx].y, HD720P_WIDTH);
+        	BilinearInterpolation(q[0].y, q[1].y, q[HD720P_WIDTH].y, q[HD720P_WIDTH+1].y, lutbak, oPtr[rowIdx][colIdx].y);
         }
 
         for(colIdx = 0, lutbak = lut + childViewInfoLUT->startX; colIdx < width ; colIdx+=2, lutbak+=2)
         {
-        	yuyv *qu = &iPtr[lutbak->yInteger][lutbak->xInteger & 0xfffe];
-        	yuyv *qv = qu+1;
+        	YUYV *qu = &iPtr[lutbak->yInteger][lutbak->xInteger & 0xfffe];
         	///U
-        	BilinearInterpolationUV(qu, lutbak, oPtr[rowIdx][colIdx].uv, HD720P_WIDTH);
+        	BilinearInterpolation(qu[0].uv, qu[2].uv, qu[HD720P_WIDTH].uv, qu[HD720P_WIDTH+2].uv, lutbak, oPtr[rowIdx][colIdx].uv);
         	///V
-        	BilinearInterpolationUV(qv, lutbak, oPtr[rowIdx][colIdx+1].uv, HD720P_WIDTH);
+        	BilinearInterpolation(qu[1].uv, qu[3].uv, qu[HD720P_WIDTH+1].uv, qu[HD720P_WIDTH+3].uv, lutbak, oPtr[rowIdx][colIdx+1].uv);
         }
 
     	lut += childViewInfoLUT->pitch;
