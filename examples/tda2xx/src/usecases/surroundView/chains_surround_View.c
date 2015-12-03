@@ -466,6 +466,7 @@ static Void chains_surround_View_StopAndDeleteApp(Surround_ViewAppObj *pObj)
 static Void chains_surround_View_SwitchDisplayChannel(
                                     Surround_ViewAppObj *pObj)
 {
+	static UInt32 alreadSend = 0;
     DisplayLink_SwitchChannelParams displayPrm;
 
     pObj->displayActiveChId++;
@@ -479,6 +480,14 @@ static Void chains_surround_View_SwitchDisplayChannel(
                                 &displayPrm,
                                 sizeof(displayPrm),
                                 TRUE);
+
+    if( pObj->displayActiveChId != 0 && alreadSend == 0){
+    	System_linkControl(pObj->ucObj.GrpxSrcLinkID, SYSTEM_CMD_CLEAR_E500_UI, NULL, 0, TRUE);
+    	alreadSend = 1;
+    } else if(pObj->displayActiveChId == 0 && alreadSend == 1){
+    	System_linkControl(pObj->ucObj.GrpxSrcLinkID, SYSTEM_CMD_REDRAW_E500_UI, NULL, 0, TRUE);
+    	alreadSend = 0;
+    }
 }
 
 /**

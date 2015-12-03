@@ -111,21 +111,7 @@ Int32 GrpxSrcLink_drawAVM_E500Button(GrpxSrcLink_Obj *pObj) //GrpxSrcLink_Create
 	if( pObj->createArgs.sViewmode.viewmode == TOP_VIEW){ //ryuhs74@20151103 - AVM Top View
 		bmpPrm.bmpIdx = DRAW2D_BMP_IDX_FULL_VIEW_NONE;
 		Draw2D_drawBmp(pObj->draw2DHndl, FULLVIEW_ICON_START_X, ICON_START_Y, &bmpPrm);
-/*
-		if( pObj->createArgs.sViewmode.prvVient == FRONT_VIEW ){ //Prv Front Sel Image, Draw Nor Image
-			bmpPrm.bmpIdx = DRAW2D_BMP_IDX_FRONT_VIEW_NOR;
-			Draw2D_drawBmp(pObj->draw2DHndl, FRONT_ICON_START_X, ICON_START_Y, &bmpPrm);
-		} else if( pObj->createArgs.sViewmode.prvVient == REAR_VIEW ){ //Prv Rear Sel Image, Draw Nor Image
-			bmpPrm.bmpIdx = DRAW2D_BMP_IDX_REAR_VIEW_NOR;
-			Draw2D_drawBmp(pObj->draw2DHndl, REAR_ICON_START_X, ICON_START_Y, &bmpPrm);
-		} else if( pObj->createArgs.sViewmode.prvVient == RIGHT_VIEW ){ //Prv Right Sel Image, Draw Nor Image
-			bmpPrm.bmpIdx = DRAW2D_BMP_IDX_RIGHT_VIEW_NOR;
-			Draw2D_drawBmp(pObj->draw2DHndl, RIGHT_ICON_START_X, ICON_START_Y, &bmpPrm);
-		} if( pObj->createArgs.sViewmode.prvVient == LEFT_VIEW ){ //Prv Left Sel Image, Draw Nor Image
-			bmpPrm.bmpIdx = DRAW2D_BMP_IDX_LEFT_VIEW_NOR;
-			Draw2D_drawBmp(pObj->draw2DHndl, LEFT_ICON_START_X, ICON_START_Y, &bmpPrm);
-		}
-*/
+
 		if( pObj->createArgs.sViewmode.viewnt == FRONT_VIEW ){ //Draw Front Sel
 			bmpPrm.bmpIdx = DRAW2D_BMP_IDX_FRONT_VIEW_SEL;
 			Draw2D_drawBmp(pObj->draw2DHndl, FRONT_ICON_START_X, ICON_START_Y, &bmpPrm);
@@ -195,10 +181,10 @@ Int32 Draw2D_FillBacgroundColor( GrpxSrcLink_Obj *pObj )
 	Draw2D_fillRegion(pObj->draw2DHndl,&regionL);
 
 	regionR.color  = AVME500_BACKGROUND_COLOR;
-	regionR.startX = 1280-16;
+	regionR.startX = 1280-19;//1280-16; //ryuhs74 나중에 원복
 	regionR.startY = 0;
 	regionR.height = 720;
-	regionR.width  = 16;
+	regionR.width  = 19;//16; //ryuhs74 나중에 원복
 
 	Draw2D_fillRegion(pObj->draw2DHndl,&regionR);
 
@@ -211,15 +197,15 @@ Int32 Draw2D_FillBacgroundColor( GrpxSrcLink_Obj *pObj )
 	Draw2D_fillRegion(pObj->draw2DHndl,&regionB);
 
 	regionM.color  = AVME500_BACKGROUND_COLOR;
-	regionM.startX = 520+16;
+	regionM.startX = 520+13;//520+16; //ryuhs74 나중에 원복
 	regionM.startY = 16;
-	regionM.height = 688;
-	regionM.width  = 16;
+	regionM.height = 720;//688; //ryuhs74 나중에 원복
+	regionM.width  = 19;//16; //ryuhs74 나중에 원복
 
 	Draw2D_fillRegion(pObj->draw2DHndl,&regionM);
 
 	regionSideB.color  = AVME500_BACKGROUND_COLOR;
-	regionSideB.startX = 552;
+	regionSideB.startX = 552; //ryuhs74 나중에 원복
 	regionSideB.startY = FULL_VIEW_TEXT_START_Y;
 	regionSideB.height = 720-(FULL_VIEW_TEXT_START_Y + 16);
 	regionSideB.width  = 712;
@@ -239,10 +225,10 @@ Int32 Draw2D_AVME500_TopView( GrpxSrcLink_Obj *pObj )
 
 	//Top View, Side View Separation Bar
 	region.color  = AVME500_BACKGROUND_COLOR;
-	region.startX = 520+16;
+	region.startX = 520+13;//520+16; //ryuhs74 나중에 원복
 	region.startY = 16;
 	region.height = 688;
-	region.width  = 16;
+	region.width  = 19;//16; //ryuhs74 나중에 원복
 
 	Draw2D_fillRegion(pObj->draw2DHndl,&region);
 
@@ -251,7 +237,7 @@ Int32 Draw2D_AVME500_TopView( GrpxSrcLink_Obj *pObj )
 	regionTopView.colorFormat = DRAW2D_TRANSPARENT_COLOR_FORMAT;
 	regionTopView.startX = 16;
 	regionTopView.startY = 524;
-	regionTopView.width  = 520;
+	regionTopView.width  = 520-3;//520; //ryuhs74 나중에 원복
 	regionTopView.height = 720-( 524 +16 );
 	Draw2D_fillRegion(pObj->draw2DHndl,&regionTopView);
 
@@ -279,12 +265,20 @@ Int32 Draw2D_AVME500_FullView( GrpxSrcLink_Obj *pObj )
 	Draw2D_RegionPrm regionMidleBar;
 	Draw2D_RegionPrm regionBootmBar;
 
+	/*
+	 * //Top View, Side View Separation Bar
+	region.color  = AVME500_BACKGROUND_COLOR;
+	region.startX = 520+13;//520+16;
+	region.startY = 16;
+	region.height = 688;
+	region.width  = 19;//16;
+	 */
 	//Top View, Side View Separation Bar of the transparent coloring
 	regionMidleBar.color  = DRAW2D_TRANSPARENT_COLOR;
 	regionMidleBar.colorFormat = DRAW2D_TRANSPARENT_COLOR_FORMAT;
-	regionMidleBar.startX = 552-16;
+	regionMidleBar.startX = 552-19;//552-16; //ryuhs74 나중에 원복
 	regionMidleBar.startY = 16;
-	regionMidleBar.width  = 16;
+	regionMidleBar.width  = 19;//16; //ryuhs74 나중에 원복
 	regionMidleBar.height = 558;
 	Draw2D_fillRegion(pObj->draw2DHndl,&regionMidleBar);
 
@@ -293,7 +287,7 @@ Int32 Draw2D_AVME500_FullView( GrpxSrcLink_Obj *pObj )
 	regionBootmBar.colorFormat = DRAW2D_TRANSPARENT_COLOR_FORMAT;
 	regionBootmBar.startX = 552;
 	regionBootmBar.startY = 524;
-	regionBootmBar.width  = 712;
+	regionBootmBar.width  = 712-3;//712;//ryuhs74 나중에 원복
 	regionBootmBar.height = 50;
 	Draw2D_fillRegion(pObj->draw2DHndl,&regionBootmBar);
 
@@ -323,6 +317,46 @@ Int32 GrpxSrcLink_drawAVM_E500Layout(GrpxSrcLink_Obj *pObj) // 이 함수를 TOP / F
 
     return SYSTEM_LINK_STATUS_SOK;
 }
+
+void GrpxSrcLink_displayTxt(GrpxSrcLink_Obj *pObj, char* pStr, UInt32 isDisplay)
+{
+	Draw2D_FontPrm fontPrm;
+	Draw2D_FontProperty fontProp;
+	UInt32 startX = 32;
+	UInt32 startY = 32;
+
+	fontPrm.fontIdx = 5;
+	Draw2D_getFontProperty(&fontPrm, &fontProp);
+
+	if( isDisplay == 0){
+		Draw2D_RegionPrm region;
+
+	    Draw2D_clearString(pObj->draw2DHndl, startX, startY, strlen(pStr), &fontPrm );
+
+	    region.color  = DRAW2D_TRANSPARENT_COLOR;
+	    region.colorFormat = DRAW2D_TRANSPARENT_COLOR_FORMAT;
+	    region.startX = startX;
+	    region.startY = startY;
+	    region.width  = fontProp.width * strlen(pStr);
+	    region.height = fontProp.height;
+		Draw2D_fillRegion(pObj->draw2DHndl,&region);
+	} else {
+		Draw2D_drawString(pObj->draw2DHndl, startX, startY, pStr, &fontPrm );
+	}
+}
+
+void GrpxSrcLink_Clear_E500UI(GrpxSrcLink_Obj *pObj)
+{
+	Draw2D_RegionPrm region;
+	region.color  = DRAW2D_TRANSPARENT_COLOR;
+	region.colorFormat = DRAW2D_TRANSPARENT_COLOR_FORMAT;
+	region.startX = 0;
+	region.startY = 0;
+	region.width  = 1280;
+	region.height = 720;
+	Draw2D_fillRegion(pObj->draw2DHndl,&region);
+}
+
 
 #if 0
 Void GrpxSrcLink_displaySurroundViewStandaloneDrawCpuLoadBar(
