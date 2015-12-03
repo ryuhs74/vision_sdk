@@ -35,6 +35,7 @@
 
 typedef struct {
        UInt32    CaptureLinkID;
+       UInt32    DupLinkCapID;
        UInt32    SyncLinkID;
        UInt32    DupLinkID;
 
@@ -54,11 +55,13 @@ typedef struct {
 
        UInt32    SyncLinkSurroundViewID;
        UInt32    Alg_DmaSwMsLinkID;
+       UInt32    MergeCapLinkID;
        UInt32    Display_videoLinkID;
        UInt32    GrpxSrcLinkID;
        UInt32    Display_GrpxLinkID;
 
        CaptureLink_CreateParams                CapturePrm;
+       DupLink_CreateParams                    DupCapPrm;
        SyncLink_CreateParams                   SyncPrm;
        DupLink_CreateParams                    DupPrm;
 
@@ -77,6 +80,7 @@ typedef struct {
        MergeLink_CreateParams                  MergePrm;
        SyncLink_CreateParams                   SyncSurroundViewPrm;
        AlgorithmLink_DmaSwMsCreateParams       Alg_DmaSwMsPrm;
+       MergeLink_CreateParams                  MergeCapPrm;
        DisplayLink_CreateParams                Display_videoPrm;
        GrpxSrcLink_CreateParams                GrpxSrcPrm;
        DisplayLink_CreateParams                Display_GrpxPrm;

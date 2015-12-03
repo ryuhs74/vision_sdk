@@ -28,8 +28,9 @@ extern UInt32 gFullFront;
 
 Void chains_surround_View_SetLinkId(chains_surround_ViewObj *pObj){
        pObj->CaptureLinkID                  = SYSTEM_LINK_ID_CAPTURE;
+       pObj->DupLinkCapID                   = IPU1_0_LINK (SYSTEM_LINK_ID_DUP_0);
        pObj->SyncLinkID                     = IPU1_0_LINK (SYSTEM_LINK_ID_SYNC_0);
-       pObj->DupLinkID                      = IPU1_0_LINK (SYSTEM_LINK_ID_DUP_0);
+       pObj->DupLinkID                      = IPU1_0_LINK (SYSTEM_LINK_ID_DUP_1);
 
        pObj->IPCOut_IPU1_0_DSP_0_0LinkID    = IPU1_0_LINK (SYSTEM_LINK_ID_IPC_OUT_0);
        pObj->IPCIn_DSP_0_IPU1_0_0LinkID     = DSP1_LINK (SYSTEM_LINK_ID_IPC_IN_0);
@@ -46,6 +47,7 @@ Void chains_surround_View_SetLinkId(chains_surround_ViewObj *pObj){
        pObj->MergeLinkID                    = IPU1_0_LINK (SYSTEM_LINK_ID_MERGE_0);
        pObj->SyncLinkSurroundViewID         = IPU1_0_LINK (SYSTEM_LINK_ID_SYNC_1);
        pObj->Alg_DmaSwMsLinkID              = IPU1_0_LINK (SYSTEM_LINK_ID_ALG_0);
+       pObj->MergeCapLinkID                 = IPU1_0_LINK (SYSTEM_LINK_ID_MERGE_1);
        pObj->Display_videoLinkID            = SYSTEM_LINK_ID_DISPLAY_0;
        pObj->GrpxSrcLinkID                  = IPU1_0_LINK (SYSTEM_LINK_ID_GRPX_SRC_0);
        pObj->Display_GrpxLinkID             = SYSTEM_LINK_ID_DISPLAY_1;
@@ -56,6 +58,7 @@ Void chains_surround_View_SetLinkId(chains_surround_ViewObj *pObj){
 
 Void chains_surround_View_ResetLinkPrms(chains_surround_ViewObj *pObj){
        CaptureLink_CreateParams_Init(&pObj->CapturePrm);
+       DupLink_CreateParams_Init(&pObj->DupCapPrm);
        SyncLink_CreateParams_Init(&pObj->SyncPrm);
        DupLink_CreateParams_Init(&pObj->DupPrm);
 
@@ -74,6 +77,7 @@ Void chains_surround_View_ResetLinkPrms(chains_surround_ViewObj *pObj){
        MergeLink_CreateParams_Init(&pObj->MergePrm);
        SyncLink_CreateParams_Init(&pObj->SyncSurroundViewPrm);
        AlgorithmLink_DmaSwMsCreateParams_Init(&pObj->Alg_DmaSwMsPrm);
+       MergeLink_CreateParams_Init(&pObj->MergeCapPrm);
        DisplayLink_CreateParams_Init(&pObj->Display_videoPrm);
        GrpxSrcLink_CreateParams_Init(&pObj->GrpxSrcPrm);
        DisplayLink_CreateParams_Init(&pObj->Display_GrpxPrm);
@@ -81,6 +85,7 @@ Void chains_surround_View_ResetLinkPrms(chains_surround_ViewObj *pObj){
 
 Void chains_surround_View_SetPrms(chains_surround_ViewObj *pObj){
        (pObj->DupPrm).numOutQue = 2;
+       (pObj->DupCapPrm).numOutQue = 2;
        (pObj->Alg_SurroundViewPrm_0).baseClassCreate.size  = sizeof(AlgorithmLink_SurroundViewCreateParams);
        (pObj->Alg_SurroundViewPrm_0).baseClassCreate.algId  = ALGORITHM_LINK_DSP_ALG_SURROUND_VIEW;
 
@@ -91,16 +96,27 @@ Void chains_surround_View_SetPrms(chains_surround_ViewObj *pObj){
        (pObj->Alg_DmaSwMsPrm).baseClassCreate.size  = sizeof(AlgorithmLink_DmaSwMsCreateParams);
        (pObj->Alg_DmaSwMsPrm).baseClassCreate.algId  = ALGORITHM_LINK_IPU_ALG_DMA_SWMS;
        (pObj->MergePrm).numInQue = 2;
+       (pObj->MergeCapPrm).numInQue = 2;
 
 
 }
 
 Void chains_surround_View_ConnectLinks(chains_surround_ViewObj *pObj){
 
-       //Capture -> SYNC
-	   pObj->CapturePrm.outQueParams.nextLink = pObj->SyncLinkID;
-	   pObj->SyncPrm.inQueParams.prevLinkId = pObj->CaptureLinkID;
+       //Capture -> DUP Cap
+       pObj->CapturePrm.outQueParams.nextLink = pObj->DupLinkCapID;
+       pObj->DupCapPrm.inQueParams.prevLinkId = pObj->CaptureLinkID;
+       pObj->DupCapPrm.inQueParams.prevLinkQueId = 0;
+
+       //DUP Cap -> SYNC
+       pObj->DupCapPrm.outQueParams[0].nextLink = pObj->SyncLinkID;
+	   pObj->SyncPrm.inQueParams.prevLinkId = pObj->DupLinkCapID;
 	   pObj->SyncPrm.inQueParams.prevLinkQueId = 0;
+
+       //Dup Cap -> Merge Cap
+       pObj->DupCapPrm.outQueParams[1].nextLink = pObj->MergeCapLinkID;
+       pObj->MergeCapPrm.inQueParams[1].prevLinkId = pObj->DupLinkCapID;
+       pObj->MergeCapPrm.inQueParams[1].prevLinkQueId = 1;
 
 	   //SYNC -> DUP
 	   pObj->SyncPrm.outQueParams.nextLink = pObj->DupLinkID;
@@ -176,14 +192,20 @@ Void chains_surround_View_ConnectLinks(chains_surround_ViewObj *pObj){
 	   pObj->SyncSurroundViewPrm.inQueParams.prevLinkId = pObj->MergeLinkID;
 	   pObj->SyncSurroundViewPrm.inQueParams.prevLinkQueId = 0;
 
-	   //SYNC -> DUP
+	   //SyncLinkSurroundViewd -> Alg_DmaSwMsLink
 	   pObj->SyncSurroundViewPrm.outQueParams.nextLink = pObj->Alg_DmaSwMsLinkID;
        pObj->Alg_DmaSwMsPrm.inQueParams.prevLinkId = pObj->SyncLinkSurroundViewID;
        pObj->Alg_DmaSwMsPrm.inQueParams.prevLinkQueId = 0;
 
-       //ALG->IPCOUT
-       pObj->Alg_DmaSwMsPrm.outQueParams.nextLink = pObj->Display_videoLinkID;
-	   pObj->Display_videoPrm.inQueParams.prevLinkId = pObj->Alg_DmaSwMsLinkID;
+       //Alg_DmaSwMsLinkID -> MergeCapLinkID
+       pObj->Alg_DmaSwMsPrm.outQueParams.nextLink = pObj->MergeCapLinkID;
+	   pObj->MergeCapPrm.inQueParams[0].prevLinkId = pObj->Alg_DmaSwMsLinkID;
+	   pObj->MergeCapPrm.inQueParams[0].prevLinkQueId = 0;
+
+
+	   //Merge Cap -> Display
+	   pObj->MergeCapPrm.outQueParams.nextLink = pObj->Display_videoLinkID;
+	   pObj->Display_videoPrm.inQueParams.prevLinkId = pObj->MergeCapLinkID;
 	   pObj->Display_videoPrm.inQueParams.prevLinkQueId = 0;
 
 	   //GrpxSrc -> Display_Grpx
@@ -210,6 +232,10 @@ Int32 chains_surround_View_Create(chains_surround_ViewObj *pObj, Void *appObj)
 								&pObj->CapturePrm,
 								sizeof(pObj->CapturePrm));
 	UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
+	status = System_linkCreate(	pObj->DupLinkCapID,
+								&pObj->DupCapPrm,
+								sizeof(pObj->DupCapPrm));
 
 	status = System_linkCreate(	pObj->SyncLinkID,
 								&pObj->SyncPrm,
@@ -287,6 +313,11 @@ Int32 chains_surround_View_Create(chains_surround_ViewObj *pObj, Void *appObj)
 								sizeof(pObj->Alg_DmaSwMsPrm));
 	UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
+	status = System_linkCreate(	pObj->MergeCapLinkID,
+								&pObj->MergeCapPrm,
+								sizeof(pObj->MergeCapPrm));
+	UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
 	status = System_linkCreate(	pObj->Display_videoLinkID,
 								&pObj->Display_videoPrm,
 								sizeof(pObj->Display_videoPrm));
@@ -319,6 +350,9 @@ Int32 chains_surround_View_Start(chains_surround_ViewObj *pObj)
 	UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
 	status = System_linkStart(pObj->Display_videoLinkID);
+	UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
+	status = System_linkStart(pObj->MergeCapLinkID);
 	UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
 	status = System_linkStart(pObj->SyncLinkSurroundViewID);
@@ -364,6 +398,9 @@ Int32 chains_surround_View_Start(chains_surround_ViewObj *pObj)
 	status = System_linkStart(pObj->SyncLinkID);
 	UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
+	status = System_linkStart(pObj->DupLinkCapID);
+	UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
    status = System_linkStart(pObj->Alg_DmaSwMsLinkID);
    UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
@@ -384,6 +421,9 @@ Int32 chains_surround_View_Stop(chains_surround_ViewObj *pObj){
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
        status = System_linkStop(pObj->Display_videoLinkID);
+       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
+       status = System_linkStop(pObj->MergeCapLinkID);
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
        status = System_linkStop(pObj->Alg_DmaSwMsLinkID);
@@ -432,6 +472,9 @@ Int32 chains_surround_View_Stop(chains_surround_ViewObj *pObj){
        status = System_linkStop(pObj->SyncLinkID);
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
+       status = System_linkStop(pObj->DupLinkCapID);
+       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
        status = System_linkStop(pObj->CaptureLinkID);
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
@@ -446,6 +489,9 @@ Int32 chains_surround_View_Delete(chains_surround_ViewObj *pObj){
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
        status = System_linkDelete(pObj->GrpxSrcLinkID);
+       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
+       status = System_linkDelete(pObj->MergeCapLinkID);
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
        status = System_linkDelete(pObj->Display_videoLinkID);
@@ -494,6 +540,9 @@ Int32 chains_surround_View_Delete(chains_surround_ViewObj *pObj){
        status = System_linkDelete(pObj->SyncLinkID);
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
+       status = System_linkDelete(pObj->DupLinkCapID);
+       UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+
        status = System_linkDelete(pObj->CaptureLinkID);
        UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
 
@@ -502,6 +551,7 @@ Int32 chains_surround_View_Delete(chains_surround_ViewObj *pObj){
 
 Void chains_surround_View_printBufferStatistics(chains_surround_ViewObj *pObj){
        System_linkPrintBufferStatistics(pObj->CaptureLinkID);
+       System_linkPrintBufferStatistics(pObj->DupLinkCapID);
        System_linkPrintBufferStatistics(pObj->SyncLinkID);
        System_linkPrintBufferStatistics(pObj->DupLinkID);
        System_linkPrintBufferStatistics(pObj->IPCOut_IPU1_0_DSP_0_0LinkID);
@@ -523,6 +573,7 @@ Void chains_surround_View_printBufferStatistics(chains_surround_ViewObj *pObj){
        System_linkPrintBufferStatistics(pObj->MergeLinkID);
        System_linkPrintBufferStatistics(pObj->SyncLinkSurroundViewID);
        System_linkPrintBufferStatistics(pObj->Alg_DmaSwMsLinkID);
+       System_linkPrintBufferStatistics(pObj->MergeCapLinkID);
        System_linkPrintBufferStatistics(pObj->Display_videoLinkID);
        System_linkPrintBufferStatistics(pObj->GrpxSrcLinkID);
        System_linkPrintBufferStatistics(pObj->Display_GrpxLinkID);
@@ -531,6 +582,7 @@ Void chains_surround_View_printBufferStatistics(chains_surround_ViewObj *pObj){
 
 Void chains_surround_View_printStatistics(chains_surround_ViewObj *pObj){
        System_linkPrintStatistics(pObj->CaptureLinkID);
+       System_linkPrintStatistics(pObj->DupLinkCapID);
        System_linkPrintStatistics(pObj->SyncLinkID);
        System_linkPrintStatistics(pObj->DupLinkID);
        System_linkPrintStatistics(pObj->IPCOut_IPU1_0_DSP_0_0LinkID);
@@ -552,6 +604,7 @@ Void chains_surround_View_printStatistics(chains_surround_ViewObj *pObj){
        System_linkPrintStatistics(pObj->MergeLinkID);
        System_linkPrintStatistics(pObj->SyncLinkSurroundViewID);
        System_linkPrintStatistics(pObj->Alg_DmaSwMsLinkID);
+       System_linkPrintStatistics(pObj->MergeCapLinkID);
        System_linkPrintStatistics(pObj->Display_videoLinkID);
        System_linkPrintStatistics(pObj->GrpxSrcLinkID);
        System_linkPrintStatistics(pObj->Display_GrpxLinkID);
