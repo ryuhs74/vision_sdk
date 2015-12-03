@@ -41,10 +41,10 @@
 
 #define CAR_START_X		200
 #define CAR_START_Y		200
-#define TOP_VIEW_TEXT_START_X	554
+#define TOP_VIEW_TEXT_START_X	552
 #define TOP_VIEW_TEXT_START_Y	524
 #define FULL_VIEW_TEXT_START_X	16
-#define FULL_VIEW_TEXT_START_Y	574
+#define FULL_VIEW_TEXT_START_Y	584
 #define FRONT_ICON_START_X		554
 #define REAR_ICON_START_X		675
 #define LEFT_ICON_START_X		796
@@ -147,6 +147,7 @@ Int32 GrpxSrcLink_drawAVM_E500Button(GrpxSrcLink_Obj *pObj) //GrpxSrcLink_Create
 
 Int32 Draw2D_FillBacgroundColor( GrpxSrcLink_Obj *pObj )
 {
+#if 0
 	Draw2D_RegionPrm region;
 
 	region.color  = AVME500_BACKGROUND_COLOR;
@@ -156,7 +157,55 @@ Int32 Draw2D_FillBacgroundColor( GrpxSrcLink_Obj *pObj )
 	region.width  = 1280;
 
 	Draw2D_fillRegion(pObj->draw2DHndl,&region);
+#else
+	Draw2D_RegionPrm regionT;
+	Draw2D_RegionPrm regionL;
+	Draw2D_RegionPrm regionR;
+	Draw2D_RegionPrm regionB;
+	Draw2D_RegionPrm regionM;
 
+	regionT.color  = AVME500_BACKGROUND_COLOR;
+	regionT.startX = 0;
+	regionT.startY = 0;
+	regionT.height = 16;
+	regionT.width  = 1280;
+
+	Draw2D_fillRegion(pObj->draw2DHndl,&regionT);
+
+	regionL.color  = AVME500_BACKGROUND_COLOR;
+	regionL.startX = 0;
+	regionL.startY = 0;
+	regionL.height = 720;
+	regionL.width  = 16;
+
+	Draw2D_fillRegion(pObj->draw2DHndl,&regionL);
+
+	regionR.color  = AVME500_BACKGROUND_COLOR;
+	regionR.startX = 1280-16;
+	regionR.startY = 0;
+	regionR.height = 720;
+	regionR.width  = 16;
+
+	Draw2D_fillRegion(pObj->draw2DHndl,&regionR);
+
+	regionB.color  = AVME500_BACKGROUND_COLOR;
+	regionB.startX = 0;
+	regionB.startY = 720-16;
+	regionB.height = 16;
+	regionB.width  = 1280;
+
+	Draw2D_fillRegion(pObj->draw2DHndl,&regionB);
+
+	regionM.color  = AVME500_BACKGROUND_COLOR;
+	regionM.startX = 552-17;
+	regionM.startY = 0;
+	regionM.height = 574;
+	regionM.width  = 16;
+
+	Draw2D_fillRegion(pObj->draw2DHndl,&regionM);
+
+
+#endif
 	return SYSTEM_LINK_STATUS_SOK;
 }
 
@@ -165,9 +214,8 @@ Int32 Draw2D_AVME500_TopView( GrpxSrcLink_Obj *pObj )
 	Draw2D_BmpPrm bmpPrm;
 	Draw2D_RegionPrm region;
 	Draw2D_RegionPrm regionTopView;
-	Draw2D_RegionPrm regionSideView;
 
-
+	//Top View, Side View Separation Bar
 	region.color  = AVME500_BACKGROUND_COLOR;
 	region.startX = 552-17;
 	region.startY = 0;
@@ -176,22 +224,14 @@ Int32 Draw2D_AVME500_TopView( GrpxSrcLink_Obj *pObj )
 
 	Draw2D_fillRegion(pObj->draw2DHndl,&region);
 
-
+	//Top View bottom of the transparent coloring
 	regionTopView.color  = DRAW2D_TRANSPARENT_COLOR;
 	regionTopView.colorFormat = DRAW2D_TRANSPARENT_COLOR_FORMAT;
 	regionTopView.startX = 16;
-	regionTopView.startY = 16;
-	regionTopView.width  = 520-2;
-	regionTopView.height = 688;
+	regionTopView.startY = 524;
+	regionTopView.width  = 520-10;
+	regionTopView.height = 720-524;
 	Draw2D_fillRegion(pObj->draw2DHndl,&regionTopView);
-
-	regionSideView.color  = DRAW2D_TRANSPARENT_COLOR;
-	regionSideView.colorFormat = DRAW2D_TRANSPARENT_COLOR_FORMAT;
-	regionSideView.startX = 552;
-	regionSideView.startY = 16;
-	regionSideView.width  = 712-2;
-	regionSideView.height = 508;
-	Draw2D_fillRegion(pObj->draw2DHndl,&regionSideView);
 
 	if (pObj->createArgs.enableJeepOverlay == TRUE)
 	{
@@ -217,6 +257,7 @@ Int32 Draw2D_AVME500_FullView( GrpxSrcLink_Obj *pObj )
 	Draw2D_RegionPrm regionMidleBar;
 	Draw2D_RegionPrm regionBootmBar;
 
+	//Top View, Side View Separation Bar of the transparent coloring
 	regionMidleBar.color  = DRAW2D_TRANSPARENT_COLOR;
 	regionMidleBar.colorFormat = DRAW2D_TRANSPARENT_COLOR_FORMAT;
 	regionMidleBar.startX = 552-16;
@@ -225,12 +266,13 @@ Int32 Draw2D_AVME500_FullView( GrpxSrcLink_Obj *pObj )
 	regionMidleBar.height = 574;
 	Draw2D_fillRegion(pObj->draw2DHndl,&regionMidleBar);
 
+	//Side View bottom of the transparent coloring
 	regionBootmBar.color  = DRAW2D_TRANSPARENT_COLOR;
 	regionBootmBar.colorFormat = DRAW2D_TRANSPARENT_COLOR_FORMAT;
-	regionBootmBar.startX = 554-2;
+	regionBootmBar.startX = 552;
 	regionBootmBar.startY = 524;
 	regionBootmBar.width  = 712;
-	regionBootmBar.height = 50;
+	regionBootmBar.height = 60;
 	Draw2D_fillRegion(pObj->draw2DHndl,&regionBootmBar);
 
 	bmpPrm.bmpIdx = DRAW2D_BMP_IDX_FULL_VIEW_TXT;
