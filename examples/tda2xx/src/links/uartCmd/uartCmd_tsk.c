@@ -268,8 +268,9 @@ static int UART_ParseCmd(uint8_t *rxBuf)
 		case IRDA_KEY_LEFT : //LFET - IRDA_KEY_LEFT = (0x0B)
 		case IRDA_KEY_RIGHT : //RIGHT - IRDA_KEY_RIGHT = (0x0A)
 		case IRDA_KEY_FULL : //Full - IRDA_KEY_FULL = (0x05),
-			GrpxLink_putCmd( GET_ARG1(rxBuf) );
+
 			AlgLink_putCmd( GET_ARG1(rxBuf) );
+			GrpxLink_putCmd( GET_ARG1(rxBuf) );
 			break;
 		} //ryuhs74@20151020 - Add HDMI On/Off Test End
 		break;

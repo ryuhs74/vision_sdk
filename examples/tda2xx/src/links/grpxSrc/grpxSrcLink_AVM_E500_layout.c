@@ -44,7 +44,7 @@
 #define TOP_VIEW_TEXT_START_X	552
 #define TOP_VIEW_TEXT_START_Y	524
 #define FULL_VIEW_TEXT_START_X	16
-#define FULL_VIEW_TEXT_START_Y	584
+#define FULL_VIEW_TEXT_START_Y	574//558//584
 #define FRONT_ICON_START_X		554
 #define REAR_ICON_START_X		675
 #define LEFT_ICON_START_X		796
@@ -93,12 +93,25 @@ Int32 GrpxSrcLink_drawAVM_E500Button(GrpxSrcLink_Obj *pObj) //GrpxSrcLink_Create
 {
 	Draw2D_BmpPrm bmpPrm;
 
+	if( pObj->createArgs.sViewmode.prvVient == FRONT_VIEW ){ //Prv Front Sel Image, Draw Nor Image
+		bmpPrm.bmpIdx = DRAW2D_BMP_IDX_FRONT_VIEW_NOR;
+		Draw2D_drawBmp(pObj->draw2DHndl, FRONT_ICON_START_X, ICON_START_Y, &bmpPrm);
+	} else if( pObj->createArgs.sViewmode.prvVient == REAR_VIEW ){ //Prv Rear Sel Image, Draw Nor Image
+		bmpPrm.bmpIdx = DRAW2D_BMP_IDX_REAR_VIEW_NOR;
+		Draw2D_drawBmp(pObj->draw2DHndl, REAR_ICON_START_X, ICON_START_Y, &bmpPrm);
+	} else if( pObj->createArgs.sViewmode.prvVient == RIGHT_VIEW ){ //Prv Right Sel Image, Draw Nor Image
+		bmpPrm.bmpIdx = DRAW2D_BMP_IDX_RIGHT_VIEW_NOR;
+		Draw2D_drawBmp(pObj->draw2DHndl, RIGHT_ICON_START_X, ICON_START_Y, &bmpPrm);
+	} if( pObj->createArgs.sViewmode.prvVient == LEFT_VIEW ){ //Prv Left Sel Image, Draw Nor Image
+		bmpPrm.bmpIdx = DRAW2D_BMP_IDX_LEFT_VIEW_NOR;
+		Draw2D_drawBmp(pObj->draw2DHndl, LEFT_ICON_START_X, ICON_START_Y, &bmpPrm);
+	}
 
 	/* TOP VIEW */
 	if( pObj->createArgs.sViewmode.viewmode == TOP_VIEW){ //ryuhs74@20151103 - AVM Top View
 		bmpPrm.bmpIdx = DRAW2D_BMP_IDX_FULL_VIEW_NONE;
 		Draw2D_drawBmp(pObj->draw2DHndl, FULLVIEW_ICON_START_X, ICON_START_Y, &bmpPrm);
-
+/*
 		if( pObj->createArgs.sViewmode.prvVient == FRONT_VIEW ){ //Prv Front Sel Image, Draw Nor Image
 			bmpPrm.bmpIdx = DRAW2D_BMP_IDX_FRONT_VIEW_NOR;
 			Draw2D_drawBmp(pObj->draw2DHndl, FRONT_ICON_START_X, ICON_START_Y, &bmpPrm);
@@ -112,7 +125,7 @@ Int32 GrpxSrcLink_drawAVM_E500Button(GrpxSrcLink_Obj *pObj) //GrpxSrcLink_Create
 			bmpPrm.bmpIdx = DRAW2D_BMP_IDX_LEFT_VIEW_NOR;
 			Draw2D_drawBmp(pObj->draw2DHndl, LEFT_ICON_START_X, ICON_START_Y, &bmpPrm);
 		}
-
+*/
 		if( pObj->createArgs.sViewmode.viewnt == FRONT_VIEW ){ //Draw Front Sel
 			bmpPrm.bmpIdx = DRAW2D_BMP_IDX_FRONT_VIEW_SEL;
 			Draw2D_drawBmp(pObj->draw2DHndl, FRONT_ICON_START_X, ICON_START_Y, &bmpPrm);
@@ -163,6 +176,7 @@ Int32 Draw2D_FillBacgroundColor( GrpxSrcLink_Obj *pObj )
 	Draw2D_RegionPrm regionR;
 	Draw2D_RegionPrm regionB;
 	Draw2D_RegionPrm regionM;
+	Draw2D_RegionPrm regionSideB;
 
 	regionT.color  = AVME500_BACKGROUND_COLOR;
 	regionT.startX = 0;
@@ -197,12 +211,20 @@ Int32 Draw2D_FillBacgroundColor( GrpxSrcLink_Obj *pObj )
 	Draw2D_fillRegion(pObj->draw2DHndl,&regionB);
 
 	regionM.color  = AVME500_BACKGROUND_COLOR;
-	regionM.startX = 552-17;
-	regionM.startY = 0;
-	regionM.height = 574;
+	regionM.startX = 520+16;
+	regionM.startY = 16;
+	regionM.height = 688;
 	regionM.width  = 16;
 
 	Draw2D_fillRegion(pObj->draw2DHndl,&regionM);
+
+	regionSideB.color  = AVME500_BACKGROUND_COLOR;
+	regionSideB.startX = 552;
+	regionSideB.startY = FULL_VIEW_TEXT_START_Y;
+	regionSideB.height = 720-(FULL_VIEW_TEXT_START_Y + 16);
+	regionSideB.width  = 712;
+
+	Draw2D_fillRegion(pObj->draw2DHndl,&regionSideB);
 
 
 #endif
@@ -217,9 +239,9 @@ Int32 Draw2D_AVME500_TopView( GrpxSrcLink_Obj *pObj )
 
 	//Top View, Side View Separation Bar
 	region.color  = AVME500_BACKGROUND_COLOR;
-	region.startX = 552-17;
-	region.startY = 0;
-	region.height = 574;
+	region.startX = 520+16;
+	region.startY = 16;
+	region.height = 688;
 	region.width  = 16;
 
 	Draw2D_fillRegion(pObj->draw2DHndl,&region);
@@ -229,8 +251,8 @@ Int32 Draw2D_AVME500_TopView( GrpxSrcLink_Obj *pObj )
 	regionTopView.colorFormat = DRAW2D_TRANSPARENT_COLOR_FORMAT;
 	regionTopView.startX = 16;
 	regionTopView.startY = 524;
-	regionTopView.width  = 520-10;
-	regionTopView.height = 720-524;
+	regionTopView.width  = 520;
+	regionTopView.height = 720-( 524 +16 );
 	Draw2D_fillRegion(pObj->draw2DHndl,&regionTopView);
 
 	if (pObj->createArgs.enableJeepOverlay == TRUE)
@@ -261,9 +283,9 @@ Int32 Draw2D_AVME500_FullView( GrpxSrcLink_Obj *pObj )
 	regionMidleBar.color  = DRAW2D_TRANSPARENT_COLOR;
 	regionMidleBar.colorFormat = DRAW2D_TRANSPARENT_COLOR_FORMAT;
 	regionMidleBar.startX = 552-16;
-	regionMidleBar.startY = 0;
+	regionMidleBar.startY = 16;
 	regionMidleBar.width  = 16;
-	regionMidleBar.height = 574;
+	regionMidleBar.height = 558;
 	Draw2D_fillRegion(pObj->draw2DHndl,&regionMidleBar);
 
 	//Side View bottom of the transparent coloring
@@ -272,7 +294,7 @@ Int32 Draw2D_AVME500_FullView( GrpxSrcLink_Obj *pObj )
 	regionBootmBar.startX = 552;
 	regionBootmBar.startY = 524;
 	regionBootmBar.width  = 712;
-	regionBootmBar.height = 60;
+	regionBootmBar.height = 50;
 	Draw2D_fillRegion(pObj->draw2DHndl,&regionBootmBar);
 
 	bmpPrm.bmpIdx = DRAW2D_BMP_IDX_FULL_VIEW_TXT;
