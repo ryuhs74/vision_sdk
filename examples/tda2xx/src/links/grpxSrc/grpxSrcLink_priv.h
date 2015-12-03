@@ -255,21 +255,21 @@ typedef struct {
  *******************************************************************************
  */
 
-Int32 GrpxSrcLink_drawSurroundViewEdgeDetectLayout(GrpxSrcLink_Obj *pObj);
+//Int32 GrpxSrcLink_drawSurroundViewEdgeDetectLayout(GrpxSrcLink_Obj *pObj);
 
-Int32 GrpxSrcLink_displaySurroundViewEdgeDetectStats(GrpxSrcLink_Obj *pObj);
+//Int32 GrpxSrcLink_displaySurroundViewEdgeDetectStats(GrpxSrcLink_Obj *pObj);
 
-Int32 GrpxSrcLink_drawOpticalFlowLayout(GrpxSrcLink_Obj *pObj);
+//Int32 GrpxSrcLink_drawOpticalFlowLayout(GrpxSrcLink_Obj *pObj);
 
-Int32 GrpxSrcLink_displayOpticalFlowDetectStats(GrpxSrcLink_Obj *pObj);
+//Int32 GrpxSrcLink_displayOpticalFlowDetectStats(GrpxSrcLink_Obj *pObj);
 
-Int32 GrpxSrcLink_drawStereoDisparityLayout(GrpxSrcLink_Obj *pObj);
+//Int32 GrpxSrcLink_drawStereoDisparityLayout(GrpxSrcLink_Obj *pObj);
 
-Int32 GrpxSrcLink_displayStereoDisparityStats(GrpxSrcLink_Obj *pObj);
+//Int32 GrpxSrcLink_displayStereoDisparityStats(GrpxSrcLink_Obj *pObj);
 
-Int32 GrpxSrcLink_drawStereoDisparityMultiFCAlgLayout(GrpxSrcLink_Obj *pObj);
+//Int32 GrpxSrcLink_drawStereoDisparityMultiFCAlgLayout(GrpxSrcLink_Obj *pObj);
 
-Int32 GrpxSrcLink_displayStereoDisparityMultiFCAlgStats(GrpxSrcLink_Obj *pObj);
+//Int32 GrpxSrcLink_displayStereoDisparityMultiFCAlgStats(GrpxSrcLink_Obj *pObj);
 
 Int32 GrpxSrcLink_drawCpuLoad(GrpxSrcLink_Obj *pObj,
                     UInt32 x, UInt32 y,
@@ -280,33 +280,32 @@ Int32 GrpxSrcLink_drawCpuLoad(GrpxSrcLink_Obj *pObj,
                     UInt32 fontIdx
                     );
 
-Int32 GrpxSrcLink_drawPdTsrLdLayout(GrpxSrcLink_Obj *pObj);
+//Int32 GrpxSrcLink_drawPdTsrLdLayout(GrpxSrcLink_Obj *pObj);
 
-Int32 GrpxSrcLink_displayPdTsrLdStats(GrpxSrcLink_Obj *pObj);
+//Int32 GrpxSrcLink_displayPdTsrLdStats(GrpxSrcLink_Obj *pObj);
 
-Int32 GrpxSrcLink_drawPdTsrLdSofLayout(GrpxSrcLink_Obj *pObj);
+//Int32 GrpxSrcLink_drawPdTsrLdSofLayout(GrpxSrcLink_Obj *pObj);
 
-Int32 GrpxSrcLink_displayPdTsrLdSofStats(GrpxSrcLink_Obj *pObj);
+//Int32 GrpxSrcLink_displayPdTsrLdSofStats(GrpxSrcLink_Obj *pObj);
 
-Int32 GrpxSrcLink_drawPdTsrLdSofStereoLayout(GrpxSrcLink_Obj *pObj);
+//Int32 GrpxSrcLink_drawPdTsrLdSofStereoLayout(GrpxSrcLink_Obj *pObj);
 
-Int32 GrpxSrcLink_displayPdTsrLdSofStereoStats(GrpxSrcLink_Obj *pObj);
+//Int32 GrpxSrcLink_displayPdTsrLdSofStereoStats(GrpxSrcLink_Obj *pObj);
 
-Int32 GrpxSrcLink_drawSurroundViewSOFLayout(GrpxSrcLink_Obj *pObj,
-                                            System_LinkChInfo *pChInfo);
+//Int32 GrpxSrcLink_drawSurroundViewSOFLayout(GrpxSrcLink_Obj *pObj, System_LinkChInfo *pChInfo);
 
-Int32 GrpxSrcLink_display3DSurroundViewStats(GrpxSrcLink_Obj *pObj);
+//Int32 GrpxSrcLink_display3DSurroundViewStats(GrpxSrcLink_Obj *pObj);
 
-Int32 GrpxSrcLink_displaySurroundViewSOFStats(GrpxSrcLink_Obj *pObj);
+//Int32 GrpxSrcLink_displaySurroundViewSOFStats(GrpxSrcLink_Obj *pObj);
 
-Int32 GrpxSrcLink_drawSurroundViewStandaloneLayout(GrpxSrcLink_Obj *pObj);
+//Int32 GrpxSrcLink_drawSurroundViewStandaloneLayout(GrpxSrcLink_Obj *pObj);
 
-Int32 GrpxSrcLink_displaySurroundViewStandaloneStats(GrpxSrcLink_Obj *pObj);
+//Int32 GrpxSrcLink_displaySurroundViewStandaloneStats(GrpxSrcLink_Obj *pObj);
 
 
-Int32 GrpxSrcLink_drawUltrasonicResultsCreate(GrpxSrcLink_Obj *pObj);
-Int32 GrpxSrcLink_drawUltrasonicResultsRun(GrpxSrcLink_Obj *pObj);
-Int32 GrpxSrcLink_drawUltrasonicResultsDelete(GrpxSrcLink_Obj *pObj);
+//Int32 GrpxSrcLink_drawUltrasonicResultsCreate(GrpxSrcLink_Obj *pObj);
+//Int32 GrpxSrcLink_drawUltrasonicResultsRun(GrpxSrcLink_Obj *pObj);
+//Int32 GrpxSrcLink_drawUltrasonicResultsDelete(GrpxSrcLink_Obj *pObj);
 
 Int32 GrpxSrcLink_drawAVM_E500Layout(GrpxSrcLink_Obj *pObj); 	//ryuhs74@20151103 - Add AVM-E500 Layout
 Int32 GrpxSrcLink_drawAVM_E500Button(GrpxSrcLink_Obj *pObj); 	//ryuhs74@20151103 - Add AVM-E500 Layout

@@ -41,10 +41,10 @@
 
 #define CAR_START_X		200
 #define CAR_START_Y		200
-#define TOP_VIEW_TEXT_START_X	562
+#define TOP_VIEW_TEXT_START_X	552
 #define TOP_VIEW_TEXT_START_Y	524
 #define FULL_VIEW_TEXT_START_X	16
-#define FULL_VIEW_TEXT_START_Y	568
+#define FULL_VIEW_TEXT_START_Y	574//558//584
 #define FRONT_ICON_START_X		554
 #define REAR_ICON_START_X		675
 #define LEFT_ICON_START_X		796
@@ -63,7 +63,6 @@
 #define FULL_VIEW_H				558
 
 UInt32 gGrpxSrcLinkID;
-UInt32 gFullFront = 0;
 
 Int32 GrpxSrcLink_drawAVM_E500NorButton( GrpxSrcLink_Obj *pObj )
 {
@@ -94,12 +93,25 @@ Int32 GrpxSrcLink_drawAVM_E500Button(GrpxSrcLink_Obj *pObj) //GrpxSrcLink_Create
 {
 	Draw2D_BmpPrm bmpPrm;
 
+	if( pObj->createArgs.sViewmode.prvVient == FRONT_VIEW ){ //Prv Front Sel Image, Draw Nor Image
+		bmpPrm.bmpIdx = DRAW2D_BMP_IDX_FRONT_VIEW_NOR;
+		Draw2D_drawBmp(pObj->draw2DHndl, FRONT_ICON_START_X, ICON_START_Y, &bmpPrm);
+	} else if( pObj->createArgs.sViewmode.prvVient == REAR_VIEW ){ //Prv Rear Sel Image, Draw Nor Image
+		bmpPrm.bmpIdx = DRAW2D_BMP_IDX_REAR_VIEW_NOR;
+		Draw2D_drawBmp(pObj->draw2DHndl, REAR_ICON_START_X, ICON_START_Y, &bmpPrm);
+	} else if( pObj->createArgs.sViewmode.prvVient == RIGHT_VIEW ){ //Prv Right Sel Image, Draw Nor Image
+		bmpPrm.bmpIdx = DRAW2D_BMP_IDX_RIGHT_VIEW_NOR;
+		Draw2D_drawBmp(pObj->draw2DHndl, RIGHT_ICON_START_X, ICON_START_Y, &bmpPrm);
+	} if( pObj->createArgs.sViewmode.prvVient == LEFT_VIEW ){ //Prv Left Sel Image, Draw Nor Image
+		bmpPrm.bmpIdx = DRAW2D_BMP_IDX_LEFT_VIEW_NOR;
+		Draw2D_drawBmp(pObj->draw2DHndl, LEFT_ICON_START_X, ICON_START_Y, &bmpPrm);
+	}
 
 	/* TOP VIEW */
 	if( pObj->createArgs.sViewmode.viewmode == TOP_VIEW){ //ryuhs74@20151103 - AVM Top View
 		bmpPrm.bmpIdx = DRAW2D_BMP_IDX_FULL_VIEW_NONE;
 		Draw2D_drawBmp(pObj->draw2DHndl, FULLVIEW_ICON_START_X, ICON_START_Y, &bmpPrm);
-
+/*
 		if( pObj->createArgs.sViewmode.prvVient == FRONT_VIEW ){ //Prv Front Sel Image, Draw Nor Image
 			bmpPrm.bmpIdx = DRAW2D_BMP_IDX_FRONT_VIEW_NOR;
 			Draw2D_drawBmp(pObj->draw2DHndl, FRONT_ICON_START_X, ICON_START_Y, &bmpPrm);
@@ -113,7 +125,7 @@ Int32 GrpxSrcLink_drawAVM_E500Button(GrpxSrcLink_Obj *pObj) //GrpxSrcLink_Create
 			bmpPrm.bmpIdx = DRAW2D_BMP_IDX_LEFT_VIEW_NOR;
 			Draw2D_drawBmp(pObj->draw2DHndl, LEFT_ICON_START_X, ICON_START_Y, &bmpPrm);
 		}
-
+*/
 		if( pObj->createArgs.sViewmode.viewnt == FRONT_VIEW ){ //Draw Front Sel
 			bmpPrm.bmpIdx = DRAW2D_BMP_IDX_FRONT_VIEW_SEL;
 			Draw2D_drawBmp(pObj->draw2DHndl, FRONT_ICON_START_X, ICON_START_Y, &bmpPrm);
@@ -148,82 +160,100 @@ Int32 GrpxSrcLink_drawAVM_E500Button(GrpxSrcLink_Obj *pObj) //GrpxSrcLink_Create
 
 Int32 Draw2D_FillBacgroundColor( GrpxSrcLink_Obj *pObj )
 {
+#if 0
 	Draw2D_RegionPrm region;
 
 	region.color  = AVME500_BACKGROUND_COLOR;
 	region.startX = 0;
 	region.startY = 0;
-	region.height = pObj->info.queInfo[0].chInfo[0].height;
-	region.width  = pObj->info.queInfo[0].chInfo[0].width;
+	region.height = 720;
+	region.width  = 1280;
 
 	Draw2D_fillRegion(pObj->draw2DHndl,&region);
+#else
+	Draw2D_RegionPrm regionT;
+	Draw2D_RegionPrm regionL;
+	Draw2D_RegionPrm regionR;
+	Draw2D_RegionPrm regionB;
+	Draw2D_RegionPrm regionM;
+	Draw2D_RegionPrm regionSideB;
 
+	regionT.color  = AVME500_BACKGROUND_COLOR;
+	regionT.startX = 0;
+	regionT.startY = 0;
+	regionT.height = 16;
+	regionT.width  = 1280;
+
+	Draw2D_fillRegion(pObj->draw2DHndl,&regionT);
+
+	regionL.color  = AVME500_BACKGROUND_COLOR;
+	regionL.startX = 0;
+	regionL.startY = 0;
+	regionL.height = 720;
+	regionL.width  = 16;
+
+	Draw2D_fillRegion(pObj->draw2DHndl,&regionL);
+
+	regionR.color  = AVME500_BACKGROUND_COLOR;
+	regionR.startX = 1280-16;
+	regionR.startY = 0;
+	regionR.height = 720;
+	regionR.width  = 16;
+
+	Draw2D_fillRegion(pObj->draw2DHndl,&regionR);
+
+	regionB.color  = AVME500_BACKGROUND_COLOR;
+	regionB.startX = 0;
+	regionB.startY = 720-16;
+	regionB.height = 16;
+	regionB.width  = 1280;
+
+	Draw2D_fillRegion(pObj->draw2DHndl,&regionB);
+
+	regionM.color  = AVME500_BACKGROUND_COLOR;
+	regionM.startX = 520+16;
+	regionM.startY = 16;
+	regionM.height = 688;
+	regionM.width  = 16;
+
+	Draw2D_fillRegion(pObj->draw2DHndl,&regionM);
+
+	regionSideB.color  = AVME500_BACKGROUND_COLOR;
+	regionSideB.startX = 552;
+	regionSideB.startY = FULL_VIEW_TEXT_START_Y;
+	regionSideB.height = 720-(FULL_VIEW_TEXT_START_Y + 16);
+	regionSideB.width  = 712;
+
+	Draw2D_fillRegion(pObj->draw2DHndl,&regionSideB);
+
+
+#endif
 	return SYSTEM_LINK_STATUS_SOK;
 }
 
 Int32 Draw2D_AVME500_TopView( GrpxSrcLink_Obj *pObj )
 {
-	Draw2D_RegionPrm regionTop;
-	Draw2D_RegionPrm regionLeft;
-	Draw2D_RegionPrm regionRight;
-	Draw2D_RegionPrm regionMidle;
-	Draw2D_RegionPrm regionBootm;
-	Draw2D_RegionPrm regionBootm2;
-	Draw2D_FontPrm fontPrm;
-	//Draw2D_BmpPrm bmpPrm; //For Car Imag Draw
+	Draw2D_BmpPrm bmpPrm;
+	Draw2D_RegionPrm region;
+	Draw2D_RegionPrm regionTopView;
 
-	// TOP( Surround ) View video Region
-	regionTop.color  = AVME500_BACKGROUND_COLOR;
-	regionTop.startX = 0;
-	regionTop.startY = 0;
-	regionTop.height = 16;
-	regionTop.width  = 1280;
+	//Top View, Side View Separation Bar
+	region.color  = AVME500_BACKGROUND_COLOR;
+	region.startX = 520+16;
+	region.startY = 16;
+	region.height = 688;
+	region.width  = 16;
 
-	Draw2D_fillRegion(pObj->draw2DHndl,&regionTop);
+	Draw2D_fillRegion(pObj->draw2DHndl,&region);
 
-	regionBootm.color  = AVME500_BACKGROUND_COLOR;
-	regionBootm.startX = 554-19;
-	regionBootm.startY = TOP_VIEW_TEXT_START_Y;
-	regionBootm.height = 196;
-	regionBootm.width  = 1280-524;
-
-	Draw2D_fillRegion(pObj->draw2DHndl,&regionBootm);
-
-	regionBootm2.color  = AVME500_BACKGROUND_COLOR;
-	regionBootm2.startX = 0;
-	regionBootm2.startY = 720-16;
-	regionBootm2.height = 16;
-	regionBootm2.width  = 1280;
-
-	Draw2D_fillRegion(pObj->draw2DHndl,&regionBootm2);
-
-
-	regionLeft.color  = AVME500_BACKGROUND_COLOR;
-	regionLeft.startX = 0;
-	regionLeft.startY = 0;
-	regionLeft.height = 720;
-	regionLeft.width  = 16;
-
-
-	Draw2D_fillRegion(pObj->draw2DHndl,&regionLeft);
-
-	regionMidle.color  = AVME500_BACKGROUND_COLOR;
-	regionMidle.startX = 552-18;
-	regionMidle.startY = 0;
-	regionMidle.height = 720;
-	regionMidle.width  = 18;
-
-	Draw2D_fillRegion(pObj->draw2DHndl,&regionMidle);
-
-	regionRight.color  = AVME500_BACKGROUND_COLOR;
-	regionRight.startX = 1261;
-	regionRight.startY = 0;
-	regionRight.height = 720;
-	regionRight.width  = 20;
-
-	Draw2D_fillRegion(pObj->draw2DHndl,&regionRight);
-
-
+	//Top View bottom of the transparent coloring
+	regionTopView.color  = DRAW2D_TRANSPARENT_COLOR;
+	regionTopView.colorFormat = DRAW2D_TRANSPARENT_COLOR_FORMAT;
+	regionTopView.startX = 16;
+	regionTopView.startY = 524;
+	regionTopView.width  = 520;
+	regionTopView.height = 720-( 524 +16 );
+	Draw2D_fillRegion(pObj->draw2DHndl,&regionTopView);
 
 	if (pObj->createArgs.enableJeepOverlay == TRUE)
 	{
@@ -237,56 +267,38 @@ Int32 Draw2D_AVME500_TopView( GrpxSrcLink_Obj *pObj )
 		//			);
 	}
 
-	fontPrm.fontIdx = 5;
-	Draw2D_drawString(pObj->draw2DHndl, TOP_VIEW_TEXT_START_X, TOP_VIEW_TEXT_START_Y,  "Warning! Please check around the vehicle directly", &fontPrm );
+	bmpPrm.bmpIdx = DRAW2D_BMP_IDX_TOP_VIEW_TXT;
+	Draw2D_drawBmp(pObj->draw2DHndl, TOP_VIEW_TEXT_START_X, TOP_VIEW_TEXT_START_Y, &bmpPrm);
 
 	return SYSTEM_LINK_STATUS_SOK;
 }
 
 Int32 Draw2D_AVME500_FullView( GrpxSrcLink_Obj *pObj )
 {
-	Draw2D_FontPrm fontPrm;
-	Draw2D_RegionPrm regionTop;
-	Draw2D_RegionPrm regionLeft;
-	Draw2D_RegionPrm regionRight;
-	Draw2D_RegionPrm regionBootm;
+	Draw2D_BmpPrm bmpPrm;
+	Draw2D_RegionPrm regionMidleBar;
+	Draw2D_RegionPrm regionBootmBar;
 
-	regionTop.color  = AVME500_BACKGROUND_COLOR;
-	regionTop.startX = 0;
-	regionTop.startY = 0;
-	regionTop.height = 16;
-	regionTop.width  = 1280;
+	//Top View, Side View Separation Bar of the transparent coloring
+	regionMidleBar.color  = DRAW2D_TRANSPARENT_COLOR;
+	regionMidleBar.colorFormat = DRAW2D_TRANSPARENT_COLOR_FORMAT;
+	regionMidleBar.startX = 552-16;
+	regionMidleBar.startY = 16;
+	regionMidleBar.width  = 16;
+	regionMidleBar.height = 558;
+	Draw2D_fillRegion(pObj->draw2DHndl,&regionMidleBar);
 
-	Draw2D_fillRegion(pObj->draw2DHndl,&regionTop);
+	//Side View bottom of the transparent coloring
+	regionBootmBar.color  = DRAW2D_TRANSPARENT_COLOR;
+	regionBootmBar.colorFormat = DRAW2D_TRANSPARENT_COLOR_FORMAT;
+	regionBootmBar.startX = 552;
+	regionBootmBar.startY = 524;
+	regionBootmBar.width  = 712;
+	regionBootmBar.height = 50;
+	Draw2D_fillRegion(pObj->draw2DHndl,&regionBootmBar);
 
-	regionBootm.color  = AVME500_BACKGROUND_COLOR;
-	regionBootm.startX = 0;
-	regionBootm.startY = 568-16;
-	regionBootm.height = 168;
-	regionBootm.width  = 1280;
-
-	Draw2D_fillRegion(pObj->draw2DHndl,&regionBootm);
-
-	regionLeft.color  = AVME500_BACKGROUND_COLOR;
-	regionLeft.startX = 0;
-	regionLeft.startY = 0;
-	regionLeft.height = 720;
-	regionLeft.width  = 16;
-
-	Draw2D_fillRegion(pObj->draw2DHndl,&regionLeft);
-
-	regionRight.color  = AVME500_BACKGROUND_COLOR;
-	regionRight.startX = 1261;
-	regionRight.startY = 0;
-	regionRight.height = 720;
-	regionRight.width  = 20;
-
-	Draw2D_fillRegion(pObj->draw2DHndl,&regionRight);
-
-
-	fontPrm.fontIdx = 5;
-	Draw2D_drawString(pObj->draw2DHndl, FULL_VIEW_TEXT_START_X, FULL_VIEW_TEXT_START_Y,  "Warning! Please check around", &fontPrm );
-	Draw2D_drawString(pObj->draw2DHndl, FULL_VIEW_TEXT_START_X+24, FULL_VIEW_TEXT_START_Y+34,  "the vehicle directly", &fontPrm );
+	bmpPrm.bmpIdx = DRAW2D_BMP_IDX_FULL_VIEW_TXT;
+	Draw2D_drawBmp(pObj->draw2DHndl, FULL_VIEW_TEXT_START_X, FULL_VIEW_TEXT_START_Y, &bmpPrm);
 
 	return SYSTEM_LINK_STATUS_SOK;
 }
@@ -294,7 +306,7 @@ Int32 Draw2D_AVME500_FullView( GrpxSrcLink_Obj *pObj )
 Int32 GrpxSrcLink_drawAVM_E500Layout(GrpxSrcLink_Obj *pObj) // 이 함수를 TOP / FULL 그리는 함수를 다시 나눈다.
 {
     /* fill full buffer with background color */
-    //Draw2D_FillBacgroundColor( pObj );
+    Draw2D_FillBacgroundColor( pObj );
 
     /*
 	 * fill transprenecy color in portions where video should be visible
@@ -312,68 +324,6 @@ Int32 GrpxSrcLink_drawAVM_E500Layout(GrpxSrcLink_Obj *pObj) // 이 함수를 TOP / F
     return SYSTEM_LINK_STATUS_SOK;
 }
 
-#if 0
-void GrpxSrcLink_putCmd( uint8_t _cmd )
-{
-#if 1
-	Int32 status;
-
-	if( _cmd == IRDA_KEY_UP ){
-		_cmd = SYSTEM_CMD_FRONT_SIDE_VIEW;
-		Vps_printf("In GrpxSrcLink_putCmd, CMD_REQ_FRONT_VIEW, CMD : %d", _cmd);
-		status = System_linkControl(gGrpxSrcLinkID, _cmd, NULL, 0, TRUE); //gGrpxSrcLinkID 객체가 두개.
-		Vps_printf("   CMD Send %s gGrpxSrcLinkID\n", ( status == 0x0)?"Success":"Fail");
-	} else if( _cmd == IRDA_KEY_DOWN ){
-		_cmd = SYSTEM_CMD_REAR_SIDE_VIEW;
-		Vps_printf("In GrpxSrcLink_putCmd, CMD_REQ_REAR_VIEW, CMD : %d", _cmd);
-		status = System_linkControl(gGrpxSrcLinkID, _cmd, NULL, 0, TRUE); //gGrpxSrcLinkID 객체가 두개.
-		Vps_printf("   CMD Send %s gGrpxSrcLinkID\n", ( status == 0x0)?"Success":"Fail");
-	} else if( _cmd == IRDA_KEY_RIGHT ){
-		_cmd = SYSTEM_CMD_RIGH_SIDE_VIEW;
-		Vps_printf("In GrpxSrcLink_putCmd, CMD_REQ_RIGHT_VIEW, CMD : %d", _cmd);
-		status = System_linkControl(gGrpxSrcLinkID, _cmd, NULL, 0, TRUE); //gGrpxSrcLinkID 객체가 두개.
-		Vps_printf("   CMD Send %s gGrpxSrcLinkID\n", ( status == 0x0)?"Success":"Fail");
-	} else if( _cmd == IRDA_KEY_LEFT ){
-		_cmd = SYSTEM_CMD_LEFT_SIDE_VIEW;
-		Vps_printf("In GrpxSrcLink_putCmd, CMD_REQ_LEFT_VIEW, CMD : %d", _cmd);
-		status = System_linkControl(gGrpxSrcLinkID, _cmd, NULL, 0, TRUE); //gGrpxSrcLinkID 객체가 두개.
-		Vps_printf("   CMD Send %s gGrpxSrcLinkID\n", ( status == 0x0)?"Success":"Fail");
-	}else if( _cmd == IRDA_KEY_FULL ){
-		if( gFullFront == 0 )//Front Full View
-		{
-
-			_cmd = SYSTEM_CMD_FULL_FRONT_VIEW;
-			Vps_printf("In GrpxSrcLink_putCmd, IRDA_KEY_FULL, Front, CMD : %d", _cmd);
-			gFullFront = 1;
-			status = System_linkControl(gGrpxSrcLinkID, _cmd, NULL, 0, TRUE); //gGrpxSrcLinkID 객체가 두개.
-			Vps_printf("   CMD Send %s gGrpxSrcLinkID\n", ( status == 0x0)?"Success":"Fail");
-		} else {
-
-			_cmd = SYSTEM_CMD_FULL_REAR_VIEW;
-			Vps_printf("In GrpxSrcLink_putCmd, IRDA_KEY_FULL, Rear, CMD : %d", _cmd);
-			gFullFront = 0;
-			status = System_linkControl(gGrpxSrcLinkID, _cmd, NULL, 0, TRUE); //gGrpxSrcLinkID 객체가 두개.
-			Vps_printf("   CMD Send %s gGrpxSrcLinkID\n", ( status == 0x0)?"Success":"Fail");
-		}
-	} else if( _cmd == IRDA_KEY_PWR ){
-		/*
-		if( gisFileSave_TEST == 0 )
-		{
-			//_cmd = SYSTEM_CMD_FILE_SAVE;
-			//gisFileSave_TEST = 1;
-		} else if( gisFileSave_TEST == 1) {
-			//_cmd = SYSTEM_CMD_FILE_SAVE_DONE;
-			//gisFileSave_TEST = 0;
-		}
-		*/
-	}
-
-
-
-
-#endif
-}
-#endif
 #if 0
 Void GrpxSrcLink_displaySurroundViewStandaloneDrawCpuLoadBar(
                     GrpxSrcLink_Obj *pObj,

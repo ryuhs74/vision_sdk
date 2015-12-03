@@ -73,6 +73,8 @@ Int32 Draw2D_getBmpProperty_Right_view_nor(Draw2D_BmpProperty *pProp);
 Int32 Draw2D_getBmpProperty_Right_view_sel(Draw2D_BmpProperty *pProp);
 Int32 Draw2D_getBmpProperty_Setting_nor(Draw2D_BmpProperty *pProp);
 Int32 Draw2D_getBmpProperty_Setting_sel(Draw2D_BmpProperty *pProp);
+Int32 Draw2D_getBmpProperty_Full_view_Txt(Draw2D_BmpProperty *pProp);
+Int32 Draw2D_getBmpProperty_Top_view_Txt(Draw2D_BmpProperty *pProp);
 //#else
 Int32 Draw2D_getFontProperty00(Draw2D_FontProperty *pProp);
 Int32 Draw2D_getFontProperty01(Draw2D_FontProperty *pProp);
@@ -82,20 +84,20 @@ Int32 Draw2D_getFontProperty04(Draw2D_FontProperty *pProp);
 Int32 Draw2D_getFontProperty05(Draw2D_FontProperty *pProp);
 Int32 Draw2D_getFontProperty06(Draw2D_FontProperty *pProp);
 Int32 Draw2D_getFontProperty07(Draw2D_FontProperty *pProp);
-Int32 Draw2D_getBmpProperty00(Draw2D_BmpProperty *pProp);
-Int32 Draw2D_getBmpProperty01(Draw2D_BmpProperty *pProp);
-Int32 Draw2D_getBmpProperty02(Draw2D_BmpProperty *pProp);
-Int32 Draw2D_getBmpProperty03(Draw2D_BmpProperty *pProp);
-Int32 Draw2D_getBmpProperty04(Draw2D_BmpProperty *pProp);
-Int32 Draw2D_getBmpProperty06(Draw2D_BmpProperty *pProp);
-Int32 Draw2D_getBmpProperty07(Draw2D_BmpProperty *pProp);
-Int32 Draw2D_getBmpProperty08(Draw2D_BmpProperty *pProp);
-Int32 Draw2D_getBmpProperty09(Draw2D_BmpProperty *pProp);
-Int32 Draw2D_getBmpProperty10(Draw2D_BmpProperty *pProp);
-Int32 Draw2D_getBmpProperty11(Draw2D_BmpProperty *pProp);
-Int32 Draw2D_getBmpProperty12(Draw2D_BmpProperty *pProp);
-Int32 Draw2D_getBmpProperty13(Draw2D_BmpProperty *pProp);
-Int32 Draw2D_getBmpProperty14(Draw2D_BmpProperty *pProp);
+//Int32 Draw2D_getBmpProperty00(Draw2D_BmpProperty *pProp);
+//Int32 Draw2D_getBmpProperty01(Draw2D_BmpProperty *pProp);
+//Int32 Draw2D_getBmpProperty02(Draw2D_BmpProperty *pProp);
+//Int32 Draw2D_getBmpProperty03(Draw2D_BmpProperty *pProp);
+//Int32 Draw2D_getBmpProperty04(Draw2D_BmpProperty *pProp);
+//Int32 Draw2D_getBmpProperty06(Draw2D_BmpProperty *pProp);
+//Int32 Draw2D_getBmpProperty07(Draw2D_BmpProperty *pProp);
+//Int32 Draw2D_getBmpProperty08(Draw2D_BmpProperty *pProp);
+//Int32 Draw2D_getBmpProperty09(Draw2D_BmpProperty *pProp);
+//Int32 Draw2D_getBmpProperty10(Draw2D_BmpProperty *pProp);
+//Int32 Draw2D_getBmpProperty11(Draw2D_BmpProperty *pProp);
+//Int32 Draw2D_getBmpProperty12(Draw2D_BmpProperty *pProp);
+//Int32 Draw2D_getBmpProperty13(Draw2D_BmpProperty *pProp);
+//Int32 Draw2D_getBmpProperty14(Draw2D_BmpProperty *pProp);
 #endif
 
 #ifdef __cplusplus

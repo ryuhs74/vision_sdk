@@ -15,6 +15,7 @@
 #include <src/utils_common/include/utils_prcm_stats.h>
 #include <src/utils_common/include/utils_uart.h>
 #include "uartCmd_priv.h"
+#include <include/link_api/algorithmLink.h>
 
 #pragma DATA_ALIGN(UartCmd_tskStack, 32)
 #pragma DATA_SECTION(UartCmd_tskStack, ".bss:taskStackSection")
@@ -30,7 +31,7 @@ static uint32_t RxBufPos = 0;
 
 //ryuhs74@20151104 - Add Put CMD To GrpxSrcLink
 //void GrpxSrcLink_putCmd( uint8_t _cmd );
-void E500ViewMode_putCmd( uint8_t _cmd );
+//void E500ViewMode_putCmd( uint8_t _cmd );
 
 
 static int LOCAL_UART_isReceivedAll(uint8_t *buf, uint16_t len)
@@ -87,6 +88,9 @@ static int UART_SendCmd(uint8_t targetId, uint8_t srcId, uint8_t *data, uint16_t
 extern int gisCapture;
 extern UInt32 gdone;
 extern UInt32 gGrpxSrcLinkID;
+UInt32 gFullFront = 0;
+extern UInt32 gE500AlgLinkID_0;
+extern UInt32 gE500AlgLinkID_1;
 
 void GrpxLink_putCmd( uint8_t _cmd )
 {
@@ -114,7 +118,6 @@ void GrpxLink_putCmd( uint8_t _cmd )
 		status = System_linkControl(gGrpxSrcLinkID, _cmd, NULL, 0, TRUE); //gGrpxSrcLinkID °´Ã¼°¡ µÎ°³.
 		Vps_printf("   CMD Send %s gGrpxSrcLinkID\n", ( status == 0x0)?"Success":"Fail");
 	}else if( _cmd == IRDA_KEY_FULL ){
-		/*
 		if( gFullFront == 0 )//Front Full View
 		{
 
@@ -131,23 +134,63 @@ void GrpxLink_putCmd( uint8_t _cmd )
 			status = System_linkControl(gGrpxSrcLinkID, _cmd, NULL, 0, TRUE); //gGrpxSrcLinkID °´Ã¼°¡ µÎ°³.
 			Vps_printf("   CMD Send %s gGrpxSrcLinkID\n", ( status == 0x0)?"Success":"Fail");
 		}
-		*/
 	} else if( _cmd == IRDA_KEY_PWR ){
-		/*
-		if( gisFileSave_TEST == 0 )
-		{
-			//_cmd = SYSTEM_CMD_FILE_SAVE;
-			//gisFileSave_TEST = 1;
-		} else if( gisFileSave_TEST == 1) {
-			//_cmd = SYSTEM_CMD_FILE_SAVE_DONE;
-			//gisFileSave_TEST = 0;
-		}
-		*/
+		_cmd = SYSTEM_CMD_FILE_SAVE;
+		Vps_printf("In GrpxSrcLink_putCmd, IRDA_KEY_PWR, File Save, CMD : %d", _cmd);
+		status = System_linkControl(gGrpxSrcLinkID, _cmd, NULL, 0, TRUE); //gGrpxSrcLinkID °´Ã¼°¡ µÎ°³.
+		Vps_printf("   CMD Send %s gGrpxSrcLinkID\n", ( status == 0x0)?"Success":"Fail");
 	}
 
 
 
 
+#endif
+}
+
+void AlgLink_putCmd( uint8_t _cmd )
+{
+#if 1
+
+	Int32 status;
+	AlgorithmLink_ControlParams AlgLinkControlPrm;
+
+	if( _cmd == IRDA_KEY_UP ){
+		Vps_printf("In AlgLink_putCmd, IRDA_KEY_UP");
+		AlgLinkControlPrm.controlCmd = SYSTEM_CMD_FRONT_SIDE_VIEW;
+		status = System_linkControl( gE500AlgLinkID_0, ALGORITHM_LINK_CMD_CONFIG, &AlgLinkControlPrm, sizeof(AlgLinkControlPrm), TRUE);
+		status = System_linkControl( gE500AlgLinkID_1, ALGORITHM_LINK_CMD_CONFIG, &AlgLinkControlPrm, sizeof(AlgLinkControlPrm), TRUE);
+		Vps_printf("   CMD Send %s AlgLink_putCmd\n", ( status == 0x0)?"Success":"Fail");
+	} else if( _cmd == IRDA_KEY_DOWN ){
+		Vps_printf("In AlgLink_putCmd, IRDA_KEY_DOWN");
+		AlgLinkControlPrm.controlCmd = SYSTEM_CMD_REAR_SIDE_VIEW;
+		status = System_linkControl( gE500AlgLinkID_0, ALGORITHM_LINK_CMD_CONFIG, &AlgLinkControlPrm, sizeof(AlgLinkControlPrm), TRUE);
+		status = System_linkControl( gE500AlgLinkID_1, ALGORITHM_LINK_CMD_CONFIG, &AlgLinkControlPrm, sizeof(AlgLinkControlPrm), TRUE);
+		Vps_printf("   CMD Send %s AlgLink_putCmd\n", ( status == 0x0)?"Success":"Fail");
+	} else if( _cmd == IRDA_KEY_RIGHT ){
+		Vps_printf("In AlgLink_putCmd, IRDA_KEY_RIGHT");
+		AlgLinkControlPrm.controlCmd = SYSTEM_CMD_RIGH_SIDE_VIEW;
+		status = System_linkControl( gE500AlgLinkID_0, ALGORITHM_LINK_CMD_CONFIG, &AlgLinkControlPrm, sizeof(AlgLinkControlPrm), TRUE);
+		status = System_linkControl( gE500AlgLinkID_1, ALGORITHM_LINK_CMD_CONFIG, &AlgLinkControlPrm, sizeof(AlgLinkControlPrm), TRUE);
+		Vps_printf("   CMD Send %s AlgLink_putCmd\n", ( status == 0x0)?"Success":"Fail");
+	} else if( _cmd == IRDA_KEY_LEFT ){
+		Vps_printf("In AlgLink_putCmd, IRDA_KEY_LEFT");
+		AlgLinkControlPrm.controlCmd = SYSTEM_CMD_LEFT_SIDE_VIEW;
+		status = System_linkControl( gE500AlgLinkID_0, ALGORITHM_LINK_CMD_CONFIG, &AlgLinkControlPrm, sizeof(AlgLinkControlPrm), TRUE);
+		status = System_linkControl( gE500AlgLinkID_1, ALGORITHM_LINK_CMD_CONFIG, &AlgLinkControlPrm, sizeof(AlgLinkControlPrm), TRUE);
+		Vps_printf("   CMD Send %s AlgLink_putCmd\n", ( status == 0x0)?"Success":"Fail");
+	}else if( _cmd == IRDA_KEY_FULL ){
+		if( gFullFront == 0 )//Front Full View
+		{
+			Vps_printf("In AlgLink_putCmd, IRDA_KEY_FULL");
+			AlgLinkControlPrm.controlCmd = SYSTEM_CMD_FULL_FRONT_VIEW;
+		} else {
+			Vps_printf("In AlgLink_putCmd, IRDA_KEY_FULL");
+			AlgLinkControlPrm.controlCmd = SYSTEM_CMD_FULL_REAR_VIEW;
+		}
+		status = System_linkControl( gE500AlgLinkID_0, ALGORITHM_LINK_CMD_CONFIG, &AlgLinkControlPrm, sizeof(AlgLinkControlPrm), TRUE);
+		status = System_linkControl( gE500AlgLinkID_1, ALGORITHM_LINK_CMD_CONFIG, &AlgLinkControlPrm, sizeof(AlgLinkControlPrm), TRUE);
+		Vps_printf("   CMD Send %s AlgLink_putCmd\n", ( status == 0x0)?"Success":"Fail");
+	}
 #endif
 }
 
@@ -225,8 +268,9 @@ static int UART_ParseCmd(uint8_t *rxBuf)
 		case IRDA_KEY_LEFT : //LFET - IRDA_KEY_LEFT = (0x0B)
 		case IRDA_KEY_RIGHT : //RIGHT - IRDA_KEY_RIGHT = (0x0A)
 		case IRDA_KEY_FULL : //Full - IRDA_KEY_FULL = (0x05),
+
+			AlgLink_putCmd( GET_ARG1(rxBuf) );
 			GrpxLink_putCmd( GET_ARG1(rxBuf) );
-			//E500ViewMode_putCmd( GET_ARG1(rxBuf) );
 			break;
 		} //ryuhs74@20151020 - Add HDMI On/Off Test End
 		break;

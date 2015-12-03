@@ -23,7 +23,8 @@
 #include <include/link_api/algorithmLink.h>
 
 extern UInt32 gGrpxSrcLinkID;
-UInt32 gE500LUTLinkID; //ryuhs74@20151112 - Add
+UInt32 gE500AlgLinkID_0; //ryuhs74@20151112 - Add
+UInt32 gE500AlgLinkID_1; //ryuhs74@20151112 - Add
 extern UInt32 gFullFront;
 
 Void chains_surround_View_SetLinkId(chains_surround_ViewObj *pObj){
@@ -53,7 +54,8 @@ Void chains_surround_View_SetLinkId(chains_surround_ViewObj *pObj){
        pObj->Display_GrpxLinkID             = SYSTEM_LINK_ID_DISPLAY_1;
 
        gGrpxSrcLinkID = pObj->GrpxSrcLinkID;
-       gE500LUTLinkID = pObj->Alg_SurroundViewLink_0_ID;
+       gE500AlgLinkID_0 = pObj->Alg_SurroundViewLink_0_ID;
+       gE500AlgLinkID_1 = pObj->Alg_SurroundViewLink_1_ID;
 }
 
 Void chains_surround_View_ResetLinkPrms(chains_surround_ViewObj *pObj){
@@ -611,6 +613,7 @@ Void chains_surround_View_printStatistics(chains_surround_ViewObj *pObj){
        Task_sleep(500);
 }
 
+#if 0
 void E500ViewMode_putCmd( uint8_t _cmd )
 {
 	/*
@@ -659,4 +662,4 @@ void E500ViewMode_putCmd( uint8_t _cmd )
 	Vps_printf("   CMD Send %s E500ViewMode_putCmd\n", ( status == 0x0)?"Success":"Fail");
 #endif
 }
-
+#endif
