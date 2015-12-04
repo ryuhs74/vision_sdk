@@ -47,7 +47,7 @@
      * the DSP Idle Function. The DSP Idle Function runs from L2 to make sure
      * the DSP pre-fetch pipeline is cleared before going to Idle.
      */
-    #define UTILS_MEM_HEAP_L2_SIZE  (224*1024 - 128)
+    #define UTILS_MEM_HEAP_L2_SIZE  (32*1024 - 128)
 #endif
 
 #ifdef BUILD_ARP32
