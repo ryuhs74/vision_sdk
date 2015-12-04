@@ -181,10 +181,10 @@ Int32 Draw2D_FillBacgroundColor( GrpxSrcLink_Obj *pObj )
 	Draw2D_fillRegion(pObj->draw2DHndl,&regionL);
 
 	regionR.color  = AVME500_BACKGROUND_COLOR;
-	regionR.startX = 1280-19;//1280-16; //ryuhs74 나중에 원복
+	regionR.startX = 1280-19;//1280-16; //ryuhs74 나중에 원복 - - 초록색 한픽셀 삭제
 	regionR.startY = 0;
 	regionR.height = 720;
-	regionR.width  = 19;//16; //ryuhs74 나중에 원복
+	regionR.width  = 19;//16; //ryuhs74 나중에 원복 - - 초록색 한픽셀 삭제
 
 	Draw2D_fillRegion(pObj->draw2DHndl,&regionR);
 
@@ -197,15 +197,15 @@ Int32 Draw2D_FillBacgroundColor( GrpxSrcLink_Obj *pObj )
 	Draw2D_fillRegion(pObj->draw2DHndl,&regionB);
 
 	regionM.color  = AVME500_BACKGROUND_COLOR;
-	regionM.startX = 520+13;//520+16; //ryuhs74 나중에 원복
+	regionM.startX = 520+13;//520+16; //ryuhs74 나중에 원복 - - 초록색 한픽셀 삭제
 	regionM.startY = 16;
-	regionM.height = 720;//688; //ryuhs74 나중에 원복
-	regionM.width  = 19;//16; //ryuhs74 나중에 원복
+	regionM.height = 720;//688; //ryuhs74 나중에 원복 - - 초록색 한픽셀 삭제
+	regionM.width  = 19;//16; //ryuhs74 나중에 원복 - - 초록색 한픽셀 삭제
 
 	Draw2D_fillRegion(pObj->draw2DHndl,&regionM);
 
 	regionSideB.color  = AVME500_BACKGROUND_COLOR;
-	regionSideB.startX = 552; //ryuhs74 나중에 원복
+	regionSideB.startX = 552; //ryuhs74 나중에 원복 - - 초록색 한픽셀 삭제
 	regionSideB.startY = FULL_VIEW_TEXT_START_Y;
 	regionSideB.height = 720-(FULL_VIEW_TEXT_START_Y + 16);
 	regionSideB.width  = 712;
@@ -225,10 +225,10 @@ Int32 Draw2D_AVME500_TopView( GrpxSrcLink_Obj *pObj )
 
 	//Top View, Side View Separation Bar
 	region.color  = AVME500_BACKGROUND_COLOR;
-	region.startX = 520+13;//520+16; //ryuhs74 나중에 원복
+	region.startX = 520+13;//520+16; //ryuhs74 나중에 원복 - - 초록색 한픽셀 삭제
 	region.startY = 16;
 	region.height = 688;
-	region.width  = 19;//16; //ryuhs74 나중에 원복
+	region.width  = 19;//16; //ryuhs74 나중에 원복 - - 초록색 한픽셀 삭제
 
 	Draw2D_fillRegion(pObj->draw2DHndl,&region);
 
@@ -237,7 +237,7 @@ Int32 Draw2D_AVME500_TopView( GrpxSrcLink_Obj *pObj )
 	regionTopView.colorFormat = DRAW2D_TRANSPARENT_COLOR_FORMAT;
 	regionTopView.startX = 16;
 	regionTopView.startY = 524;
-	regionTopView.width  = 520-3;//520; //ryuhs74 나중에 원복
+	regionTopView.width  = 520-3;//520; //ryuhs74 나중에 원복 - 초록색 한픽셀 삭제
 	regionTopView.height = 720-( 524 +16 );
 	Draw2D_fillRegion(pObj->draw2DHndl,&regionTopView);
 
@@ -276,9 +276,9 @@ Int32 Draw2D_AVME500_FullView( GrpxSrcLink_Obj *pObj )
 	//Top View, Side View Separation Bar of the transparent coloring
 	regionMidleBar.color  = DRAW2D_TRANSPARENT_COLOR;
 	regionMidleBar.colorFormat = DRAW2D_TRANSPARENT_COLOR_FORMAT;
-	regionMidleBar.startX = 552-19;//552-16; //ryuhs74 나중에 원복
+	regionMidleBar.startX = 552-19;//552-16; //ryuhs74 나중에 원복 - - 초록색 한픽셀 삭제
 	regionMidleBar.startY = 16;
-	regionMidleBar.width  = 19;//16; //ryuhs74 나중에 원복
+	regionMidleBar.width  = 19;//16; //ryuhs74 나중에 원복 - - 초록색 한픽셀 삭제
 	regionMidleBar.height = 558;
 	Draw2D_fillRegion(pObj->draw2DHndl,&regionMidleBar);
 
@@ -287,7 +287,7 @@ Int32 Draw2D_AVME500_FullView( GrpxSrcLink_Obj *pObj )
 	regionBootmBar.colorFormat = DRAW2D_TRANSPARENT_COLOR_FORMAT;
 	regionBootmBar.startX = 552;
 	regionBootmBar.startY = 524;
-	regionBootmBar.width  = 712-3;//712;//ryuhs74 나중에 원복
+	regionBootmBar.width  = 712-3;//712;//ryuhs74 나중에 원복 - - 초록색 한픽셀 삭제
 	regionBootmBar.height = 50;
 	Draw2D_fillRegion(pObj->draw2DHndl,&regionBootmBar);
 
