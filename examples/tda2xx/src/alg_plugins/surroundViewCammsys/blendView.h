@@ -14,7 +14,7 @@
 #include <src/utils_common/include/utils_mem.h>
 #include "singleView.h"
 
-#define BLEND_VIEW_TEMP_BUF_SIZE	260*344
+#define BLEND_VIEW_TEMP_BUF_SIZE	260*500
 
 #define ONE_PER_AVM_BLEND_FRACTION_BITS	256
 

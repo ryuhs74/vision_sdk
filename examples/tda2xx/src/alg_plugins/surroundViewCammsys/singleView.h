@@ -79,6 +79,14 @@ typedef YUYV yuvHD260Pixel[260];
 	R2 = _LinearInterpolation(_X,q3,q4,ONE_PER_AVM_LUT_FRACTION_BITS);\
 	Q = _LinearInterpolation(_Y,R1,R2,ONE_PER_AVM_LUT_FRACTION_BITS)>>(AVM_LUT_FRACTION_BITS<<1);\
 }
+#define BilinearInterpolation_filter(q1,q2,q3,q4, lut, Q, _Q)\
+{\
+	register Int32 R1,R2;\
+	R1 = _LinearInterpolation(_X,q1,q2,ONE_PER_AVM_LUT_FRACTION_BITS);\
+	R2 = _LinearInterpolation(_X,q3,q4,ONE_PER_AVM_LUT_FRACTION_BITS);\
+	Q = _LinearInterpolation(_Y,R1,R2,ONE_PER_AVM_LUT_FRACTION_BITS)>>(AVM_LUT_FRACTION_BITS<<1);\
+	_Q = Q;\
+}
 #define NoInterpolation(q1,q2,q3,q4, lut, Q)\
 {\
 	Q = q1;\
@@ -180,6 +188,92 @@ static inline Int32 makeSingleView720PNoInter(	UInt32 *RESTRICT inPtr,
     }
     return SYSTEM_LINK_STATUS_SOK;
 }
+
+static inline Int32 makeSingleView720PWithFilter(	UInt32 *RESTRICT inPtr,
+													UInt32 *RESTRICT outPtr,
+													UInt8       *RESTRICT buf1,
+													UInt8       *RESTRICT buf2,
+													UInt32 *RESTRICT viewLUTPtr,
+													AlgorithmLink_SurroundViewLutInfo *RESTRICT viewInfo,
+													AlgorithmLink_SurroundViewLutInfo *RESTRICT childViewInfoLUT)
+{
+	UInt16 rowIdx;
+    UInt16 colIdx;
+    UInt8* FilterBuffIn = buf1;
+    UInt8* FilterBuffOut = buf2;
+
+    yuvHD720P* iPtr;
+    yuvHD720P* oPtr;
+
+    UInt16 startX = viewInfo->startX + childViewInfoLUT->startX;
+    UInt16 width = childViewInfoLUT->width + startX;
+    UInt16 height = childViewInfoLUT->height;
+
+    if(width > (viewInfo->startX+viewInfo->width))
+    	width = viewInfo->startX+viewInfo->width;
+
+    ViewLUT_Packed *lut = ((ViewLUT_Packed*)viewLUTPtr) + (childViewInfoLUT->pitch * childViewInfoLUT->startY);
+
+    iPtr  = (yuvHD720P*)inPtr;
+    oPtr = ((yuvHD720P*)outPtr) + viewInfo->startY + childViewInfoLUT->startY;
+
+    for(rowIdx = 0; rowIdx < height ; rowIdx++)
+    {
+    	ViewLUT_Packed *lutbak;
+        for(colIdx = startX, lutbak = lut + childViewInfoLUT->startX; colIdx < width ; colIdx++, lutbak++)
+        {
+        	YUYV *q = &iPtr[lutbak->yInteger][lutbak->xInteger];
+
+        	BilinearInterpolation_filter(q[0].y, q[1].y, q[HD720P_WIDTH].y, q[HD720P_WIDTH+1].y, lutbak, *(FilterBuffIn), *(FilterBuffOut));
+        	FilterBuffIn++;
+        	FilterBuffOut++;
+        }
+
+        for(colIdx = startX, lutbak = lut + childViewInfoLUT->startX; colIdx < width ; colIdx+=2, lutbak+=2)
+        {
+        	YUYV *qu = &iPtr[lutbak->yInteger][lutbak->xInteger & 0xfffe];
+        	///U
+        	BilinearInterpolation(qu[0].uv, qu[2].uv, qu[HD720P_WIDTH].uv, qu[HD720P_WIDTH+2].uv, lutbak, oPtr[rowIdx][colIdx].uv);
+        	///V
+        	BilinearInterpolation(qu[1].uv, qu[3].uv, qu[HD720P_WIDTH+1].uv, qu[HD720P_WIDTH+3].uv, lutbak, oPtr[rowIdx][colIdx+1].uv);
+        }
+
+    	lut += childViewInfoLUT->pitch;
+    }
+    FilterBuffIn = buf1;
+    FilterBuffOut = buf2;
+#ifdef BUILD_DSP
+    width -= startX;
+    {
+	#include "IMG_conv_3x3_i8_c8s.h"
+		char sharpen_mask[3][3] =
+		{
+		{ -9, 1, -9 },
+		{ 1, 96, 1 },
+		{ -9, 1, -9 } };
+		char sharpen_shift=6;
+		int i = 0;
+		for(i=1; i<height-2; i++)
+		{
+			IMG_conv_3x3_i8_c8s(FilterBuffIn,FilterBuffOut,width,width,(char*)sharpen_mask,sharpen_shift);
+			FilterBuffIn += width;
+			FilterBuffOut += width;
+		}
+    }
+    FilterBuffOut = buf2;
+    width += startX;
+#endif
+    ///Filter
+    for(rowIdx = 0; rowIdx < height ; rowIdx++)
+    {
+        for(colIdx = startX; colIdx < width ; colIdx++)
+        {
+        	oPtr[rowIdx][colIdx].y = *(FilterBuffOut++);
+        }
+    }
+    return SYSTEM_LINK_STATUS_SOK;
+}
+
 /**
  * @param brief  Top View Size 520x688 and than bland area must be smaller quad size(260x344)
  * @param inPtr
