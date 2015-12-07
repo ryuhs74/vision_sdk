@@ -79,6 +79,10 @@ typedef YUYV yuvHD260Pixel[260];
 	R2 = _LinearInterpolation(_X,q3,q4,ONE_PER_AVM_LUT_FRACTION_BITS);\
 	Q = _LinearInterpolation(_Y,R1,R2,ONE_PER_AVM_LUT_FRACTION_BITS)>>(AVM_LUT_FRACTION_BITS<<1);\
 }
+#define NoInterpolation(q1,q2,q3,q4, lut, Q)\
+{\
+	Q = q1;\
+}
 
 static inline Int32 makeSingleView720P(  UInt32       *RESTRICT inPtr,
                            	   UInt32           *RESTRICT outPtr,
@@ -129,6 +133,53 @@ static inline Int32 makeSingleView720P(  UInt32       *RESTRICT inPtr,
     return SYSTEM_LINK_STATUS_SOK;
 }
 
+static inline Int32 makeSingleView720PNoInter(	UInt32 *RESTRICT inPtr,
+												UInt32 *RESTRICT outPtr,
+												UInt32 *RESTRICT viewLUTPtr,
+												AlgorithmLink_SurroundViewLutInfo *RESTRICT viewInfo,
+												AlgorithmLink_SurroundViewLutInfo *RESTRICT childViewInfoLUT)
+{
+	UInt16 rowIdx;
+    UInt16 colIdx;
+
+    yuvHD720P* iPtr;
+    yuvHD720P* oPtr;
+
+    UInt16 startX = viewInfo->startX + childViewInfoLUT->startX;
+    UInt16 width = childViewInfoLUT->width + startX;
+    UInt16 height = childViewInfoLUT->height;
+
+    if(width > (viewInfo->startX+viewInfo->width))
+    	width = viewInfo->startX+viewInfo->width;
+
+    ViewLUT_Packed *lut = ((ViewLUT_Packed*)viewLUTPtr) + (childViewInfoLUT->pitch * childViewInfoLUT->startY);
+
+    iPtr  = (yuvHD720P*)inPtr;
+    oPtr = ((yuvHD720P*)outPtr) + viewInfo->startY + childViewInfoLUT->startY;
+
+    for(rowIdx = 0; rowIdx < height ; rowIdx++)
+    {
+    	ViewLUT_Packed *lutbak;
+        for(colIdx = startX, lutbak = lut + childViewInfoLUT->startX; colIdx < width ; colIdx++, lutbak++)
+        {
+        	YUYV *q = &iPtr[lutbak->yInteger][lutbak->xInteger];
+
+        	NoInterpolation(q[0].y, q[1].y, q[HD720P_WIDTH].y, q[HD720P_WIDTH+1].y, lutbak, oPtr[rowIdx][colIdx].y);
+        }
+
+        for(colIdx = startX, lutbak = lut + childViewInfoLUT->startX; colIdx < width ; colIdx+=2, lutbak+=2)
+        {
+        	YUYV *qu = &iPtr[lutbak->yInteger][lutbak->xInteger & 0xfffe];
+        	///U
+        	NoInterpolation(qu[0].uv, qu[2].uv, qu[HD720P_WIDTH].uv, qu[HD720P_WIDTH+2].uv, lutbak, oPtr[rowIdx][colIdx].uv);
+        	///V
+        	NoInterpolation(qu[1].uv, qu[3].uv, qu[HD720P_WIDTH+1].uv, qu[HD720P_WIDTH+3].uv, lutbak, oPtr[rowIdx][colIdx+1].uv);
+        }
+
+    	lut += childViewInfoLUT->pitch;
+    }
+    return SYSTEM_LINK_STATUS_SOK;
+}
 /**
  * @param brief  Top View Size 520x688 and than bland area must be smaller quad size(260x344)
  * @param inPtr

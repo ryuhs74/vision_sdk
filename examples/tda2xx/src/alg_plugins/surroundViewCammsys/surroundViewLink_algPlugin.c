@@ -325,7 +325,7 @@ Void AlgorithmLink_surroundViewAllocAndQueueOutBuf(void * pObj,
 
 /**
  *******************************************************************************
- *
+ *makeSingleView720PNoInter
  * \brief Implementation of Create Plugin for this algorithm
  *
  *
@@ -663,6 +663,7 @@ Int32 AlgorithmLink_surroundViewMakeSingleView(	void * pObj,
 												System_VideoFrameCompositeBuffer *pInFrameCompositeBuffer,
 												System_VideoFrameBuffer *pOutFrameBuffer)
 {
+#define INTERPOLATION_TEST	1
 #define DEVIDE_SINGLE_VIEW	4
     Int32 status    = SYSTEM_LINK_STATUS_SOK;
 
@@ -670,7 +671,41 @@ Int32 AlgorithmLink_surroundViewMakeSingleView(	void * pObj,
     int i=0;
     int devideWidth = curLayoutPrm->psingleViewLUTInfo->width/DEVIDE_SINGLE_VIEW;
 
+#if INTERPOLATION_TEST
+    AlgorithmLink_SurroundViewLutInfo ViewforTest = {0};
+    ViewforTest.pitch = curLayoutPrm->psingleViewInfo->pitch;
+    ViewforTest.startY = curLayoutPrm->psingleViewInfo->startY;
+    ViewforTest.height = curLayoutPrm->psingleViewInfo->height;
+    ViewforTest.width = curLayoutPrm->psingleViewInfo->width;
+    ViewforTest.startX = curLayoutPrm->psingleViewInfo->startX + devideWidth;
 
+    for(i=0; i<DEVIDE_SINGLE_VIEW>>1; i++)
+    {
+    	indViewforLUT[i].pitch = curLayoutPrm->psingleViewLUTInfo->pitch;
+    	indViewforLUT[i].startY = curLayoutPrm->psingleViewLUTInfo->startY;
+    	indViewforLUT[i].height = curLayoutPrm->psingleViewLUTInfo->height;
+
+
+    	indViewforLUT[i].startX = curLayoutPrm->psingleViewLUTInfo->startX + (devideWidth * (i<<1));
+    	indViewforLUT[i].width = devideWidth;
+
+
+    	status = makeSingleView(pInFrameCompositeBuffer->bufAddr[0][curLayoutPrm->singleViewInputChannel],
+    							pOutFrameBuffer->bufAddr[0],
+    							curLayoutPrm->psingleViewLUT,
+    							curLayoutPrm->psingleViewInfo,
+    							&indViewforLUT[i]);
+
+
+    	status = makeSingleView720PNoInter(pInFrameCompositeBuffer->bufAddr[0][curLayoutPrm->singleViewInputChannel],
+    							pOutFrameBuffer->bufAddr[0],
+    							curLayoutPrm->psingleViewLUT,
+    							&ViewforTest,
+    							&indViewforLUT[i]);
+    }
+
+
+#else
     for(i=0; i<DEVIDE_SINGLE_VIEW; i++)
     {
     	indViewforLUT[i].pitch = curLayoutPrm->psingleViewLUTInfo->pitch;
@@ -689,7 +724,7 @@ Int32 AlgorithmLink_surroundViewMakeSingleView(	void * pObj,
     							&indViewforLUT[i]);
     }
 
-
+#endif
 
     return status;
 }
