@@ -52,11 +52,13 @@ typedef struct {
 	unsigned char cr_r_overlay:8;
 } MaskLUT_Packed;
 
+#define TEMP_BUF_WIDTH	260
 #define HD720P_WIDTH	1280
 #define HD1080P_WIDTH	1920
 typedef YUYV yuvHD720P[HD720P_WIDTH];
 typedef YUYV yuvHD1080P[HD1080P_WIDTH];
-typedef YUYV yuvHD260Pixel[260];
+typedef YUYV yuvHD260Pixel[TEMP_BUF_WIDTH];
+typedef UInt8 yHD260Pixel[TEMP_BUF_WIDTH];
 
 
 #define ONE_PER_AVM_LUT_FRACTION_BITS	(1<<AVM_LUT_FRACTION_BITS)
@@ -199,8 +201,13 @@ static inline Int32 makeSingleView720PWithFilter(	UInt32 *RESTRICT inPtr,
 {
 	UInt16 rowIdx;
     UInt16 colIdx;
+
+    yHD260Pixel* FilterBuffIn  = (yHD260Pixel*)buf1;
+    yHD260Pixel* FilterBuffOut = (yHD260Pixel*)buf2;
+/*
     UInt8* FilterBuffIn = buf1;
     UInt8* FilterBuffOut = buf2;
+*/
 
     yuvHD720P* iPtr;
     yuvHD720P* oPtr;
@@ -220,13 +227,11 @@ static inline Int32 makeSingleView720PWithFilter(	UInt32 *RESTRICT inPtr,
     for(rowIdx = 0; rowIdx < height ; rowIdx++)
     {
     	ViewLUT_Packed *lutbak;
-        for(colIdx = startX, lutbak = lut + childViewInfoLUT->startX; colIdx < width ; colIdx++, lutbak++)
+        for(colIdx = 0, lutbak = lut + childViewInfoLUT->startX; colIdx < (width - startX) ; colIdx++, lutbak++)
         {
         	YUYV *q = &iPtr[lutbak->yInteger][lutbak->xInteger];
 
-        	BilinearInterpolation_filter(q[0].y, q[1].y, q[HD720P_WIDTH].y, q[HD720P_WIDTH+1].y, lutbak, *(FilterBuffIn), *(FilterBuffOut));
-        	FilterBuffIn++;
-        	FilterBuffOut++;
+        	BilinearInterpolation_filter(q[0].y, q[1].y, q[HD720P_WIDTH].y, q[HD720P_WIDTH+1].y, lutbak, FilterBuffIn[rowIdx][colIdx], FilterBuffOut[rowIdx][colIdx]);
         }
 
         for(colIdx = startX, lutbak = lut + childViewInfoLUT->startX; colIdx < width ; colIdx+=2, lutbak+=2)
@@ -240,35 +245,35 @@ static inline Int32 makeSingleView720PWithFilter(	UInt32 *RESTRICT inPtr,
 
     	lut += childViewInfoLUT->pitch;
     }
-    FilterBuffIn = buf1;
-    FilterBuffOut = buf2;
+    ///Filter
 #ifdef BUILD_DSP
-    width -= startX;
-    {
-	#include "IMG_conv_3x3_i8_c8s.h"
+	{
+#include "IMG_conv_3x3_i8_c8s.h"
 		char sharpen_mask[3][3] =
 		{
 		{ -9, 1, -9 },
 		{ 1, 96, 1 },
 		{ -9, 1, -9 } };
-		char sharpen_shift=6;
+		char sharpen_shift = 6;
 		int i = 0;
-		for(i=1; i<height-2; i++)
+		int _width = ((width - startX) & 0xfffc)-4;
+		for (i = 0; i < height - 2; i++)
 		{
-			IMG_conv_3x3_i8_c8s(FilterBuffIn,FilterBuffOut,width,width,(char*)sharpen_mask,sharpen_shift);
-			FilterBuffIn += width;
-			FilterBuffOut += width;
+			IMG_conv_3x3_i8_c8s(FilterBuffIn[i],
+								FilterBuffOut[i+1],
+								_width,
+								TEMP_BUF_WIDTH,
+								(char*) sharpen_mask,
+								sharpen_shift);
 		}
-    }
-    FilterBuffOut = buf2;
-    width += startX;
+	}
 #endif
-    ///Filter
     for(rowIdx = 0; rowIdx < height ; rowIdx++)
     {
-        for(colIdx = startX; colIdx < width ; colIdx++)
+    	int filtercolIdx = 0;
+        for(colIdx = startX, filtercolIdx = 0; colIdx < width ; colIdx++, filtercolIdx++)
         {
-        	oPtr[rowIdx][colIdx].y = *(FilterBuffOut++);
+        	oPtr[rowIdx][colIdx].y = FilterBuffOut[rowIdx][filtercolIdx];
         }
     }
     return SYSTEM_LINK_STATUS_SOK;

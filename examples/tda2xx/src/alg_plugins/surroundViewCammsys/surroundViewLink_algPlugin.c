@@ -670,12 +670,12 @@ Int32 AlgorithmLink_surroundViewMakeSingleView(	void * pObj,
 												System_VideoFrameBuffer *pOutFrameBuffer)
 {
 #define INTERPOLATION_TEST	0
-#define DEVIDE_SINGLE_VIEW	4
+#define	DEVIDE_WIDTH	200
     Int32 status    = SYSTEM_LINK_STATUS_SOK;
-
     AlgorithmLink_SurroundViewLutInfo indViewforLUT = {0};
     int i=0;
-    int devideWidth = curLayoutPrm->psingleViewLUTInfo->width/DEVIDE_SINGLE_VIEW;
+    int devideCount = curLayoutPrm->psingleViewLUTInfo->width/DEVIDE_WIDTH;
+    int nextStartX = 0;
 
 #if INTERPOLATION_TEST
     AlgorithmLink_SurroundViewLutInfo ViewforTest = {0};
@@ -712,16 +712,16 @@ Int32 AlgorithmLink_surroundViewMakeSingleView(	void * pObj,
 
 
 #else
-    for(i=0; i<DEVIDE_SINGLE_VIEW; i++)
+
+    indViewforLUT.pitch = curLayoutPrm->psingleViewLUTInfo->pitch;
+	indViewforLUT.startY = curLayoutPrm->psingleViewLUTInfo->startY;
+	indViewforLUT.height = curLayoutPrm->psingleViewLUTInfo->height;
+	indViewforLUT.width = DEVIDE_WIDTH;
+
+    for(i=0; i<devideCount; i++)
     {
-    	indViewforLUT.pitch = curLayoutPrm->psingleViewLUTInfo->pitch;
-    	indViewforLUT.startY = curLayoutPrm->psingleViewLUTInfo->startY;
-    	indViewforLUT.height = 400;
-
-
-    	indViewforLUT.startX = curLayoutPrm->psingleViewLUTInfo->startX + (devideWidth * i);
-    	indViewforLUT.width = devideWidth;
-
+    	indViewforLUT.startX = curLayoutPrm->psingleViewLUTInfo->startX + nextStartX;
+    	nextStartX += DEVIDE_WIDTH;
 
     	status =
 				makeSingleView720PWithFilter(	pInFrameCompositeBuffer->bufAddr[0][curLayoutPrm->singleViewInputChannel],
@@ -733,6 +733,20 @@ Int32 AlgorithmLink_surroundViewMakeSingleView(	void * pObj,
 												&indViewforLUT);
 	}
 
+	indViewforLUT.startX = curLayoutPrm->psingleViewLUTInfo->startX + nextStartX;
+	indViewforLUT.width = curLayoutPrm->psingleViewLUTInfo->width - nextStartX;
+
+	if (indViewforLUT.width)
+	{
+		status =
+				makeSingleView720PWithFilter(	pInFrameCompositeBuffer->bufAddr[0][curLayoutPrm->singleViewInputChannel],
+												pOutFrameBuffer->bufAddr[0],
+												(UInt8*) curLayoutPrm->buf1,
+												(UInt8*) curLayoutPrm->buf2,
+												curLayoutPrm->psingleViewLUT,
+												curLayoutPrm->psingleViewInfo,
+												&indViewforLUT);
+	}
 #endif
 
     return status;
