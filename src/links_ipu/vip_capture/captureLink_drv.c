@@ -588,195 +588,24 @@ Int32 CaptureLink_drvCreate(CaptureLink_Obj * pObj,
     return status;
 }
 
-#define USE_TSK
-#ifndef  USE_TSK
-int gisCapture = 0;
-int isCh1 = 0;
-int isCh2 = 0;
-int isCh3 = 0;
-int isCh4 = 0;
-void saveCaptureToFile(int nCh, UInt8  *bufAddr[], UInt32 bufSize[])//FVID2_Frame *pFrame)//System_Buffer *pSysBuf)
-{
-#define FILE_PATH "fat:"
-#define FILE_EXTENSION ".bin"
-
-	char tmpName[20] = {0,};
-	char tmp[20] = {0,};
-	static int ch1 = 0;
-	static int ch2 = 0;
-	static int ch3 = 0;
-	static int ch4 = 0;
-	int chnum = 0;
-
-	if( gisCapture == 1 ){
-		FILE* fp = NULL;
-
-		switch(nCh)
-		{
-		case 0: //rear
-			chnum = ch1;
-			isCh1 = 1;
-			ch1++;
-			strcpy(tmp,"rear");
-			break;
-		case 1: //left
-			chnum = ch2;
-			isCh2 = 1;
-			ch2++;
-			strcpy(tmp,"left");
-			break;
-		case 2: //right
-			chnum = ch3;
-			isCh3 = 1;
-			ch3++;
-			strcpy(tmp,"right");
-			break;
-		case 3: //front
-			chnum = ch4;
-			isCh4 = 1;
-			ch4++;
-			strcpy(tmp,"front");
-			break;
-		}
-
-		sprintf(tmpName,"%s%s_%d%s",FILE_PATH, tmp, chnum,FILE_EXTENSION);
-		Vps_printf(" ************************* Fail Name %s!!! pFrame->chNum : %d\n", tmpName, nCh);//, pSysBuf->payloadSize);
-
-		fp = fopen(tmpName, "w+");
-
-		if( fp != NULL){
-			int ret = fwrite(bufAddr[0], 1, bufSize[0], fp);
-
-			if( ret == 0){
-				Vps_printf(" ************************* file Write Fail %s!!!\n", tmpName);
-			} else {
-				Vps_printf(" ************************* file Write Success %s!!!\n", tmpName);
-			}
-/*
-			if( ( isCh1 == 1 ) && (isCh2 ==  1 ) && (isCh3 == 1 ) && ( isCh4 == 1 ) ){
-				gisCapture = 0;
-				isCh1 = 0;
-				isCh2 = 0;
-				isCh3 = 0;
-				isCh4 = 0;
-				Vps_printf(" ************************* ch1: %d, ch2: %d, ch3: %d, ch4: %d, gisCapture: %d\n", ch1, ch2, ch3, ch4, gisCapture);
-			}
-*/
-		} else {
-			Vps_printf(" ************************* file Open Fail %s!!!\n", tmpName);
-			gisCapture = 0;
-			isCh1 = 0;
-			isCh2 = 0;
-			isCh3 = 0;
-			isCh4 = 0;
-		}
-
-		fclose(fp);
-		fp = NULL;
-
-		Vps_printf(" ************************* gisCapture : %d\n", gisCapture);
-	}
-}
-#else
 int gisCapture = 0;
 int gisCaptureCh_rear = 0;
 int gisCaptureCh_front = 0;
 int gisCaptureCh_left = 0;
 int gisCaptureCh_right = 0;
-int isCh1 = 0;
-int isCh2 = 0;
-int isCh3 = 0;
-int isCh4 = 0;
 
-
-BspOsal_TaskHandle tskfilesave_rear = NULL;
 BspOsal_TaskHandle tskfilesave_front = NULL;
-BspOsal_TaskHandle tskfilesave_left = NULL;
-BspOsal_TaskHandle tskfilesave_right = NULL;
 
 #pragma DATA_ALIGN(filesave_tskStack_front, 32)
 #pragma DATA_SECTION(filesave_tskStack_front, ".bss:taskStackSection")
 UInt8 filesave_tskStack_front[1024*4];
 
-#pragma DATA_ALIGN(filesave_tskStack_rear, 32)
-#pragma DATA_SECTION(filesave_tskStack_rear, ".bss:taskStackSection")
-UInt8 filesave_tskStack_rear[1024*4];
-
-#pragma DATA_ALIGN(filesave_tskStack_left, 32)
-#pragma DATA_SECTION(filesave_tskStack_left, ".bss:taskStackSection")
-UInt8 filesave_tskStack_left[1024*4];
-
-#pragma DATA_ALIGN(filesave_tskStack_right, 32)
-#pragma DATA_SECTION(filesave_tskStack_right, ".bss:taskStackSection")
-UInt8 filesave_tskStack_right[1024*4];
-
 #define FILE_SIZE 1280*720*2
-
-//UInt8 rear_dataAddr[FILE_SIZE+1];
-//UInt8 front_dataAddr[FILE_SIZE+1];
-//UInt8 left_dataAddr[FILE_SIZE];
-//UInt8 right_dataAddr[FILE_SIZE];
 
 UInt8* rear_dataAddr = NULL;
 UInt8* front_dataAddr = NULL;
 UInt8* left_dataAddr = NULL;
 UInt8* right_dataAddr = NULL;
-
-
-
-
-
-Void filesave_tsk_rear(UArg arg0, UArg arg1)
-{
-	char tmpName[20] = {0,};
-	static int ch_rear = 0;
-	int chnum = 0;
-	FILE* fp = NULL;
-	char loadstring[50] = {0,};
-
-	System_VideoFrameBuffer* videoFrame = (System_VideoFrameBuffer*)arg0;
-
-	chnum = ch_rear;
-	ch_rear++;
-
-	sprintf(tmpName,"%s%s_%d%s","fat:", "rear", chnum,".bin");
-	Vps_printf(" ************************* File Name %s!!! gChnum : %d, payloadSize : %d\n", tmpName, chnum, FILE_SIZE);
-
-
-	fp = fopen(tmpName, "w+");
-
-	if( fp != NULL){
-		int ret = 0;
-
-		rear_dataAddr = Utils_memAlloc( UTILS_HEAPID_DDR_CACHED_SR, FILE_SIZE, SYSTEM_BUFFER_ALIGNMENT ); //UTILS_HEAPID_L2_LOCAL
-
-		if( rear_dataAddr == NULL){
-			Vps_printf(" ************************* rear_dataAddr Mem Alloc Fail\n");
-			return;
-		}
-
-		sprintf(loadstring,"%s File Save Start", tmpName);
-		//Draw2D_drawString(pCtx, 100, 100, loadstring, pPrm);
-		memcpy(rear_dataAddr, videoFrame->bufAddr[0], FILE_SIZE);
-		ret = fwrite(/*videoFrame->bufAddr[0]*/rear_dataAddr, 1, FILE_SIZE, fp);
-
-		if( ret == 0)
-			Vps_printf(" ************************* file Write Fail %s!!!\n", tmpName);
-		else {
-			gisCaptureCh_rear = 1;
-			//Draw2D_clearString(pCtx, 100, 100, strlen(loadstring), pPrm);
-			sprintf(loadstring,"%s File Save End", tmpName);
-			//Draw2D_drawString(pCtx, 100, 100, loadstring, pPm);
-			Vps_printf(" ************************* file Write Success %s, gisCaptureCh_rear %d!!!\n", tmpName, gisCaptureCh_rear);
-		}
-	} else {
-		Vps_printf(" ************************* file Open Fail %s!!!\n", tmpName);
-	}
-
-	fclose(fp);
-	fp = NULL;
-}
-
 
 Void filesave_tsk_front(UArg arg0, UArg arg1)
 {
@@ -785,7 +614,6 @@ Void filesave_tsk_front(UArg arg0, UArg arg1)
 	static int ch_front = 0;
 	int chnum = 0;
 	FILE* fp = NULL;
-#if 1
 
 	chnum = ch_front;
 
@@ -928,160 +756,35 @@ Void filesave_tsk_front(UArg arg0, UArg arg1)
 		System_linkControl(gGrpxSrcLinkID, SYSTEM_CMD_FILE_SAVE_DONE, &nPrm, sizeof(nPrm), TRUE);
 		Vps_printf("   CMD Send %s CaptureLink\n", ( status == 0x0)?"Success":"Fail");
 	}
-#else
-	char loadstring[50] = {0,};
-	System_VideoFrameBuffer* videoFrame = (System_VideoFrameBuffer*)arg0;
 
-	chnum = ch_front;
-	ch_front++;
-
-	sprintf(tmpName,"%s%s_%d%s","fat:", "front", chnum,".bin");
-	Vps_printf(" ************************* File Name %s!!! gChnum : %d, payloadSize : %d\n", tmpName, chnum, FILE_SIZE);
-
-
-	fp = fopen(tmpName, "w+");
-
-	if( fp != NULL){
-		int ret = 0;
-
-		rear_dataAddr = Utils_memAlloc( UTILS_HEAPID_DDR_CACHED_SR, FILE_SIZE, SYSTEM_BUFFER_ALIGNMENT ); //UTILS_HEAPID_L2_LOCAL
-
-		if( rear_dataAddr == NULL){
-			Vps_printf(" ************************* rear_dataAddr Mem Alloc Fail\n");
-			return;
-		}
-
-		sprintf(loadstring,"%s File Save Start", tmpName);
-		//Draw2D_drawString(pCtx, 100, 100, loadstring, pPrm);
-		memcpy(front_dataAddr, videoFrame->bufAddr[0], FILE_SIZE);
-		ret = fwrite(front_dataAddr/*videoFrame->bufAddr[0]*/, 1, FILE_SIZE, fp);
-
-		if( ret == 0)
-			Vps_printf(" ************************* file Write Fail %s!!!\n", tmpName);
-		else {
-			gisCaptureCh_front = 1;
-
-			//Draw2D_clearString(pCtx, 100, 100, strlen(loadstring), pPrm);
-			sprintf(loadstring,"%s File Save End", tmpName);
-			//Draw2D_drawString(pCtx, 100, 100, loadstring, pPrm);
-			Vps_printf(" ************************* file Write Success %s, gisCaptureCh_front %d!!!\n", tmpName, gisCaptureCh_front);
-		}
-	} else {
-		Vps_printf(" ************************* file Open Fail %s!!!\n", tmpName);
+	if( rear_dataAddr != NULL ){
+		status = Utils_memFree( UTILS_HEAPID_DDR_CACHED_SR, rear_dataAddr, FILE_SIZE);
+		UTILS_assert(status==SYSTEM_LINK_STATUS_SOK);
+		rear_dataAddr = NULL;
 	}
 
-	fclose(fp);
-	fp = NULL;
-#endif
-}
-
-Void filesave_tsk_left(UArg arg0, UArg arg1)
-{
-	char tmpName[20] = {0,};
-	static int ch_left = 0;
-	int chnum = 0;
-	FILE* fp = NULL;
-	char loadstring[50] = {0,};
-
-	System_VideoFrameBuffer* videoFrame = (System_VideoFrameBuffer*)arg0;
-
-	chnum = ch_left;
-	ch_left++;
-
-	sprintf(tmpName,"%s%s_%d%s","fat:", "left", chnum,".bin");
-	Vps_printf(" ************************* File Name %s!!! gChnum : %d, payloadSize : %d\n", tmpName, chnum, FILE_SIZE);
-
-	fp = fopen(tmpName, "w+");
-
-	if( fp != NULL){
-		int ret = 0;
-
-		rear_dataAddr = Utils_memAlloc( UTILS_HEAPID_DDR_CACHED_SR, FILE_SIZE, SYSTEM_BUFFER_ALIGNMENT ); //UTILS_HEAPID_L2_LOCAL
-
-		if( rear_dataAddr == NULL){
-			Vps_printf(" ************************* rear_dataAddr Mem Alloc Fail\n");
-			return;
-		}
-
-		sprintf(loadstring,"%s File Save Start", tmpName);
-		//Draw2D_drawString(pCtx, 100, 100, loadstring, pPrm);
-		memcpy(left_dataAddr, videoFrame->bufAddr[0], FILE_SIZE);
-		ret = fwrite(left_dataAddr/*videoFrame->bufAddr[0]*/, 1, FILE_SIZE, fp);
-
-		if( ret == 0)
-			Vps_printf(" ************************* file Write Fail %s!!!\n", tmpName);
-		else {
-			gisCaptureCh_left = 1;
-
-			//Draw2D_clearString(pCtx, 100, 100, strlen(loadstring), pPrm);
-			sprintf(loadstring,"%s File Save End", tmpName);
-			//Draw2D_drawString(pCtx, 100, 100, loadstring, pPrm);
-			Vps_printf(" ************************* file Write Success %s, gisCaptureCh_left %d!!!\n", tmpName, gisCaptureCh_left);
-		}
-	} else {
-		Vps_printf(" ************************* file Open Fail %s!!!\n", tmpName);
+	if( front_dataAddr != NULL ){
+		status = Utils_memFree( UTILS_HEAPID_DDR_CACHED_SR, front_dataAddr, FILE_SIZE);
+		UTILS_assert(status==SYSTEM_LINK_STATUS_SOK);
+		front_dataAddr = NULL;
 	}
 
-	fclose(fp);
-	fp = NULL;
-}
-
-Void filesave_tsk_right(UArg arg0, UArg arg1)
-{
-	char tmpName[20] = {0,};
-	static int ch_right = 0;
-	int chnum = 0;
-	FILE* fp = NULL;
-	char loadstring[50] = {0,};
-	//UInt8* dataAddr = NULL;
-
-	System_VideoFrameBuffer* videoFrame = (System_VideoFrameBuffer*)arg0;
-
-	chnum = ch_right;
-	ch_right++;
-
-	sprintf(tmpName,"%s%s_%d%s","fat:", "right", chnum,".bin");
-	Vps_printf(" ************************* File Name %s!!! gChnum : %d, payloadSize : %d\n", tmpName, chnum, FILE_SIZE);
-
-	fp = fopen(tmpName, "w+");
-
-	if( fp != NULL){
-		int ret = 0;
-
-		rear_dataAddr = Utils_memAlloc( UTILS_HEAPID_DDR_CACHED_SR, FILE_SIZE, SYSTEM_BUFFER_ALIGNMENT ); //UTILS_HEAPID_L2_LOCAL
-
-		if( rear_dataAddr == NULL){
-			gisCaptureCh_right = 1;
-			Vps_printf(" ========> RIGHT Camer Mem Fail %s!!! <========\n", tmpName);
-			return;
-		}
-
-		sprintf(loadstring,"%s File Save Start", tmpName);
-		//Draw2D_drawString(pCtx, 100, 100, loadstring, pPrm);
-		//memcpy(dataAddr, videoFrame->bufAddr[0], FILE_SIZE);
-		//ret = fwrite(dataAddr, 1, FILE_SIZE, fp);
-		ret = fwrite(videoFrame->bufAddr[0], 1, FILE_SIZE, fp);
-
-		if( ret == 0)
-			Vps_printf(" ************************* file Write Fail %s!!!\n", tmpName);
-		else {
-			gisCaptureCh_right = 1;
-
-			//Draw2D_clearString(pCtx, 100, 100, strlen(loadstring), pPrm);
-			sprintf(loadstring,"%s File Save End", tmpName);
-			//Draw2D_drawString(pCtx, 100, 100, loadstring, pPrm);
-			Vps_printf(" ************************* file Write Success %s, gisCaptureCh_right %d!!!\n", tmpName, gisCaptureCh_right);
-		}
-	} else {
-		Vps_printf(" ************************* file Open Fail %s!!!\n", tmpName);
+	if( left_dataAddr != NULL ){
+		status = Utils_memFree( UTILS_HEAPID_DDR_CACHED_SR, left_dataAddr, FILE_SIZE);
+		UTILS_assert(status==SYSTEM_LINK_STATUS_SOK);
+		left_dataAddr = NULL;
 	}
 
-	//free(dataAddr);
+	if( right_dataAddr != NULL ){
+		status = Utils_memFree( UTILS_HEAPID_DDR_CACHED_SR, right_dataAddr, FILE_SIZE);
+		UTILS_assert(status==SYSTEM_LINK_STATUS_SOK);
+		right_dataAddr = NULL;
+	}
 
-	fclose(fp);
-	fp = NULL;
+	BspOsal_taskDelete(tskfilesave_front);
+	tskfilesave_front = NULL;
 }
-#endif
+
 /**
  *******************************************************************************
  *
@@ -1170,7 +873,7 @@ Int32 CaptureLink_drvProcessData(CaptureLink_Obj * pObj, UInt32 instId)
                         );
                 }
 
-#ifdef USE_TSK
+                //ryuhs74 - Start
                 if( gisCapture == 1 ){
 
                 	System_VideoFrameBuffer* videoFrame = ((System_VideoFrameBuffer*)sysBuf->payload);
@@ -1188,17 +891,6 @@ Int32 CaptureLink_drvProcessData(CaptureLink_Obj * pObj, UInt32 instId)
 						memcpy(rear_dataAddr, videoFrame->bufAddr[0], FILE_SIZE);
 
 						gisCaptureCh_rear = 1;
-
-						/*
-                		if( tskfilesave_rear == NULL ){
-							tskfilesave_rear = BspOsal_taskCreate(
-																(BspOsal_TaskFuncPtr)filesave_tsk_rear,
-																1,
-																filesave_tskStack_rear,
-																sizeof(filesave_tskStack_rear),
-																videoFrame);
-                		}
-                		*/
                 		break;
                 	case 1: //left
                 		if( left_dataAddr != NULL )
@@ -1257,22 +949,7 @@ Int32 CaptureLink_drvProcessData(CaptureLink_Obj * pObj, UInt32 instId)
 
                 	}
                 }
-#else
-                //ryuhs74@20150922 - Add Save File
-				//Vps_printf(" ************************* before saveCaptureToFile!!!\n");
-                if( gisCapture == 1){
-                	UInt8 *dataAddr[4];
-                	UInt32 dataSize[4];
-                	System_VideoFrameBuffer* videoFrame = ((System_VideoFrameBuffer*)sysBuf->payload);
-
-                	dataAddr[0] = videoFrame->bufAddr[0];
-                	dataSize[0] = 1280*720*4;
-
-                	saveCaptureToFile(sysBuf->chNum, dataAddr, dataSize);
-                	gisCapture = 0; //test
-                }
-				//Vps_printf(" ************************* after saveCaptureToFile!!!\n");
-#endif
+                //ryuhs74 - End
 
                 status = Utils_bufPutFullBuffer(&pObj->bufQue, pFrame->appData);
                 UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
