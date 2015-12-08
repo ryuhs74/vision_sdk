@@ -325,7 +325,7 @@ Void AlgorithmLink_surroundViewAllocAndQueueOutBuf(void * pObj,
 
 /**
  *******************************************************************************
- *
+ *makeSingleView720PNoInter
  * \brief Implementation of Create Plugin for this algorithm
  *
  *
@@ -405,27 +405,25 @@ Int32 AlgorithmLink_surroundViewCreate(void * pObj, void * pCreateParams)
 
     pSurroundViewObj->isFirstFrameRecv = FALSE;
 
+    pSurroundViewObj->curLayoutPrm.buf1 =
+            Utils_memAlloc(
+            		UTILS_HEAPID_OCMC_SR,
+					BLEND_VIEW_TEMP_BUF_SIZE ,
+                    ALGORITHMLINK_FRAME_ALIGN
+                );
+    UTILS_assert( pSurroundViewObj->curLayoutPrm.buf1);
 
+    pSurroundViewObj->curLayoutPrm.buf2 =
+            Utils_memAlloc(
+            		UTILS_HEAPID_OCMC_SR,
+                    BLEND_VIEW_TEMP_BUF_SIZE ,
+                    ALGORITHMLINK_FRAME_ALIGN
+                );
+    UTILS_assert( pSurroundViewObj->curLayoutPrm.buf2);
 
     if(pSurroundViewObj->curLayoutPrm.makeViewPart == 0)
     {
     	pSurroundViewObj->AlgorithmLink_surroundViewMake = AlgorithmLink_surroundViewMakeTopView;
-
-	    pSurroundViewObj->curLayoutPrm.buf1 =
-	            Utils_memAlloc(
-	            		UTILS_HEAPID_OCMC_SR,
-	                    BLEND_VIEW_TEMP_BUF_SIZE ,
-	                    ALGORITHMLINK_FRAME_ALIGN
-	                );
-        UTILS_assert( pSurroundViewObj->curLayoutPrm.buf1);
-
-	    pSurroundViewObj->curLayoutPrm.buf2 =
-	            Utils_memAlloc(
-	            		UTILS_HEAPID_OCMC_SR,
-	                    BLEND_VIEW_TEMP_BUF_SIZE ,
-	                    ALGORITHMLINK_FRAME_ALIGN
-	                );
-        UTILS_assert( pSurroundViewObj->curLayoutPrm.buf2);
     }
     else
     {
@@ -582,6 +580,8 @@ Int32 AlgorithmLink_surroundViewMakeTopView( void * pObj,
 	///front
 	status = makeSingleView(pInFrameCompositeBuffer->bufAddr[0][3],
 							pOutFrameBuffer->bufAddr[0],
+							(UInt8*)pLayoutPrm->buf1,
+							(UInt8*)pLayoutPrm->buf2,
 							pLayoutPrm->Basic_frontNT,
 							&pLutViewInfo[LUT_VIEW_INFO_TOP_VIEW],
 							&pLutViewInfo[LUT_VIEW_INFO_TOP_A00]);
@@ -589,12 +589,16 @@ Int32 AlgorithmLink_surroundViewMakeTopView( void * pObj,
 	///left
 	status = makeSingleView(pInFrameCompositeBuffer->bufAddr[0][1],
 							pOutFrameBuffer->bufAddr[0],
+							(UInt8*)pLayoutPrm->buf1,
+							(UInt8*)pLayoutPrm->buf2,
 							pLayoutPrm->Basic_leftNT,
 							&pLutViewInfo[LUT_VIEW_INFO_TOP_VIEW],
 							&pLutViewInfo[LUT_VIEW_INFO_TOP_A02]);
 	///rear
 	status = makeSingleView(pInFrameCompositeBuffer->bufAddr[0][0],
 							pOutFrameBuffer->bufAddr[0],
+							(UInt8*)pLayoutPrm->buf1,
+							(UInt8*)pLayoutPrm->buf2,
 							pLayoutPrm->Basic_rearNT,
 							&pLutViewInfo[LUT_VIEW_INFO_TOP_VIEW],
 							&pLutViewInfo[LUT_VIEW_INFO_TOP_A04]);
@@ -603,6 +607,8 @@ Int32 AlgorithmLink_surroundViewMakeTopView( void * pObj,
 	///right
 	status = makeSingleView(pInFrameCompositeBuffer->bufAddr[0][2],
 							pOutFrameBuffer->bufAddr[0],
+							(UInt8*)pLayoutPrm->buf1,
+							(UInt8*)pLayoutPrm->buf2,
 							pLayoutPrm->Basic_rightNT,
 							&pLutViewInfo[LUT_VIEW_INFO_TOP_VIEW],
 							&pLutViewInfo[LUT_VIEW_INFO_TOP_A06]);
@@ -663,33 +669,97 @@ Int32 AlgorithmLink_surroundViewMakeSingleView(	void * pObj,
 												System_VideoFrameCompositeBuffer *pInFrameCompositeBuffer,
 												System_VideoFrameBuffer *pOutFrameBuffer)
 {
-#define DEVIDE_SINGLE_VIEW	4
+#define INTERPOLATION_TEST	0
+#define	DEVIDE_WIDTH	200
     Int32 status    = SYSTEM_LINK_STATUS_SOK;
-
-    AlgorithmLink_SurroundViewLutInfo indViewforLUT[DEVIDE_SINGLE_VIEW] = {0};
+    AlgorithmLink_SurroundViewLutInfo indViewforLUT = {0};
     int i=0;
-    int devideWidth = curLayoutPrm->psingleViewLUTInfo->width/DEVIDE_SINGLE_VIEW;
+    int devideCount = curLayoutPrm->psingleViewLUTInfo->width/DEVIDE_WIDTH;
+    int nextStartX = 0;
+    indViewforLUT.pitch = curLayoutPrm->psingleViewLUTInfo->pitch;
+	indViewforLUT.startY = curLayoutPrm->psingleViewLUTInfo->startY;
+	indViewforLUT.height = curLayoutPrm->psingleViewLUTInfo->height;
+	indViewforLUT.width = DEVIDE_WIDTH;
 
+#if INTERPOLATION_TEST
+    AlgorithmLink_SurroundViewLutInfo ViewforTest = {0};
+    AlgorithmLink_SurroundViewLutInfo ViewforTest1 = {0};
+    ViewforTest.pitch = curLayoutPrm->psingleViewInfo->pitch;
+    ViewforTest.startY = curLayoutPrm->psingleViewInfo->startY;
+    ViewforTest.height = curLayoutPrm->psingleViewInfo->height;
+    ViewforTest.width = curLayoutPrm->psingleViewInfo->width;
+    ViewforTest.startX = curLayoutPrm->psingleViewInfo->startX + (DEVIDE_WIDTH<<1);
 
-    for(i=0; i<DEVIDE_SINGLE_VIEW; i++)
+    ViewforTest1.pitch = curLayoutPrm->psingleViewInfo->pitch;
+    ViewforTest1.startY = curLayoutPrm->psingleViewInfo->startY;
+    ViewforTest1.height = curLayoutPrm->psingleViewInfo->height;
+    ViewforTest1.width = curLayoutPrm->psingleViewInfo->width;
+    ViewforTest1.startX = curLayoutPrm->psingleViewInfo->startX + DEVIDE_WIDTH;
+
+    for(i=0; i<(devideCount>>1); i++)
     {
-    	indViewforLUT[i].pitch = curLayoutPrm->psingleViewLUTInfo->pitch;
-    	indViewforLUT[i].startY = curLayoutPrm->psingleViewLUTInfo->startY;
-    	indViewforLUT[i].height = curLayoutPrm->psingleViewLUTInfo->height;
 
-
-    	indViewforLUT[i].startX = curLayoutPrm->psingleViewLUTInfo->startX + (devideWidth * i);
-    	indViewforLUT[i].width = devideWidth;
-
+    	indViewforLUT.startX = curLayoutPrm->psingleViewLUTInfo->startX + nextStartX;
+    	nextStartX += (DEVIDE_WIDTH<<1);
 
     	status = makeSingleView(pInFrameCompositeBuffer->bufAddr[0][curLayoutPrm->singleViewInputChannel],
     							pOutFrameBuffer->bufAddr[0],
+								(UInt8*) curLayoutPrm->buf1,
+								(UInt8*) curLayoutPrm->buf2,
     							curLayoutPrm->psingleViewLUT,
     							curLayoutPrm->psingleViewInfo,
-    							&indViewforLUT[i]);
+    							&indViewforLUT);
+
+    	status = makeSingleView720P(pInFrameCompositeBuffer->bufAddr[0][curLayoutPrm->singleViewInputChannel],
+    							pOutFrameBuffer->bufAddr[0],
+								(UInt8*) curLayoutPrm->buf1,
+								(UInt8*) curLayoutPrm->buf2,
+    							curLayoutPrm->psingleViewLUT,
+    							&ViewforTest1,
+    							&indViewforLUT);
+
+
+    	status = makeSingleView720PNoInter(pInFrameCompositeBuffer->bufAddr[0][curLayoutPrm->singleViewInputChannel],
+    							pOutFrameBuffer->bufAddr[0],
+								(UInt8*) curLayoutPrm->buf1,
+								(UInt8*) curLayoutPrm->buf2,
+    							curLayoutPrm->psingleViewLUT,
+    							&ViewforTest,
+    							&indViewforLUT);
     }
+#else
 
 
+    for(i=0; i<devideCount; i++)
+    {
+    	indViewforLUT.startX = curLayoutPrm->psingleViewLUTInfo->startX + nextStartX;
+    	nextStartX += DEVIDE_WIDTH;
+
+    	status =
+    			makeSingleView(	pInFrameCompositeBuffer->bufAddr[0][curLayoutPrm->singleViewInputChannel],
+												pOutFrameBuffer->bufAddr[0],
+												(UInt8*)curLayoutPrm->buf1,
+												(UInt8*)curLayoutPrm->buf2,
+												curLayoutPrm->psingleViewLUT,
+												curLayoutPrm->psingleViewInfo,
+												&indViewforLUT);
+	}
+
+	indViewforLUT.startX = curLayoutPrm->psingleViewLUTInfo->startX + nextStartX;
+	indViewforLUT.width = curLayoutPrm->psingleViewLUTInfo->width - nextStartX;
+
+	if (indViewforLUT.width)
+	{
+		status =
+				makeSingleView(	pInFrameCompositeBuffer->bufAddr[0][curLayoutPrm->singleViewInputChannel],
+												pOutFrameBuffer->bufAddr[0],
+												(UInt8*) curLayoutPrm->buf1,
+												(UInt8*) curLayoutPrm->buf2,
+												curLayoutPrm->psingleViewLUT,
+												curLayoutPrm->psingleViewInfo,
+												&indViewforLUT);
+	}
+#endif
 
     return status;
 }
