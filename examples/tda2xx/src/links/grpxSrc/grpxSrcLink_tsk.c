@@ -38,6 +38,7 @@
 #pragma DATA_SECTION(gGrpxSrcLink_tskStack, ".bss:taskStackSection")
 UInt8 gGrpxSrcLink_tskStack[GRPX_SRC_LINK_OBJ_MAX][GRPX_SRC_LINK_TSK_STACK_SIZE];
 
+extern int gisCapture;
 static VIEW_MODE gCurViewmode;
 Int32 GrpxSrcLink_drawAVM_E500Button(GrpxSrcLink_Obj *pObj);
 Int32 Draw2D_AVME500_TopView( GrpxSrcLink_Obj *pObj );
@@ -830,13 +831,35 @@ Void GrpxSrcLink_tskMain(struct Utils_TskHndl * pTsk, Utils_MsgHndl * pMsg)
                 	 break;
                  case SYSTEM_CMD_FILE_SAVE_START:
                 	 GrpxSrcLink_displayTxt(pObj, "File Save Start", 1);
+                	 gisCapture = 1;
                 	 System_sendLinkCmd(pObj->createArgs.outQueParams.nextLink, SYSTEM_CMD_NEW_DATA, NULL);
                 	 Utils_tskAckOrFreeMsg(pMsg, SYSTEM_LINK_STATUS_SOK);
                 	 break;
                  case SYSTEM_CMD_FILE_SAVE_DONE:
+                 {
+                	 UInt32 *nPrm = (UInt32 *) Utils_msgGetPrm(pMsg);
+
                 	 GrpxSrcLink_displayTxt(pObj, "File Save Start", 0);
                 	 System_sendLinkCmd(pObj->createArgs.outQueParams.nextLink, SYSTEM_CMD_NEW_DATA, NULL);
+                	 BspOsal_sleep(5000);
+
+                	 if( *nPrm == 1001 )
+                	 {
+                		 GrpxSrcLink_displayTxt(pObj, "File Save Fail", 1);
+                		 System_sendLinkCmd(pObj->createArgs.outQueParams.nextLink, SYSTEM_CMD_NEW_DATA, NULL);
+                		 BspOsal_sleep(5000);
+                		 GrpxSrcLink_displayTxt(pObj, "File Save Fail", 0);
+                		 System_sendLinkCmd(pObj->createArgs.outQueParams.nextLink, SYSTEM_CMD_NEW_DATA, NULL);
+                	 } else if( *nPrm == 1000)
+                	 {
+                		 GrpxSrcLink_displayTxt(pObj, "File Save Success", 1);
+                		 System_sendLinkCmd(pObj->createArgs.outQueParams.nextLink, SYSTEM_CMD_NEW_DATA, NULL);
+                		 BspOsal_sleep(5000);
+                		 GrpxSrcLink_displayTxt(pObj, "File Save Success", 0);
+                		 System_sendLinkCmd(pObj->createArgs.outQueParams.nextLink, SYSTEM_CMD_NEW_DATA, NULL);
+                	 }
                 	 Utils_tskAckOrFreeMsg(pMsg, SYSTEM_LINK_STATUS_SOK);
+                 }
                 	 break;
                  case SYSTEM_CMD_CLEAR_E500_UI:
                 	 GrpxSrcLink_Clear_E500UI(pObj);
