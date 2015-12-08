@@ -9,6 +9,9 @@
 #ifndef EXAMPLES_TDA2XX_SRC_ALG_PLUGINS_FULLVIEW_SINGLEVIEW_H_
 #define EXAMPLES_TDA2XX_SRC_ALG_PLUGINS_FULLVIEW_SINGLEVIEW_H_
 
+#define SUPPORT_SHARPEN_FILTER	1
+
+
 #ifndef RESTRICT
 #ifdef BUILD_DSP
 #define RESTRICT restrict
@@ -52,7 +55,7 @@ typedef struct {
 	unsigned char cr_r_overlay:8;
 } MaskLUT_Packed;
 
-#define TEMP_BUF_WIDTH	260
+#define TEMP_BUF_WIDTH	208
 #define HD720P_WIDTH	1280
 #define HD1080P_WIDTH	1920
 typedef YUYV yuvHD720P[HD720P_WIDTH];
@@ -94,12 +97,13 @@ typedef UInt8 yHD260Pixel[TEMP_BUF_WIDTH];
 	Q = q1;\
 }
 
-static inline Int32 makeSingleView720P(  UInt32       *RESTRICT inPtr,
-                           	   UInt32           *RESTRICT outPtr,
-							   UInt32			*RESTRICT viewLUTPtr,
-							   AlgorithmLink_SurroundViewLutInfo			*RESTRICT viewInfo,
-							   AlgorithmLink_SurroundViewLutInfo			*RESTRICT childViewInfoLUT
-                          )
+static inline Int32 makeSingleView720P(	UInt32 *RESTRICT inPtr,
+										UInt32 *RESTRICT outPtr,
+										UInt8 *RESTRICT buf1,
+										UInt8 *RESTRICT buf2,
+										UInt32 *RESTRICT viewLUTPtr,
+										AlgorithmLink_SurroundViewLutInfo *RESTRICT viewInfo,
+										AlgorithmLink_SurroundViewLutInfo *RESTRICT childViewInfoLUT)
 {
 	UInt16 rowIdx;
     UInt16 colIdx;
@@ -145,6 +149,8 @@ static inline Int32 makeSingleView720P(  UInt32       *RESTRICT inPtr,
 
 static inline Int32 makeSingleView720PNoInter(	UInt32 *RESTRICT inPtr,
 												UInt32 *RESTRICT outPtr,
+												UInt8       *RESTRICT buf1,
+												UInt8       *RESTRICT buf2,
 												UInt32 *RESTRICT viewLUTPtr,
 												AlgorithmLink_SurroundViewLutInfo *RESTRICT viewInfo,
 												AlgorithmLink_SurroundViewLutInfo *RESTRICT childViewInfoLUT)
@@ -231,7 +237,7 @@ static inline Int32 makeSingleView720PWithFilter(	UInt32 *RESTRICT inPtr,
         {
         	YUYV *q = &iPtr[lutbak->yInteger][lutbak->xInteger];
 
-        	BilinearInterpolation_filter(q[0].y, q[1].y, q[HD720P_WIDTH].y, q[HD720P_WIDTH+1].y, lutbak, FilterBuffIn[rowIdx][colIdx], FilterBuffOut[rowIdx][colIdx]);
+        	BilinearInterpolation_filter(q[0].y, q[1].y, q[HD720P_WIDTH].y, q[HD720P_WIDTH+1].y, lutbak, FilterBuffIn[rowIdx][colIdx], FilterBuffOut[rowIdx][colIdx+3]);
         }
 
         for(colIdx = startX, lutbak = lut + childViewInfoLUT->startX; colIdx < width ; colIdx+=2, lutbak+=2)
@@ -260,7 +266,7 @@ static inline Int32 makeSingleView720PWithFilter(	UInt32 *RESTRICT inPtr,
 		for (i = 0; i < height - 2; i++)
 		{
 			IMG_conv_3x3_i8_c8s(FilterBuffIn[i],
-								FilterBuffOut[i+1],
+								FilterBuffOut[i+1]+4,
 								_width,
 								TEMP_BUF_WIDTH,
 								(char*) sharpen_mask,
@@ -270,8 +276,8 @@ static inline Int32 makeSingleView720PWithFilter(	UInt32 *RESTRICT inPtr,
 #endif
     for(rowIdx = 0; rowIdx < height ; rowIdx++)
     {
-    	int filtercolIdx = 0;
-        for(colIdx = startX, filtercolIdx = 0; colIdx < width ; colIdx++, filtercolIdx++)
+    	int filtercolIdx = 3;
+        for(colIdx = startX, filtercolIdx = 3; colIdx < width ; colIdx++, filtercolIdx++)
         {
         	oPtr[rowIdx][colIdx].y = FilterBuffOut[rowIdx][filtercolIdx];
         }
@@ -334,8 +340,11 @@ static inline Int32 makeSingleView720PBuff(  UInt32       *RESTRICT inPtr,
     return SYSTEM_LINK_STATUS_SOK;
 }
 
+#if SUPPORT_SHARPEN_FILTER
+#define makeSingleView makeSingleView720PWithFilter
+#else
 #define makeSingleView makeSingleView720P
-
+#endif
 #if 0
 static inline Int32 makeSingleView(  UInt32       	*RESTRICT inPtr,
                            	   UInt32           *RESTRICT outPtr,
