@@ -161,11 +161,11 @@ static Void chains_surround_View_SetSyncPrm(
     if(numLvdsCh == 2)
     {
 		pPrm->chParams.syncDelta = SYNC_DELTA_IN_MSEC_SURROUND_VIEW;
-		pPrm->chParams.syncThreshold = SYNC_DELTA_IN_MSEC_SURROUND_VIEW;
+		pPrm->chParams.syncThreshold = 0xffff;
     }else
     {
 		pPrm->chParams.syncDelta = SYNC_DELTA_IN_MSEC_CAP;
-		pPrm->chParams.syncThreshold = SYNC_DELTA_IN_MSEC_CAP;
+		pPrm->chParams.syncThreshold = SYNC_DROP_THRESHOLD_IN_MSEC_CAP;
     }
 }
 
