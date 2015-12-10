@@ -26,6 +26,7 @@ extern UInt32 gGrpxSrcLinkID;
 UInt32 gE500AlgLinkID_0; //ryuhs74@20151112 - Add
 UInt32 gE500AlgLinkID_1; //ryuhs74@20151112 - Add
 extern UInt32 gFullFront;
+extern UInt32 gDisplay_videoLinkID; //ryuhs74@20151209 - For CES
 
 Void chains_surround_View_SetLinkId(chains_surround_ViewObj *pObj){
        pObj->CaptureLinkID                  = SYSTEM_LINK_ID_CAPTURE;
@@ -56,6 +57,7 @@ Void chains_surround_View_SetLinkId(chains_surround_ViewObj *pObj){
        gGrpxSrcLinkID = pObj->GrpxSrcLinkID;
        gE500AlgLinkID_0 = pObj->Alg_SurroundViewLink_0_ID;
        gE500AlgLinkID_1 = pObj->Alg_SurroundViewLink_1_ID;
+       gDisplay_videoLinkID = pObj->Display_videoLinkID; //ryuhs74@20151209 - For CES
 }
 
 Void chains_surround_View_ResetLinkPrms(chains_surround_ViewObj *pObj){

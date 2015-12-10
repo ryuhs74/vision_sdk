@@ -841,20 +841,20 @@ Void GrpxSrcLink_tskMain(struct Utils_TskHndl * pTsk, Utils_MsgHndl * pMsg)
 
                 	 GrpxSrcLink_displayTxt(pObj, "File Save Start", 0);
                 	 System_sendLinkCmd(pObj->createArgs.outQueParams.nextLink, SYSTEM_CMD_NEW_DATA, NULL);
-                	 BspOsal_sleep(5000);
+                	 BspOsal_sleep(1000);
 
                 	 if( *nPrm == 1001 )
                 	 {
                 		 GrpxSrcLink_displayTxt(pObj, "File Save Fail", 1);
                 		 System_sendLinkCmd(pObj->createArgs.outQueParams.nextLink, SYSTEM_CMD_NEW_DATA, NULL);
-                		 BspOsal_sleep(5000);
+                		 BspOsal_sleep(1000);
                 		 GrpxSrcLink_displayTxt(pObj, "File Save Fail", 0);
                 		 System_sendLinkCmd(pObj->createArgs.outQueParams.nextLink, SYSTEM_CMD_NEW_DATA, NULL);
                 	 } else if( *nPrm == 1000)
                 	 {
                 		 GrpxSrcLink_displayTxt(pObj, "File Save Success", 1);
                 		 System_sendLinkCmd(pObj->createArgs.outQueParams.nextLink, SYSTEM_CMD_NEW_DATA, NULL);
-                		 BspOsal_sleep(5000);
+                		 BspOsal_sleep(1000);
                 		 GrpxSrcLink_displayTxt(pObj, "File Save Success", 0);
                 		 System_sendLinkCmd(pObj->createArgs.outQueParams.nextLink, SYSTEM_CMD_NEW_DATA, NULL);
                 	 }
