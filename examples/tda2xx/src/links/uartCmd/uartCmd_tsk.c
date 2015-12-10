@@ -215,6 +215,54 @@ void AlgLink_putCmd( uint8_t _cmd )
 #endif
 }
 
+void PutCmd_Button(  )
+{
+	static UInt32 nState = 0;
+	Int32 status;
+	AlgorithmLink_ControlParams AlgLinkControlPrm;
+
+
+	if( nState >= 5)
+		nState = 0;
+	else
+		nState++;
+
+	Vps_printf("AVM-E500 : In PutCmd_Button, nState: %d", nState);
+
+	if( nState == 0 ){ //IRDA_KEY_UP
+		AlgLinkControlPrm.controlCmd = SYSTEM_CMD_FRONT_SIDE_VIEW;
+		status = System_linkControl( gE500AlgLinkID_0, ALGORITHM_LINK_CMD_CONFIG, &AlgLinkControlPrm, sizeof(AlgLinkControlPrm), TRUE);
+		status = System_linkControl( gE500AlgLinkID_1, ALGORITHM_LINK_CMD_CONFIG, &AlgLinkControlPrm, sizeof(AlgLinkControlPrm), TRUE);
+		status = System_linkControl(gGrpxSrcLinkID, SYSTEM_CMD_FRONT_SIDE_VIEW, NULL, 0, TRUE); //gGrpxSrcLinkID °´Ã¼°¡ µÎ°³.
+	} else if( nState == 1 ){ //IRDA_KEY_DOWN
+		AlgLinkControlPrm.controlCmd = SYSTEM_CMD_REAR_SIDE_VIEW;
+		status = System_linkControl( gE500AlgLinkID_0, ALGORITHM_LINK_CMD_CONFIG, &AlgLinkControlPrm, sizeof(AlgLinkControlPrm), TRUE);
+		status = System_linkControl( gE500AlgLinkID_1, ALGORITHM_LINK_CMD_CONFIG, &AlgLinkControlPrm, sizeof(AlgLinkControlPrm), TRUE);
+		status = System_linkControl(gGrpxSrcLinkID, SYSTEM_CMD_REAR_SIDE_VIEW, NULL, 0, TRUE); //gGrpxSrcLinkID °´Ã¼°¡ µÎ°³.
+	} else if( nState == 2 ){ //IRDA_KEY_LEFT
+		AlgLinkControlPrm.controlCmd = SYSTEM_CMD_LEFT_SIDE_VIEW;
+		status = System_linkControl( gE500AlgLinkID_0, ALGORITHM_LINK_CMD_CONFIG, &AlgLinkControlPrm, sizeof(AlgLinkControlPrm), TRUE);
+		status = System_linkControl( gE500AlgLinkID_1, ALGORITHM_LINK_CMD_CONFIG, &AlgLinkControlPrm, sizeof(AlgLinkControlPrm), TRUE);
+		status = System_linkControl(gGrpxSrcLinkID, SYSTEM_CMD_LEFT_SIDE_VIEW, NULL, 0, TRUE); //gGrpxSrcLinkID °´Ã¼°¡ µÎ°³.
+	} else if( nState == 3 ){ //IRDA_KEY_RIGHT
+		AlgLinkControlPrm.controlCmd = SYSTEM_CMD_RIGH_SIDE_VIEW;
+		status = System_linkControl( gE500AlgLinkID_0, ALGORITHM_LINK_CMD_CONFIG, &AlgLinkControlPrm, sizeof(AlgLinkControlPrm), TRUE);
+		status = System_linkControl( gE500AlgLinkID_1, ALGORITHM_LINK_CMD_CONFIG, &AlgLinkControlPrm, sizeof(AlgLinkControlPrm), TRUE);
+		status = System_linkControl(gGrpxSrcLinkID, SYSTEM_CMD_RIGH_SIDE_VIEW, NULL, 0, TRUE); //gGrpxSrcLinkID °´Ã¼°¡ µÎ°³.
+	}else if( nState == 4 ){ //IRDA_KEY_FULL - Front
+		AlgLinkControlPrm.controlCmd = SYSTEM_CMD_FULL_FRONT_VIEW;
+		status = System_linkControl( gE500AlgLinkID_0, ALGORITHM_LINK_CMD_CONFIG, &AlgLinkControlPrm, sizeof(AlgLinkControlPrm), TRUE);
+		status = System_linkControl( gE500AlgLinkID_1, ALGORITHM_LINK_CMD_CONFIG, &AlgLinkControlPrm, sizeof(AlgLinkControlPrm), TRUE);
+		status = System_linkControl(gGrpxSrcLinkID, SYSTEM_CMD_FULL_FRONT_VIEW, NULL, 0, TRUE); //gGrpxSrcLinkID °´Ã¼°¡ µÎ°³.
+	} else if( nState == 5 ){ //IRDA_KEY_FULL - Rear
+		AlgLinkControlPrm.controlCmd = SYSTEM_CMD_FULL_REAR_VIEW;
+		status = System_linkControl( gE500AlgLinkID_0, ALGORITHM_LINK_CMD_CONFIG, &AlgLinkControlPrm, sizeof(AlgLinkControlPrm), TRUE);
+		status = System_linkControl( gE500AlgLinkID_1, ALGORITHM_LINK_CMD_CONFIG, &AlgLinkControlPrm, sizeof(AlgLinkControlPrm), TRUE);
+		status = System_linkControl(gGrpxSrcLinkID, SYSTEM_CMD_FULL_REAR_VIEW, NULL, 0, TRUE); //gGrpxSrcLinkID °´Ã¼°¡ µÎ°³.
+	}
+	Vps_printf("AVM-E500 : CMD Send %s PutCmd_Button\n", ( status == 0x0)?"Success":"Fail");
+}
+
 static int UART_ParseCmd(uint8_t *rxBuf)
 {
 	uint8_t calcBcc;
@@ -293,6 +341,7 @@ static int UART_ParseCmd(uint8_t *rxBuf)
 
 			AlgLink_putCmd( GET_ARG1(rxBuf) );
 			GrpxLink_putCmd( GET_ARG1(rxBuf) );
+			//PutCmd_Button();
 			break;
 		} //ryuhs74@20151020 - Add HDMI On/Off Test End
 		break;
@@ -311,6 +360,23 @@ static int UART_ParseCmd(uint8_t *rxBuf)
 
 		break;
 	case CMD_SEND_BUTTON_PRESSED:	///Recv Button Event
+		Vps_printf("In CMD_SEND_BUTTON_PRESSED ");
+		switch (GET_ARG1(rxBuf))
+		{
+		case BUTTON_1_SHORT_PRESSED:
+			Vps_printf("In BUTTON_1_SHORT_PRESSED\n");
+			PutCmd_Button();
+			break;
+		case BUTTON_1_LONG_PRESSED :
+			Vps_printf("In BUTTON_1_LONG_PRESSED\n");
+			break;
+		case BUTTON_2_SHORT_PRESSED :
+			Vps_printf("In BUTTON_2_SHORT_PRESSED\n");
+			break;
+		case BUTTON_2_LONG_PRESSED : //LFET - IRDA_KEY_LEFT = (0x0B)
+			Vps_printf("In BUTTON_2_LONG_PRESSED\n");
+			break;
+		}
 		break;
 	case CMD_REQ_LVDS_STATUS:
 		break;
