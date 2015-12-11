@@ -245,12 +245,8 @@ Int32 Draw2D_AVME500_TopView( GrpxSrcLink_Obj *pObj )
 	{
 		/* CMASK Image */
 		/* TODO : Change Co-ordinates as per the requirement */
-		//bmpPrm.bmpIdx = DRAW2D_BMP_IDX_JEEP_IMAGE_TRUESCALE;
-		//Draw2D_drawBmp(pObj->draw2DHndl,
-		//			(326+520), //520 comes from layout
-		//			(324+5), //5 comes from layout
-		//			&bmpPrm
-		//			);
+		bmpPrm.bmpIdx = DRAW2D_BMP_IDX_CARMASK;
+		Draw2D_drawBmp(pObj->draw2DHndl, (182), (142), &bmpPrm );
 	}
 
 	bmpPrm.bmpIdx = DRAW2D_BMP_IDX_TOP_VIEW_TXT;
@@ -265,14 +261,15 @@ Int32 Draw2D_AVME500_FullView( GrpxSrcLink_Obj *pObj )
 	Draw2D_RegionPrm regionMidleBar;
 	Draw2D_RegionPrm regionBootmBar;
 
-	/*
-	 * //Top View, Side View Separation Bar
-	region.color  = AVME500_BACKGROUND_COLOR;
-	region.startX = 520+13;//520+16;
-	region.startY = 16;
-	region.height = 688;
-	region.width  = 19;//16;
-	 */
+	//Car Image transparent coloring
+	regionMidleBar.color  = DRAW2D_TRANSPARENT_COLOR;
+	regionMidleBar.colorFormat = DRAW2D_TRANSPARENT_COLOR_FORMAT;
+	regionMidleBar.startX = 182;
+	regionMidleBar.startY = 142;
+	regionMidleBar.width  = 156;
+	regionMidleBar.height = 404;
+	Draw2D_fillRegion(pObj->draw2DHndl,&regionMidleBar);
+
 	//Top View, Side View Separation Bar of the transparent coloring
 	regionMidleBar.color  = DRAW2D_TRANSPARENT_COLOR;
 	regionMidleBar.colorFormat = DRAW2D_TRANSPARENT_COLOR_FORMAT;

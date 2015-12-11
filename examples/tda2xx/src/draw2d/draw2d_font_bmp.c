@@ -100,6 +100,8 @@ Int32 Draw2D_getBmpProperty(Draw2D_BmpPrm *pPrm, Draw2D_BmpProperty *pProp)
 			Draw2D_getBmpProperty_Top_view_Txt(pProp);
 		else if( pPrm->bmpIdx == DRAW2D_BMP_IDX_FULL_VIEW_TXT )
 			Draw2D_getBmpProperty_Full_view_Txt(pProp);
+		else if( pPrm->bmpIdx == DRAW2D_BMP_IDX_CARMASK)
+			Draw2D_getBmpProperty_carmask(pProp);
 #if 0 //ryuhs74@20151202
 		else
 			if(pPrm->bmpIdx==DRAW2D_BMP_IDX_SURROUND_VIEW)

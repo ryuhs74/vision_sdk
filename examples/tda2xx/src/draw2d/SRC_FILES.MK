@@ -16,6 +16,7 @@ SRCS_ipu1_0 += front_view_nor.c \
 		setting_sel.c \
 		fullviewTxt.c \
 		topviewTxt.c \
+		carmask.c \
 		draw2d_font_bmp.c \
         draw2d_font00.c \
         draw2d_font01.c \

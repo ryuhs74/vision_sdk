@@ -101,6 +101,7 @@ extern "C" {
 #define DRAW2D_BMP_IDX_FULL_VIEW_REAR		(27)
 #define DRAW2D_BMP_IDX_TOP_VIEW_TXT			(28)
 #define DRAW2D_BMP_IDX_FULL_VIEW_TXT		(29)
+#define DRAW2D_BMP_IDX_CARMASK				(30)
 /*
  *******************************************************************************
  *
