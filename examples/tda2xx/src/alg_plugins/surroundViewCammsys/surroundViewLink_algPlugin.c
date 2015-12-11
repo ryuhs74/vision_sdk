@@ -789,6 +789,7 @@ Int32 AlgorithmLink_surroundViewProcess(void * pObj)
     UInt32 bufId;
     Bool  bufDropFlag[SYSTEM_MAX_BUFFERS_IN_BUFFER_LIST];
     System_LinkStatistics      * linkStatsInfo;
+    int InbufCount = 0;
 
     pSurroundViewObj = (AlgorithmLink_SurroundViewObj *)
                     AlgorithmLink_getAlgorithmParamsObj(pObj);
@@ -880,6 +881,18 @@ Int32 AlgorithmLink_surroundViewProcess(void * pObj)
                     [pInBuffer->chNum].inBufProcessCount++;
             linkStatsInfo->linkStats.chStats
                     [pInBuffer->chNum].outBufCount[0]++;
+
+
+            for(InbufCount = 0; InbufCount < pInFrameCompositeBuffer->numFrames; InbufCount++)
+            {
+            	int size = pInFrameCompositeBuffer->chInfo.height * pInFrameCompositeBuffer->chInfo.pitch[InbufCount];
+
+                Cache_inv(pInFrameCompositeBuffer->bufAddr[0][InbufCount],
+						  size,
+                          Cache_Type_ALLD,
+                          TRUE
+                         );
+            }
 
             pSurroundViewObj->AlgorithmLink_surroundViewMake(
                     pObj,
