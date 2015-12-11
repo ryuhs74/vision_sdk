@@ -1092,7 +1092,7 @@ Int32 AlgorithmLink_surroundViewControl(void * pObj, void * pControlParams)
             	pSurroundViewObj->curLayoutPrm.psingleViewLUT = pSurroundViewObj->curLayoutPrm.Basic_leftSideView;
                 pSurroundViewObj->curLayoutPrm.psingleViewInfo = &pSurroundViewObj->curLayoutPrm.lutViewInfo[LUT_VIEW_INFO_SIDE_VIEW];
                 pSurroundViewObj->curLayoutPrm.psingleViewLUTInfo = &pSurroundViewObj->curLayoutPrm.lutViewInfo[LUT_VIEW_INFO_SIDE_VIEW_LUT];
-                pSurroundViewObj->curLayoutPrm.singleViewInputChannel = CAMERA_REAR;
+                pSurroundViewObj->curLayoutPrm.singleViewInputChannel = CAMERA_LEFT;
 
             }
             break;
