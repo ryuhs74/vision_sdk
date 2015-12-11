@@ -16,6 +16,7 @@
 #include <src/utils_common/include/utils_uart.h>
 #include "uartCmd_priv.h"
 #include <include/link_api/algorithmLink.h>
+#include <include/link_api/displayLink.h> //ryuhs74@20151209 - For CES
 
 #pragma DATA_ALIGN(UartCmd_tskStack, 32)
 #pragma DATA_SECTION(UartCmd_tskStack, ".bss:taskStackSection")
@@ -92,7 +93,34 @@ UInt32 gFullFront = 0;
 extern UInt32 gE500AlgLinkID_0;
 extern UInt32 gE500AlgLinkID_1;
 
-UInt32 TestFileSave = 0;
+//UInt32 TestFileSave = 0;
+UInt32 gDisplay_videoLinkID = 0; //ryuhs74@20151209 - For CES
+Void chains_surround_View_SwitchDisplayCh( uint8_t _cmd ) //ryuhs74@20151209 - For CES
+{
+	//TOP : 0 Rear = 1, LEFT = 2, RIGHT = 3, FRONT = 4
+    DisplayLink_SwitchChannelParams displayPrm;
+
+    if( _cmd == IRDA_KEY_UP ){ //FRONT : 4
+    	displayPrm.activeChId = 4;
+    	System_linkControl(gDisplay_videoLinkID, DISPLAY_LINK_CMD_SWITCH_CH, &displayPrm, sizeof(displayPrm), TRUE);
+    	System_linkControl(gGrpxSrcLinkID, SYSTEM_CMD_CLEAR_E500_UI, NULL, 0, TRUE);
+    } else if( _cmd == IRDA_KEY_DOWN ){ //Rear : 1
+    	displayPrm.activeChId = 1;
+    	System_linkControl(gDisplay_videoLinkID, DISPLAY_LINK_CMD_SWITCH_CH, &displayPrm, sizeof(displayPrm), TRUE);
+    	System_linkControl(gGrpxSrcLinkID, SYSTEM_CMD_CLEAR_E500_UI, NULL, 0, TRUE);
+    } else if( _cmd == IRDA_KEY_RIGHT ){ //RIGHT : 3
+    	displayPrm.activeChId = 3;
+    	System_linkControl(gDisplay_videoLinkID, DISPLAY_LINK_CMD_SWITCH_CH, &displayPrm, sizeof(displayPrm), TRUE);
+    	System_linkControl(gGrpxSrcLinkID, SYSTEM_CMD_CLEAR_E500_UI, NULL, 0, TRUE);
+    } else if( _cmd == IRDA_KEY_LEFT ){ //LEFT : 2
+    	displayPrm.activeChId = 2;
+    	System_linkControl(gGrpxSrcLinkID, SYSTEM_CMD_CLEAR_E500_UI, NULL, 0, TRUE);
+    }else if( _cmd == IRDA_KEY_FULL ){
+    	displayPrm.activeChId = 0;
+    	System_linkControl(gDisplay_videoLinkID, DISPLAY_LINK_CMD_SWITCH_CH, &displayPrm, sizeof(displayPrm), TRUE);
+    	System_linkControl(gGrpxSrcLinkID, SYSTEM_CMD_REDRAW_E500_UI, NULL, 0, TRUE);
+    }
+}
 
 void GrpxLink_putCmd( uint8_t _cmd )
 {
@@ -141,7 +169,6 @@ void GrpxLink_putCmd( uint8_t _cmd )
 		}
 	} else if( _cmd == IRDA_KEY_PWR ){
 #if 1
-		TestFileSave = 1;
 		_cmd = SYSTEM_CMD_FILE_SAVE_START;
 		Vps_printf("In GrpxSrcLink_putCmd, IRDA_KEY_PWR, File Save, CMD : %d", _cmd);
 		status = System_linkControl(gGrpxSrcLinkID, _cmd, NULL, 0, TRUE); //gGrpxSrcLinkID °´Ã¼°¡ µÎ°³.
@@ -339,9 +366,9 @@ static int UART_ParseCmd(uint8_t *rxBuf)
 		case IRDA_KEY_RIGHT : //RIGHT - IRDA_KEY_RIGHT = (0x0A)
 		case IRDA_KEY_FULL : //Full - IRDA_KEY_FULL = (0x05),
 
-			AlgLink_putCmd( GET_ARG1(rxBuf) );
-			GrpxLink_putCmd( GET_ARG1(rxBuf) );
-			//PutCmd_Button();
+			//AlgLink_putCmd( GET_ARG1(rxBuf) );
+			//GrpxLink_putCmd( GET_ARG1(rxBuf) );
+			chains_surround_View_SwitchDisplayCh( GET_ARG1(rxBuf));
 			break;
 		} //ryuhs74@20151020 - Add HDMI On/Off Test End
 		break;
@@ -385,7 +412,6 @@ static int UART_ParseCmd(uint8_t *rxBuf)
 
 	case CMD_REQ_HDMI_ONOFF:
 	{
-		/*
 		extern void vpshal_HdmiWpVideoStart(UInt32 start)	;
 
 		buf[0] = CMD_REQ_HDMI_ONOFF;
@@ -407,12 +433,10 @@ static int UART_ParseCmd(uint8_t *rxBuf)
 		buf[0] = CMD_SEND_HDMI_ON_OFF;
 		buf[1] = GET_ARG1(rxBuf);
 		UART_SendCmd(DEV_ID_AVM_MICOM, DEV_ID_AVM_DSP, buf, 2);
-		*/
 		break;
 	}
 	case CMD_REQ_ETHERNET_ONOFF:
 	{
-		/*
 		extern void PlatformRGMII1SetPinDeMux(void);
 		extern void PlatformRGMII1SetPinMux(void);
 
@@ -431,7 +455,6 @@ static int UART_ParseCmd(uint8_t *rxBuf)
 			PlatformRGMII1SetPinMux();
 		}
 		UART_SendCmd(DEV_ID_AVM_MICOM, DEV_ID_AVM_DSP, buf, 2);
-		*/
 		break;
 	}
 	default:
