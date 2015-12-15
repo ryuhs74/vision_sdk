@@ -749,6 +749,8 @@ Void GrpxSrcLink_tskMain(struct Utils_TskHndl * pTsk, Utils_MsgHndl * pMsg)
                  case SYSTEM_CMD_START:
                      status = SYSTEM_LINK_STATUS_SOK;
                      pObj->isLinkStarted = TRUE;
+                     GrpxSrcLink_drawAVM_E500Layout(pObj);
+                     System_sendLinkCmd(pObj->createArgs.outQueParams.nextLink, SYSTEM_CMD_NEW_DATA, NULL);
                      Utils_tskAckOrFreeMsg(pMsg, status);
                      break;
 
