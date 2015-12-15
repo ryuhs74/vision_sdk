@@ -607,6 +607,138 @@ UInt8* front_dataAddr = NULL;
 UInt8* left_dataAddr = NULL;
 UInt8* right_dataAddr = NULL;
 
+UInt8 outbuf[FILE_SIZE] = {0,};
+
+void Convert_YUV422P( UInt8* _in, UInt8* _out)
+{
+	Int32 status = SYSTEM_LINK_STATUS_SOK;
+	int total_Index = 0;
+	int Y_index = 0;
+	int U_index = 0;
+	int V_index = 0;
+	int UV_index = 0;
+
+	UInt8* Y_Buf = NULL;//[YUV422P_SIZE/2] = {0,};
+	UInt8* UV_Buf = NULL;//[YUV422P_SIZE/2] = {0,};
+	UInt8* U_Buf = NULL;//[(YUV422P_SIZE/2)/2] = {0,};
+	UInt8* V_Buf = NULL;//[(YUV422P_SIZE/2)/2] = {0,};
+
+	Y_Buf = Utils_memAlloc( UTILS_HEAPID_DDR_CACHED_SR, FILE_SIZE/2, SYSTEM_BUFFER_ALIGNMENT );
+	UV_Buf = Utils_memAlloc( UTILS_HEAPID_DDR_CACHED_SR, FILE_SIZE/2, SYSTEM_BUFFER_ALIGNMENT );
+	U_Buf = Utils_memAlloc( UTILS_HEAPID_DDR_CACHED_SR, (FILE_SIZE/2)/2, SYSTEM_BUFFER_ALIGNMENT );
+	V_Buf = Utils_memAlloc( UTILS_HEAPID_DDR_CACHED_SR, (FILE_SIZE/2)/2, SYSTEM_BUFFER_ALIGNMENT );
+
+
+
+	for(total_Index = 0; total_Index < FILE_SIZE; total_Index++)
+	{
+		if( total_Index % 2 == 0 )
+		{
+			Y_Buf[Y_index++] = _in[total_Index];
+		} else {
+			UV_Buf[UV_index++] = _in[total_Index];
+		}
+	}
+
+	for(total_Index = 0; total_Index < FILE_SIZE/2; total_Index++)
+	{
+		if( total_Index % 2 == 0 )
+		{
+			U_Buf[U_index++] = UV_Buf[total_Index];
+		} else {
+			V_Buf[V_index++] = UV_Buf[total_Index];
+		}
+	}
+
+
+	memcpy(_out, Y_Buf, FILE_SIZE/2);
+	memcpy(&_out[FILE_SIZE/2],U_Buf, (FILE_SIZE/2)/2);
+	memcpy(&_out[(FILE_SIZE/2)+((FILE_SIZE/2)/2)],V_Buf, (FILE_SIZE/2)/2);
+
+
+	status = Utils_memFree( UTILS_HEAPID_DDR_CACHED_SR, Y_Buf, FILE_SIZE/2);
+	UTILS_assert(status==SYSTEM_LINK_STATUS_SOK);
+	status = Utils_memFree( UTILS_HEAPID_DDR_CACHED_SR, UV_Buf, FILE_SIZE/2);
+	UTILS_assert(status==SYSTEM_LINK_STATUS_SOK);
+	status = Utils_memFree( UTILS_HEAPID_DDR_CACHED_SR, U_Buf, (FILE_SIZE/2)/2);
+	UTILS_assert(status==SYSTEM_LINK_STATUS_SOK);
+	status = Utils_memFree( UTILS_HEAPID_DDR_CACHED_SR, V_Buf, (FILE_SIZE/2)/2);
+	UTILS_assert(status==SYSTEM_LINK_STATUS_SOK);
+}
+
+void Convert_YUV420SP( UInt8* _in, UInt8* _out)
+{
+	Int32 status = SYSTEM_LINK_STATUS_SOK;
+	int total_Index = 0;
+	int Y_index = 0;
+	int U_index = 0;
+	int V_index = 0;
+	int UV_index = 0;
+
+	UInt8* Y_Buf = NULL;//[YUV422P_SIZE/2] = {0,};
+	UInt8* UV_Buf = NULL;//[YUV422P_SIZE/2] = {0,};
+	UInt8* U_Buf = NULL;//[(YUV422P_SIZE/2)/2] = {0,};
+	UInt8* V_Buf = NULL;//[(YUV422P_SIZE/2)/2] = {0,};
+
+	Y_Buf = Utils_memAlloc( UTILS_HEAPID_DDR_CACHED_SR, FILE_SIZE/2, SYSTEM_BUFFER_ALIGNMENT );
+	UV_Buf = Utils_memAlloc( UTILS_HEAPID_DDR_CACHED_SR, FILE_SIZE/2, SYSTEM_BUFFER_ALIGNMENT );
+	U_Buf = Utils_memAlloc( UTILS_HEAPID_DDR_CACHED_SR, (FILE_SIZE/2)/2, SYSTEM_BUFFER_ALIGNMENT );
+	V_Buf = Utils_memAlloc( UTILS_HEAPID_DDR_CACHED_SR, (FILE_SIZE/2)/2, SYSTEM_BUFFER_ALIGNMENT );
+
+
+
+	for(total_Index = 0; total_Index < FILE_SIZE; total_Index++)
+	{
+		if( total_Index % 2 == 0 )
+		{
+			Y_Buf[Y_index++] = _in[total_Index];
+		} else {
+			UV_Buf[UV_index++] = _in[total_Index];
+		}
+	}
+
+	for(total_Index = 0; total_Index < FILE_SIZE/2; total_Index++)
+	{
+		if( total_Index % 2 == 0 )
+		{
+			U_Buf[U_index++] = UV_Buf[total_Index];
+		} else {
+			V_Buf[V_index++] = UV_Buf[total_Index];
+		}
+	}
+
+	U_index = 0;
+	V_index = 0;
+
+	memset(UV_Buf, 0xFF, FILE_SIZE/2);
+
+	for(total_Index = 0; total_Index < (FILE_SIZE/4); total_Index++)
+	{
+		if( total_Index % 2 == 0 )
+		{
+			UV_Buf[total_Index] = U_Buf[U_index*2];
+			U_index++;
+		} else {
+			UV_Buf[total_Index] = V_Buf[V_index*2];
+			V_index++;
+		}
+	}
+
+
+	memcpy(_out, Y_Buf, FILE_SIZE/2);
+	memcpy(&_out[FILE_SIZE/2],UV_Buf, (FILE_SIZE/4));
+
+
+	status = Utils_memFree( UTILS_HEAPID_DDR_CACHED_SR, Y_Buf, FILE_SIZE/2);
+	UTILS_assert(status==SYSTEM_LINK_STATUS_SOK);
+	status = Utils_memFree( UTILS_HEAPID_DDR_CACHED_SR, UV_Buf, FILE_SIZE/2);
+	UTILS_assert(status==SYSTEM_LINK_STATUS_SOK);
+	status = Utils_memFree( UTILS_HEAPID_DDR_CACHED_SR, U_Buf, (FILE_SIZE/2)/2);
+	UTILS_assert(status==SYSTEM_LINK_STATUS_SOK);
+	status = Utils_memFree( UTILS_HEAPID_DDR_CACHED_SR, V_Buf, (FILE_SIZE/2)/2);
+	UTILS_assert(status==SYSTEM_LINK_STATUS_SOK);
+}
+
 Void filesave_tsk_front(UArg arg0, UArg arg1)
 {
 	char tmpName[20] = {0,};
@@ -627,7 +759,9 @@ Void filesave_tsk_front(UArg arg0, UArg arg1)
 		if( fp != NULL){
 			int ret = 0;
 
-			ret = fwrite(rear_dataAddr, 1, FILE_SIZE, fp);
+			Convert_YUV420SP/*Convert_YUV422P*/(rear_dataAddr,outbuf );
+
+			ret = fwrite(outbuf/*rear_dataAddr*/, 1, FILE_SIZE, fp);
 
 			if( ret == 0)
 				Vps_printf(" ************************* file Write Fail %s!!!\n", tmpName);
@@ -657,7 +791,9 @@ Void filesave_tsk_front(UArg arg0, UArg arg1)
 		if( fp != NULL){
 			int ret = 0;
 
-			ret = fwrite(front_dataAddr, 1, FILE_SIZE, fp);
+			Convert_YUV420SP/*Convert_YUV422P*/(front_dataAddr,outbuf );
+
+			ret = fwrite(outbuf/*front_dataAddr*/, 1, FILE_SIZE, fp);
 
 			if( ret == 0)
 				Vps_printf(" ************************* file Write Fail %s!!!\n", tmpName);
@@ -687,7 +823,8 @@ Void filesave_tsk_front(UArg arg0, UArg arg1)
 		if( fp != NULL){
 			int ret = 0;
 
-			ret = fwrite(left_dataAddr, 1, FILE_SIZE, fp);
+			Convert_YUV420SP/*Convert_YUV422P*/(left_dataAddr,outbuf );
+			ret = fwrite(outbuf/*left_dataAddr*/, 1, FILE_SIZE, fp);
 
 			if( ret == 0)
 				Vps_printf(" ************************* file Write Fail %s!!!\n", tmpName);
@@ -717,7 +854,8 @@ Void filesave_tsk_front(UArg arg0, UArg arg1)
 		if( fp != NULL){
 			int ret = 0;
 
-			ret = fwrite(right_dataAddr, 1, FILE_SIZE, fp);
+			Convert_YUV420SP/*Convert_YUV422P*/(right_dataAddr,outbuf );
+			ret = fwrite(outbuf/*right_dataAddr*/, 1, FILE_SIZE, fp);
 
 			if( ret == 0)
 				Vps_printf(" ************************* file Write Fail %s!!!\n", tmpName);
