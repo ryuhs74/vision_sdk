@@ -1000,6 +1000,7 @@ Int32 CaptureLink_drvProcessData(CaptureLink_Obj * pObj, UInt32 instId)
                  */
                 sysBuf->srcTimestamp = Utils_getCurGlobalTimeInUsec();
                 sysBuf->linkLocalTimestamp = sysBuf->srcTimestamp;
+				sysBuf->errorFlag = 0;
 
                 linkStatsInfo->linkStats.chStats[pFrame->chNum].
                     outBufCount[0]++;
@@ -1146,6 +1147,7 @@ Int32 CaptureLink_drvProcessData(CaptureLink_Obj * pObj, UInt32 instId)
 					pFrame->chNum = pFrame->chNum;
 					sendMsgToTsk |= (1 << 0);
 					sysBuf = pFrame->appData;
+					sysBuf->errorFlag = 1;
 					/* Update the timestamp at this point when frame is available
 					 * from driver
 					 */

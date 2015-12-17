@@ -273,6 +273,8 @@ typedef struct {
     BspOsal_ClockHandle timer;
     /**<Timer used to generate new data at a set interval*/
 
+    Void* dummyBuf[3];
+    /**<when Camera Disconnect, we used this Dummy Image(Green)*/
 } SyncLink_Obj;
 
 extern SyncLink_Obj gSyncLink_obj[];

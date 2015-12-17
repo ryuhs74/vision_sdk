@@ -175,6 +175,25 @@ Int32 SyncLink_drvCreate(SyncLink_Obj * pObj, SyncLink_CreateParams *pPrm)
                             33, FALSE, pObj);
     UTILS_assert(pObj->timer != NULL);
 
+    pObj->dummyBuf[0] =
+            Utils_memAlloc(
+            		UTILS_HEAPID_DDR_CACHED_SR,
+                    1920*1080*2 ,
+                    16
+                );
+    pObj->dummyBuf[1] =
+            Utils_memAlloc(
+            		UTILS_HEAPID_DDR_CACHED_SR,
+					1920*1080*2 ,
+                    16
+                );
+    pObj->dummyBuf[2] =
+            Utils_memAlloc(
+            		UTILS_HEAPID_DDR_CACHED_SR,
+					1920*1080*2 ,
+                    16
+                );
+
     return SYSTEM_LINK_STATUS_SOK;
 }
 
@@ -581,8 +600,16 @@ Int32 SyncLink_makeCompositeBuffer(SyncLink_Obj * pObj, System_Buffer *pSysBuf)
 
                 for (i=0; i < SYSTEM_MAX_PLANES; i++)
                 {
-                    pSysCompBuf->bufAddr[i][pSysCompBuf->numFrames] =
-                                                            pVidBuf->bufAddr[i];
+                	////@todo this point insert Dummy Empty Frame
+                	if(chBuf->errorFlag)
+                	{
+						pSysCompBuf->bufAddr[i][pSysCompBuf->numFrames] = pObj->dummyBuf[i];
+
+                	}else
+                	{
+						pSysCompBuf->bufAddr[i][pSysCompBuf->numFrames] =
+																pVidBuf->bufAddr[i];
+                	}
                 }
                 pSysCompBuf->metaBufAddr[pSysCompBuf->numFrames] =
                                                            pVidBuf->metaBufAddr;
