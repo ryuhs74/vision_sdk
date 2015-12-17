@@ -259,7 +259,7 @@ Int32 Draw2D_AVME500_TopView( GrpxSrcLink_Obj *pObj )
 		/* CMASK Image */
 		/* TODO : Change Co-ordinates as per the requirement */
 		bmpPrm.bmpIdx = DRAW2D_BMP_IDX_CARMASK;
-		Draw2D_drawBmp(pObj->draw2DHndl, 182, 140, &bmpPrm );
+		Draw2D_drawBmp(pObj->draw2DHndl, 197, 158, &bmpPrm );
 	}
 
 	bmpPrm.bmpIdx = DRAW2D_BMP_IDX_TOP_VIEW_TXT;
