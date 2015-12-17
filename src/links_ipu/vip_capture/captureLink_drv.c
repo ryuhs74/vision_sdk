@@ -29,6 +29,7 @@
  *******************************************************************************
  */
 #include "captureLink_priv.h"
+#include <common/bsp_GpioDefineAVM_E500.h>
 
 #include <stdio.h> //ryyuhs74@20150924
 
@@ -1105,6 +1106,79 @@ Int32 CaptureLink_drvProcessData(CaptureLink_Obj * pObj, UInt32 instId)
                            NULL);
     }
 
+
+    ///@todo Check camera Error
+    if(pObj->checkCameraErrorInstID != instId)
+    {
+    	if(Bsp_boardGetDesStatusERROR(pObj->checkCameraErrorInstID) == 0)
+		{
+    		pObj->checkCameraErrorInstID = instId;
+		}
+    }else
+    {
+    	int i = 0;
+        Int32 numFrame = frameList.numFrames;
+    	for(i = 0; i<pObj->createArgs.numVipInst; i++)
+    	{
+    		if(Bsp_boardGetDesStatusERROR(i) != 0)
+    		{
+    			continue;
+    		}
+
+			for (streamId = 0; streamId < CAPTURE_LINK_MAX_OUTPUT_PER_INST; streamId++)
+			{
+
+				for (frameId = 0; frameId < numFrame; frameId++)
+				{
+					FVID2_dequeue(pObj->instObj[i].captureVipHandle,
+								  &frameList,
+								  streamId,
+								  BSP_OSAL_NO_WAIT);
+
+					if(frameList.numFrames == 0)
+						continue;
+
+					pFrame = frameList.frames[0];
+
+					UTILS_assert(pFrame->chNum < CAPTURE_LINK_MAX_CH_PER_OUT_QUE);
+
+					pFrame->perFrameCfg = NULL;
+					pFrame->chNum = pFrame->chNum;
+					sendMsgToTsk |= (1 << 0);
+					sysBuf = pFrame->appData;
+					/* Update the timestamp at this point when frame is available
+					 * from driver
+					 */
+					sysBuf->srcTimestamp = Utils_getCurGlobalTimeInUsec();
+					sysBuf->linkLocalTimestamp = sysBuf->srcTimestamp;
+
+					linkStatsInfo->linkStats.chStats[pFrame->chNum].
+						outBufCount[0]++;
+
+					if(pObj->createArgs.callback)
+					{
+						pObj->createArgs.callback(
+							pObj->createArgs.appObj,
+							sysBuf
+							);
+					}
+					status = Utils_bufPutFullBuffer(&pObj->bufQue, pFrame->appData);
+					UTILS_assert(status == SYSTEM_LINK_STATUS_SOK);
+				}
+			}
+
+			/*
+			 * Send command to link for putting the buffer in output queue of the buffer
+			 */
+			if (sendMsgToTsk & 0x1)
+			{
+				System_sendLinkCmd(pObj->createArgs.outQueParams.nextLink,
+								   SYSTEM_CMD_NEW_DATA,
+								   NULL);
+			}
+    	}
+    }
+
     return SYSTEM_LINK_STATUS_SOK;
 }
 
@@ -1597,7 +1671,7 @@ Int32 CaptureLink_drvAllocAndQueueFrames(CaptureLink_Obj * pObj,
 
             pBaseAddr += frameSize;
 
-//#ifdef SYSTEM_VERBOSE_PRINTS
+#ifdef SYSTEM_VERBOSE_PRINTS
             {
                 Vps_printf(" CAPTURE: Frame %d: CH %d: 0x%08x, 0x%08x, %d B \n",
                         frameId,
@@ -1607,7 +1681,7 @@ Int32 CaptureLink_drvAllocAndQueueFrames(CaptureLink_Obj * pObj,
                         frameSize
                         );
             }
-//#endif
+#endif
         }
 
         /*
