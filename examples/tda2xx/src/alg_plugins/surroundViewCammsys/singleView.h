@@ -11,6 +11,9 @@
 
 #define SUPPORT_SHARPEN_FILTER	1
 
+#ifdef BUILD_DSP
+#include "IMG_conv_3x3_i8_c8s.h"
+#endif
 
 #ifndef RESTRICT
 #ifdef BUILD_DSP
@@ -32,8 +35,7 @@ typedef struct
 
 typedef struct
 {
-	UInt8 u;
-	UInt8 v;
+	UInt8 uv;
 }UV;
 
 typedef struct
@@ -55,13 +57,14 @@ typedef struct {
 	unsigned char cr_r_overlay:8;
 } MaskLUT_Packed;
 
-#define TEMP_BUF_WIDTH	208
+#define TEMP_BUF_WIDTH	228
 #define HD720P_WIDTH	1280
 #define HD1080P_WIDTH	1920
 typedef YUYV yuvHD720P[HD720P_WIDTH];
 typedef YUYV yuvHD1080P[HD1080P_WIDTH];
 typedef YUYV yuvHD260Pixel[TEMP_BUF_WIDTH];
 typedef UInt8 yHD260Pixel[TEMP_BUF_WIDTH];
+typedef UV uvHD260Pixel[TEMP_BUF_WIDTH];
 
 
 #define ONE_PER_AVM_LUT_FRACTION_BITS	(1<<AVM_LUT_FRACTION_BITS)
@@ -252,7 +255,6 @@ static inline Int32 makeSingleView720PWithFilter(	UInt32 *RESTRICT inPtr,
     ///Filter
 #ifdef BUILD_DSP
 	{
-#include "IMG_conv_3x3_i8_c8s.h"
 		char sharpen_mask[3][3] =
 		{
 		{ -9, 1, -9 },
@@ -331,6 +333,54 @@ static inline Int32 makeSingleView720PBuff(  UInt32       *RESTRICT inPtr,
         	BilinearInterpolation(qu[0].uv, qu[2].uv, qu[HD720P_WIDTH].uv, qu[HD720P_WIDTH+2].uv, lutbak, oPtr[rowIdx][colIdx].uv);
         	///V
         	BilinearInterpolation(qu[1].uv, qu[3].uv, qu[HD720P_WIDTH+1].uv, qu[HD720P_WIDTH+3].uv, lutbak, oPtr[rowIdx][colIdx+1].uv);
+        }
+
+    	lut += childViewInfoLUT->pitch;
+    }
+    return SYSTEM_LINK_STATUS_SOK;
+}
+
+static inline Int32 makeSingleView720PBuffConv422SP(UInt32 *RESTRICT inPtr,
+													UInt32 *RESTRICT outPtrY,
+													UInt32 *RESTRICT outPtrUV,
+													UInt32 *RESTRICT viewLUTPtr,
+													AlgorithmLink_SurroundViewLutInfo *RESTRICT viewInfo,
+													AlgorithmLink_SurroundViewLutInfo *RESTRICT childViewInfoLUT)
+{
+	UInt16 rowIdx;
+    UInt16 colIdx;
+
+    yuvHD720P* iPtr;
+    yHD260Pixel* oPtrY;
+    uvHD260Pixel* oPtrUV;
+
+    UInt16 width = childViewInfoLUT->width;
+    UInt16 height = childViewInfoLUT->height;
+
+
+    ViewLUT_Packed *lut = ((ViewLUT_Packed*)viewLUTPtr) + (childViewInfoLUT->pitch * childViewInfoLUT->startY);
+
+    iPtr  = (yuvHD720P*)inPtr;
+    oPtrY = ((yHD260Pixel*)outPtrY);
+    oPtrUV = ((uvHD260Pixel*)outPtrUV);
+
+    for(rowIdx = 0; rowIdx < height ; rowIdx++)
+    {
+    	ViewLUT_Packed *lutbak;
+        for(colIdx = 0, lutbak = lut + childViewInfoLUT->startX; colIdx < width ; colIdx++, lutbak++)
+        {
+        	YUYV *q = &iPtr[lutbak->yInteger][lutbak->xInteger];
+
+        	BilinearInterpolation(q[0].y, q[1].y, q[HD720P_WIDTH].y, q[HD720P_WIDTH+1].y, lutbak, oPtrY[rowIdx][colIdx]);
+        }
+
+        for(colIdx = 0, lutbak = lut + childViewInfoLUT->startX; colIdx < width ; colIdx+=2, lutbak+=2)
+        {
+        	YUYV *qu = &iPtr[lutbak->yInteger][lutbak->xInteger & 0xfffe];
+        	///U
+        	BilinearInterpolation(qu[0].uv, qu[2].uv, qu[HD720P_WIDTH].uv, qu[HD720P_WIDTH+2].uv, lutbak, oPtrUV[rowIdx][colIdx].uv);
+        	///V
+        	BilinearInterpolation(qu[1].uv, qu[3].uv, qu[HD720P_WIDTH+1].uv, qu[HD720P_WIDTH+3].uv, lutbak, oPtrUV[rowIdx][colIdx+1].uv);
         }
 
     	lut += childViewInfoLUT->pitch;

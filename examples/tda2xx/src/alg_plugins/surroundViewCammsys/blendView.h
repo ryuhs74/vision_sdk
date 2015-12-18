@@ -20,8 +20,8 @@
 
 static inline Int32 makeBlendView720P(  UInt32       *RESTRICT inPtr_main,
 										UInt32       *RESTRICT inPtr_sub,
-										UInt32       *RESTRICT buf1,
-										UInt32       *RESTRICT buf2,
+										UInt8       *RESTRICT buf1,
+										UInt8       *RESTRICT buf2,
 										UInt32       *RESTRICT outPtr,
 										UInt32		 *RESTRICT viewLUTPtr_main,
 										UInt32		 *RESTRICT viewLUTPtr_sub,
@@ -69,8 +69,108 @@ static inline Int32 makeBlendView720P(  UInt32       *RESTRICT inPtr_main,
 
     return SYSTEM_LINK_STATUS_SOK;
 }
+static inline Int32 makeBlendView720PWidthSharpen(	UInt32 *RESTRICT inPtr_main,
+													UInt32 *RESTRICT inPtr_sub,
+													UInt8 *RESTRICT buf1,
+													UInt8 *RESTRICT buf2,
+													UInt32 *RESTRICT outPtr,
+													UInt32 *RESTRICT viewLUTPtr_main,
+													UInt32 *RESTRICT viewLUTPtr_sub,
+													UInt32 *RESTRICT carMask,
+													AlgorithmLink_SurroundViewLutInfo *RESTRICT viewInfo,
+													AlgorithmLink_SurroundViewLutInfo *RESTRICT childViewInfoLUT)
+{
+//	UInt32 mallocSize = childViewInfoLUT->height * (childViewInfoLUT->pitch>>1);
 
-#define makeBlendView makeBlendView720P
+	uvHD260Pixel* mainBufUV = (uvHD260Pixel*)buf1;
+	yHD260Pixel* mainBufY = (yHD260Pixel*)(buf1 + (BLEND_VIEW_TEMP_BUF_SIZE >> 1));
+
+	uvHD260Pixel* subBufUV = (uvHD260Pixel*)buf2;
+	yHD260Pixel* subBufY = (yHD260Pixel*)(buf2 + (BLEND_VIEW_TEMP_BUF_SIZE >> 1));
+
+	yHD260Pixel* FilterBuffIn  = (yHD260Pixel*)mainBufUV;
+	yHD260Pixel* FilterBuffOut = (yHD260Pixel*)subBufUV;
+	yuvHD720P* oPtr = (yuvHD720P*)outPtr;
+	UInt16 rowIdx;
+    UInt16 colIdx;
+
+    UInt16 width = childViewInfoLUT->width;
+    UInt16 height = childViewInfoLUT->height;
+
+	UInt16 startX = viewInfo->startX + childViewInfoLUT->startX;
+	MaskLUT_Packed* maskOry = ((MaskLUT_Packed*)carMask) + (childViewInfoLUT->pitch * childViewInfoLUT->startY) + childViewInfoLUT->startX;
+	MaskLUT_Packed* mask = maskOry;
+
+	makeSingleView720PBuffConv422SP(inPtr_main,(UInt32*)mainBufY,(UInt32*)mainBufUV,viewLUTPtr_main,viewInfo,childViewInfoLUT);
+
+	makeSingleView720PBuffConv422SP(inPtr_sub,(UInt32*)subBufY,(UInt32*)subBufUV,viewLUTPtr_sub,viewInfo,childViewInfoLUT);
+
+	oPtr+= (viewInfo->startY + childViewInfoLUT->startY);
+
+	for(rowIdx = 0; rowIdx < height; rowIdx++)
+	{
+		MaskLUT_Packed *maskBak;
+		for(colIdx = 0,maskBak = mask; colIdx < width; colIdx++, maskBak++)
+		{
+			UV q1 = mainBufUV[rowIdx][colIdx];
+			UV q2 = subBufUV[rowIdx][colIdx];
+			UInt16 X = maskBak->cr_r_overlay;
+
+			oPtr[rowIdx][colIdx+startX].uv = LinearInterpolation(X,q2.uv,q1.uv,ONE_PER_AVM_BLEND_FRACTION_BITS,8);
+		}
+		mask += childViewInfoLUT->pitch;
+	}
+	mask = maskOry;
+	for(rowIdx = 0; rowIdx < height; rowIdx++)
+	{
+		MaskLUT_Packed *maskBak;
+		for(colIdx = 0,maskBak = mask; colIdx < width; colIdx++, maskBak++)
+		{
+			UInt8 q1 = mainBufY[rowIdx][colIdx];
+			UInt8 q2 = subBufY[rowIdx][colIdx];
+			UInt16 X = maskBak->cr_r_overlay;
+
+			FilterBuffIn[rowIdx][colIdx] = LinearInterpolation(X,q2,q1,ONE_PER_AVM_BLEND_FRACTION_BITS,8);
+			FilterBuffOut[rowIdx][colIdx+3] = FilterBuffIn[rowIdx][colIdx];
+		}
+		mask += childViewInfoLUT->pitch;
+	}
+
+
+
+#ifdef BUILD_DSP
+	{
+		char sharpen_mask[3][3] =
+		{
+		{ -9, 1, -9 },
+		{ 1, 96, 1 },
+		{ -9, 1, -9 } };
+		char sharpen_shift = 6;
+		int _width = ((width) & 0xfffc)-4;
+		for (rowIdx = 0; rowIdx < (height - 2); rowIdx++)
+		{
+			IMG_conv_3x3_i8_c8s(FilterBuffIn[rowIdx],
+								FilterBuffOut[rowIdx+1]+4,
+								_width,
+								TEMP_BUF_WIDTH,
+								(char*) sharpen_mask,
+								sharpen_shift);
+		}
+	}
+#endif
+    for(rowIdx = 0; rowIdx < height ; rowIdx++)
+    {
+    	int filtercolIdx = 3;
+        for(colIdx = startX; colIdx < width + startX ; colIdx++, filtercolIdx++)
+        {
+        	oPtr[rowIdx][colIdx].y = FilterBuffOut[rowIdx][filtercolIdx];
+        }
+    }
+
+    return SYSTEM_LINK_STATUS_SOK;
+}
+
+#define makeBlendView makeBlendView720PWidthSharpen
 
 #if 0
 static inline Int32 makeBlendView(  UInt32       *RESTRICT inPtr_main,
