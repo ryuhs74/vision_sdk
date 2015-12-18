@@ -57,7 +57,7 @@ typedef struct {
 	unsigned char cr_r_overlay:8;
 } MaskLUT_Packed;
 
-#define TEMP_BUF_WIDTH	228
+#define TEMP_BUF_WIDTH	208
 #define HD720P_WIDTH	1280
 #define HD1080P_WIDTH	1920
 typedef YUYV yuvHD720P[HD720P_WIDTH];
