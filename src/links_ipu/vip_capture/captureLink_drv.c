@@ -1131,10 +1131,11 @@ Int32 CaptureLink_drvProcessData(CaptureLink_Obj * pObj, UInt32 instId)
 
 				for (frameId = 0; frameId < numFrame; frameId++)
 				{
+#define DEQUE_DUMMY_FRAME	(0xFFFFFFFFU)
 					FVID2_dequeue(pObj->instObj[i].captureVipHandle,
 								  &frameList,
 								  streamId,
-								  BSP_OSAL_NO_WAIT);
+								  DEQUE_DUMMY_FRAME);
 
 					if(frameList.numFrames == 0)
 						continue;
