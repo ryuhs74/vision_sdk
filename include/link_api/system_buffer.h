@@ -397,6 +397,7 @@ typedef struct System_Buffer {
 
     UInt64                ipcPrfTimestamp64[2];
     /**< Used to measure IPC overheads */
+    UInt32			errorFlag;
 
 } System_Buffer;
 

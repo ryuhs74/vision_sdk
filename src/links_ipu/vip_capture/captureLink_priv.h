@@ -358,6 +358,7 @@ struct CaptureLink_Obj_t
     UInt32  statsStartTime;
     /**< Time at which capture is started */
 
+    UInt32 checkCameraErrorInstID;
 };
 
 
