@@ -217,8 +217,8 @@ typedef struct
     AlgorithmLink_SurroundViewLutInfo* psingleViewLUTInfo;
     AlgorithmLink_SurroundViewLutInfo* psingleViewInfo;
 
-    UInt32* buf1;
-    UInt32* buf2;
+    UInt32* FilterInbuf;
+    UInt32* FilterOutbuf;
 
 } AlgorithmLink_SurroundViewLayoutParams;
 

@@ -405,21 +405,21 @@ Int32 AlgorithmLink_surroundViewCreate(void * pObj, void * pCreateParams)
 
     pSurroundViewObj->isFirstFrameRecv = FALSE;
 
-    pSurroundViewObj->curLayoutPrm.buf1 =
+    pSurroundViewObj->curLayoutPrm.FilterInbuf =
             Utils_memAlloc(
             		UTILS_HEAPID_OCMC_SR,
 					BLEND_VIEW_TEMP_BUF_SIZE ,
                     ALGORITHMLINK_FRAME_ALIGN
                 );
-    UTILS_assert( pSurroundViewObj->curLayoutPrm.buf1);
+    UTILS_assert( pSurroundViewObj->curLayoutPrm.FilterInbuf);
 
-    pSurroundViewObj->curLayoutPrm.buf2 =
+    pSurroundViewObj->curLayoutPrm.FilterOutbuf =
             Utils_memAlloc(
             		UTILS_HEAPID_OCMC_SR,
                     BLEND_VIEW_TEMP_BUF_SIZE ,
                     ALGORITHMLINK_FRAME_ALIGN
                 );
-    UTILS_assert( pSurroundViewObj->curLayoutPrm.buf2);
+    UTILS_assert( pSurroundViewObj->curLayoutPrm.FilterOutbuf);
 
     if(pSurroundViewObj->curLayoutPrm.makeViewPart == 0)
     {
@@ -580,8 +580,8 @@ Int32 AlgorithmLink_surroundViewMakeTopView( void * pObj,
 	///front
 	status = makeSingleView(pInFrameCompositeBuffer->bufAddr[0][3],
 							pOutFrameBuffer->bufAddr[0],
-							(UInt8*)pLayoutPrm->buf1,
-							(UInt8*)pLayoutPrm->buf2,
+							(UInt8*)pLayoutPrm->FilterInbuf,
+							(UInt8*)pLayoutPrm->FilterOutbuf,
 							pLayoutPrm->Basic_frontNT,
 							&pLutViewInfo[LUT_VIEW_INFO_TOP_VIEW],
 							&pLutViewInfo[LUT_VIEW_INFO_TOP_A00]);
@@ -589,16 +589,16 @@ Int32 AlgorithmLink_surroundViewMakeTopView( void * pObj,
 	///left
 	status = makeSingleView(pInFrameCompositeBuffer->bufAddr[0][1],
 							pOutFrameBuffer->bufAddr[0],
-							(UInt8*)pLayoutPrm->buf1,
-							(UInt8*)pLayoutPrm->buf2,
+							(UInt8*)pLayoutPrm->FilterInbuf,
+							(UInt8*)pLayoutPrm->FilterOutbuf,
 							pLayoutPrm->Basic_leftNT,
 							&pLutViewInfo[LUT_VIEW_INFO_TOP_VIEW],
 							&pLutViewInfo[LUT_VIEW_INFO_TOP_A02]);
 	///rear
 	status = makeSingleView(pInFrameCompositeBuffer->bufAddr[0][0],
 							pOutFrameBuffer->bufAddr[0],
-							(UInt8*)pLayoutPrm->buf1,
-							(UInt8*)pLayoutPrm->buf2,
+							(UInt8*)pLayoutPrm->FilterInbuf,
+							(UInt8*)pLayoutPrm->FilterOutbuf,
 							pLayoutPrm->Basic_rearNT,
 							&pLutViewInfo[LUT_VIEW_INFO_TOP_VIEW],
 							&pLutViewInfo[LUT_VIEW_INFO_TOP_A04]);
@@ -607,8 +607,8 @@ Int32 AlgorithmLink_surroundViewMakeTopView( void * pObj,
 	///right
 	status = makeSingleView(pInFrameCompositeBuffer->bufAddr[0][2],
 							pOutFrameBuffer->bufAddr[0],
-							(UInt8*)pLayoutPrm->buf1,
-							(UInt8*)pLayoutPrm->buf2,
+							(UInt8*)pLayoutPrm->FilterInbuf,
+							(UInt8*)pLayoutPrm->FilterOutbuf,
 							pLayoutPrm->Basic_rightNT,
 							&pLutViewInfo[LUT_VIEW_INFO_TOP_VIEW],
 							&pLutViewInfo[LUT_VIEW_INFO_TOP_A06]);
@@ -617,8 +617,8 @@ Int32 AlgorithmLink_surroundViewMakeTopView( void * pObj,
 	///left, front
 	makeBlendView(	pInFrameCompositeBuffer->bufAddr[0][1],
 					pInFrameCompositeBuffer->bufAddr[0][3],
-					pLayoutPrm->buf1,
-					pLayoutPrm->buf2,
+					(UInt8*)pLayoutPrm->FilterInbuf,
+					(UInt8*)pLayoutPrm->FilterOutbuf,
 					pOutFrameBuffer->bufAddr[0],
 					pLayoutPrm->Basic_leftNT,
 					pLayoutPrm->Basic_frontNT,
@@ -628,8 +628,8 @@ Int32 AlgorithmLink_surroundViewMakeTopView( void * pObj,
 	///left, rear
 	makeBlendView(	pInFrameCompositeBuffer->bufAddr[0][1],
 					pInFrameCompositeBuffer->bufAddr[0][0],
-					pLayoutPrm->buf1,
-					pLayoutPrm->buf2,
+					(UInt8*)pLayoutPrm->FilterInbuf,
+					(UInt8*)pLayoutPrm->FilterOutbuf,
 					pOutFrameBuffer->bufAddr[0],
 					pLayoutPrm->Basic_leftNT,
 					pLayoutPrm->Basic_rearNT,
@@ -641,8 +641,8 @@ Int32 AlgorithmLink_surroundViewMakeTopView( void * pObj,
 	///right, front
 	makeBlendView(	pInFrameCompositeBuffer->bufAddr[0][2],
 					pInFrameCompositeBuffer->bufAddr[0][3],
-					pLayoutPrm->buf1,
-					pLayoutPrm->buf2,
+					(UInt8*)pLayoutPrm->FilterInbuf,
+					(UInt8*)pLayoutPrm->FilterOutbuf,
 					pOutFrameBuffer->bufAddr[0],
 					pLayoutPrm->Basic_rightNT,
 					pLayoutPrm->Basic_frontNT,
@@ -653,8 +653,8 @@ Int32 AlgorithmLink_surroundViewMakeTopView( void * pObj,
 	///right, rear
 	makeBlendView(	pInFrameCompositeBuffer->bufAddr[0][2],
 					pInFrameCompositeBuffer->bufAddr[0][0],
-					pLayoutPrm->buf1,
-					pLayoutPrm->buf2,
+					(UInt8*)pLayoutPrm->FilterInbuf,
+					(UInt8*)pLayoutPrm->FilterOutbuf,
 					pOutFrameBuffer->bufAddr[0],
 					pLayoutPrm->Basic_rightNT,
 					pLayoutPrm->Basic_rearNT,
@@ -704,7 +704,7 @@ Int32 AlgorithmLink_surroundViewMakeSingleView(	void * pObj,
 
     	status = makeSingleView(pInFrameCompositeBuffer->bufAddr[0][curLayoutPrm->singleViewInputChannel],
     							pOutFrameBuffer->bufAddr[0],
-								(UInt8*) curLayoutPrm->buf1,
+								(UInt8*) curLayoutPrm->FilterInbuf,
 								(UInt8*) curLayoutPrm->buf2,
     							curLayoutPrm->psingleViewLUT,
     							curLayoutPrm->psingleViewInfo,
@@ -712,7 +712,7 @@ Int32 AlgorithmLink_surroundViewMakeSingleView(	void * pObj,
 
     	status = makeSingleView720P(pInFrameCompositeBuffer->bufAddr[0][curLayoutPrm->singleViewInputChannel],
     							pOutFrameBuffer->bufAddr[0],
-								(UInt8*) curLayoutPrm->buf1,
+								(UInt8*) curLayoutPrm->FilterInbuf,
 								(UInt8*) curLayoutPrm->buf2,
     							curLayoutPrm->psingleViewLUT,
     							&ViewforTest1,
@@ -721,7 +721,7 @@ Int32 AlgorithmLink_surroundViewMakeSingleView(	void * pObj,
 
     	status = makeSingleView720PNoInter(pInFrameCompositeBuffer->bufAddr[0][curLayoutPrm->singleViewInputChannel],
     							pOutFrameBuffer->bufAddr[0],
-								(UInt8*) curLayoutPrm->buf1,
+								(UInt8*) curLayoutPrm->FilterInbuf,
 								(UInt8*) curLayoutPrm->buf2,
     							curLayoutPrm->psingleViewLUT,
     							&ViewforTest,
@@ -738,8 +738,8 @@ Int32 AlgorithmLink_surroundViewMakeSingleView(	void * pObj,
     	status =
     			makeSingleView(	pInFrameCompositeBuffer->bufAddr[0][curLayoutPrm->singleViewInputChannel],
 												pOutFrameBuffer->bufAddr[0],
-												(UInt8*)curLayoutPrm->buf1,
-												(UInt8*)curLayoutPrm->buf2,
+												(UInt8*)curLayoutPrm->FilterInbuf,
+												(UInt8*)curLayoutPrm->FilterOutbuf,
 												curLayoutPrm->psingleViewLUT,
 												curLayoutPrm->psingleViewInfo,
 												&indViewforLUT);
@@ -753,8 +753,8 @@ Int32 AlgorithmLink_surroundViewMakeSingleView(	void * pObj,
 		status =
 				makeSingleView(	pInFrameCompositeBuffer->bufAddr[0][curLayoutPrm->singleViewInputChannel],
 												pOutFrameBuffer->bufAddr[0],
-												(UInt8*) curLayoutPrm->buf1,
-												(UInt8*) curLayoutPrm->buf2,
+												(UInt8*) curLayoutPrm->FilterInbuf,
+												(UInt8*) curLayoutPrm->FilterOutbuf,
 												curLayoutPrm->psingleViewLUT,
 												curLayoutPrm->psingleViewInfo,
 												&indViewforLUT);
@@ -1192,11 +1192,11 @@ Int32 AlgorithmLink_surroundViewDelete(void * pObj)
     if(pSurroundViewObj->curLayoutPrm.makeViewPart == 0)
     {
 		Utils_memFree(	UTILS_HEAPID_OCMC_SR,
-						pSurroundViewObj->curLayoutPrm.buf1,
+						pSurroundViewObj->curLayoutPrm.FilterInbuf,
 						BLEND_VIEW_TEMP_BUF_SIZE);
 
 		Utils_memFree(	UTILS_HEAPID_OCMC_SR,
-						pSurroundViewObj->curLayoutPrm.buf2,
+						pSurroundViewObj->curLayoutPrm.FilterOutbuf,
 						BLEND_VIEW_TEMP_BUF_SIZE);
     }
     UTILS_assert(status==SYSTEM_LINK_STATUS_SOK);
