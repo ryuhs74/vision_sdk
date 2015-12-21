@@ -37,10 +37,10 @@
  */
 #define AVME500_BACKGROUND_COLOR ((UInt16)(RGB888_TO_RGB565(8,8,8)))
 
-#define AVME500_FRAME_THICKNESS  (10)
+//#define AVME500_FRAME_THICKNESS  (10)
 
-#define CAR_START_X		200
-#define CAR_START_Y		200
+//#define CAR_START_X		200
+//#define CAR_START_Y		200
 #define TOP_VIEW_TEXT_START_X	552
 #define TOP_VIEW_TEXT_START_Y	524
 #define FULL_VIEW_TEXT_START_X	16
@@ -61,6 +61,9 @@
 #define SIDE_VIEW_H				508
 #define FULL_VIEW_W				1248
 #define FULL_VIEW_H				558
+
+//#define COLOR_GREEN2     (0x960000)
+//#define COLOR_RED2       (0x4C34FF)
 
 UInt32 gGrpxSrcLinkID;
 
@@ -222,6 +225,7 @@ Int32 Draw2D_AVME500_TopView( GrpxSrcLink_Obj *pObj )
 	Draw2D_BmpPrm bmpPrm;
 	Draw2D_RegionPrm region;
 	Draw2D_RegionPrm regionTopView;
+	//Draw2D_LinePrm linePrm;
 
 	//Top View, Side View Separation Bar
 	region.color  = AVME500_BACKGROUND_COLOR;
@@ -241,12 +245,21 @@ Int32 Draw2D_AVME500_TopView( GrpxSrcLink_Obj *pObj )
 	regionTopView.height = 720-( 524 +16 );
 	Draw2D_fillRegion(pObj->draw2DHndl,&regionTopView);
 
+	/*/ryuhs74@20151216 - Line Draw Test
+	linePrm.lineSize = 5;
+	linePrm.lineColor = COLOR_RED2;
+	linePrm.lineColorFormat = SYSTEM_DF_BGR16_565;//SYSTEM_DF_BGR16_565
+	Draw2D_drawLine(pObj->draw2DHndl, 16, 16, 182, 142, &linePrm );
+	Draw2D_drawLine(pObj->draw2DHndl, 182+156, 36, 182+156+182, 36, &linePrm );
+	Draw2D_drawLine(pObj->draw2DHndl, 16, 142+404+26, 182, 142+404+26, &linePrm );
+	Draw2D_drawLine(pObj->draw2DHndl, 182+156, 142+404+26, 182+156+182, 142+404+26, &linePrm );
+	*/
 	if (pObj->createArgs.enableJeepOverlay == TRUE)
 	{
 		/* CMASK Image */
 		/* TODO : Change Co-ordinates as per the requirement */
 		bmpPrm.bmpIdx = DRAW2D_BMP_IDX_CARMASK;
-		Draw2D_drawBmp(pObj->draw2DHndl, (182), (142), &bmpPrm );
+		Draw2D_drawBmp(pObj->draw2DHndl, 197, 158, &bmpPrm );
 	}
 
 	bmpPrm.bmpIdx = DRAW2D_BMP_IDX_TOP_VIEW_TXT;
@@ -260,6 +273,34 @@ Int32 Draw2D_AVME500_FullView( GrpxSrcLink_Obj *pObj )
 	Draw2D_BmpPrm bmpPrm;
 	Draw2D_RegionPrm regionMidleBar;
 	Draw2D_RegionPrm regionBootmBar;
+
+	/*/´ë°¢¼± transparent coloring
+	regionMidleBar.color  = DRAW2D_TRANSPARENT_COLOR;
+	regionMidleBar.colorFormat = DRAW2D_TRANSPARENT_COLOR_FORMAT;
+	regionMidleBar.startX = 16;
+	regionMidleBar.startY = 16;
+	regionMidleBar.width  = 182;
+	regionMidleBar.height = 142;
+	Draw2D_fillRegion(pObj->draw2DHndl,&regionMidleBar);
+
+	regionMidleBar.startX = 182+156;
+	regionMidleBar.startY = 16;
+	regionMidleBar.width  = 156;
+	regionMidleBar.height = 142;
+	Draw2D_fillRegion(pObj->draw2DHndl,&regionMidleBar);
+
+	regionMidleBar.startX = 16;
+	regionMidleBar.startY = 142+404;
+	regionMidleBar.width  = 182;
+	regionMidleBar.height = 720-16-142-404;
+	Draw2D_fillRegion(pObj->draw2DHndl,&regionMidleBar);
+
+	regionMidleBar.startX = 182+156;
+	regionMidleBar.startY = 142+404;
+	regionMidleBar.width  = 156;
+	regionMidleBar.height = 720-16-142-404;
+	Draw2D_fillRegion(pObj->draw2DHndl,&regionMidleBar);
+	*/
 
 	//Car Image transparent coloring
 	regionMidleBar.color  = DRAW2D_TRANSPARENT_COLOR;
