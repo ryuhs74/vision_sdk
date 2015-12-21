@@ -305,8 +305,8 @@ Int32 Draw2D_AVME500_FullView( GrpxSrcLink_Obj *pObj )
 	//Car Image transparent coloring
 	regionMidleBar.color  = DRAW2D_TRANSPARENT_COLOR;
 	regionMidleBar.colorFormat = DRAW2D_TRANSPARENT_COLOR_FORMAT;
-	regionMidleBar.startX = 182;
-	regionMidleBar.startY = 142;
+	regionMidleBar.startX = 197;//182;
+	regionMidleBar.startY = 158;//142;
 	regionMidleBar.width  = 156;
 	regionMidleBar.height = 404;
 	Draw2D_fillRegion(pObj->draw2DHndl,&regionMidleBar);
