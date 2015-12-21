@@ -169,8 +169,11 @@ static inline Int32 makeBlendView720PWidthSharpen(	UInt32 *RESTRICT inPtr_main,
 
     return SYSTEM_LINK_STATUS_SOK;
 }
-
+#if SUPPORT_SHARPEN_FILTER
 #define makeBlendView makeBlendView720PWidthSharpen
+#else
+#define	makeBlendView makeBlendView720P
+#endif
 
 #if 0
 static inline Int32 makeBlendView(  UInt32       *RESTRICT inPtr_main,
