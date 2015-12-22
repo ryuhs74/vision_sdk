@@ -242,17 +242,20 @@ void AlgLink_putCmd( uint8_t _cmd )
 #endif
 }
 
-void PutCmd_Button(  )
+static UInt32 nState = 0;
+
+void PutCmd_Button(UInt32 nState )
 {
-	static UInt32 nState = 0;
+	//static UInt32 nState = 0;
 	Int32 status;
 	AlgorithmLink_ControlParams AlgLinkControlPrm;
 
-
+/*
 	if( nState >= 5)
 		nState = 0;
 	else
 		nState++;
+*/
 
 	Vps_printf("AVM-E500 : In PutCmd_Button, nState: %d", nState);
 
@@ -392,13 +395,23 @@ static int UART_ParseCmd(uint8_t *rxBuf)
 		{
 		case BUTTON_1_SHORT_PRESSED:
 			Vps_printf("In BUTTON_1_SHORT_PRESSED\n");
-			PutCmd_Button();
+			if( nState >= 5)
+				nState = 0;
+			else
+				nState++;
+
+			PutCmd_Button(nState);
 			break;
 		case BUTTON_1_LONG_PRESSED :
 			Vps_printf("In BUTTON_1_LONG_PRESSED\n");
 			break;
 		case BUTTON_2_SHORT_PRESSED :
 			Vps_printf("In BUTTON_2_SHORT_PRESSED\n");
+			if( nState <= 0)
+				nState = 5;
+			else
+				nState--;
+			PutCmd_Button(nState);
 			break;
 		case BUTTON_2_LONG_PRESSED : //LFET - IRDA_KEY_LEFT = (0x0B)
 			Vps_printf("In BUTTON_2_LONG_PRESSED\n");
