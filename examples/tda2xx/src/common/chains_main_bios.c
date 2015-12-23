@@ -1828,6 +1828,7 @@ void Start_AVM_E500() //ryuhs74@20151020 - Add HDMI On/Off Test
  */
 char gChains_runTimeMenu[] = {
     "\r\n "
+	"\r\n V : AE500FW_000.000.0007D"
     "\r\n ===================="
     "\r\n Chains Run-time Menu"
     "\r\n ===================="
