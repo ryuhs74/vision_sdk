@@ -1189,16 +1189,14 @@ Int32 AlgorithmLink_surroundViewDelete(void * pObj)
         UTILS_assert(status==SYSTEM_LINK_STATUS_SOK);
     }
 
-    if(pSurroundViewObj->curLayoutPrm.makeViewPart == 0)
-    {
-		Utils_memFree(	UTILS_HEAPID_OCMC_SR,
-						pSurroundViewObj->curLayoutPrm.FilterInbuf,
-						BLEND_VIEW_TEMP_BUF_SIZE);
+	Utils_memFree(	UTILS_HEAPID_OCMC_SR,
+					pSurroundViewObj->curLayoutPrm.FilterInbuf,
+					BLEND_VIEW_TEMP_BUF_SIZE);
 
-		Utils_memFree(	UTILS_HEAPID_OCMC_SR,
-						pSurroundViewObj->curLayoutPrm.FilterOutbuf,
-						BLEND_VIEW_TEMP_BUF_SIZE);
-    }
+	Utils_memFree(	UTILS_HEAPID_OCMC_SR,
+					pSurroundViewObj->curLayoutPrm.FilterOutbuf,
+					BLEND_VIEW_TEMP_BUF_SIZE);
+
     UTILS_assert(status==SYSTEM_LINK_STATUS_SOK);
 
     free(pSurroundViewObj);
