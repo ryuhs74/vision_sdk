@@ -114,6 +114,7 @@ Void chains_surround_View_SwitchDisplayCh( uint8_t _cmd ) //ryuhs74@20151209 - F
     	System_linkControl(gGrpxSrcLinkID, SYSTEM_CMD_CLEAR_E500_UI, NULL, 0, TRUE);
     } else if( _cmd == IRDA_KEY_LEFT ){ //LEFT : 2
     	displayPrm.activeChId = 2;
+    	System_linkControl(gDisplay_videoLinkID, DISPLAY_LINK_CMD_SWITCH_CH, &displayPrm, sizeof(displayPrm), TRUE);
     	System_linkControl(gGrpxSrcLinkID, SYSTEM_CMD_CLEAR_E500_UI, NULL, 0, TRUE);
     }else if( _cmd == IRDA_KEY_FULL ){
     	displayPrm.activeChId = 0;
@@ -129,25 +130,25 @@ void GrpxLink_putCmd( uint8_t _cmd )
 	if( _cmd == IRDA_KEY_UP ){
 		_cmd = SYSTEM_CMD_FRONT_SIDE_VIEW;
 		Vps_printf("In GrpxSrcLink_putCmd, CMD_REQ_FRONT_VIEW, CMD : %d", _cmd);
-		status = System_linkControl(gGrpxSrcLinkID, _cmd, NULL, 0, TRUE); //gGrpxSrcLinkID °´Ã¼°¡ µÎ°³.
+		status = System_linkControl(gGrpxSrcLinkID, _cmd, NULL, 0, TRUE); //gGrpxSrcLinkID ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½Î°ï¿½.
 		Vps_printf("   CMD Send %s gGrpxSrcLinkID\n", ( status == 0x0)?"Success":"Fail");
 		gFullFront = 0;
 	} else if( _cmd == IRDA_KEY_DOWN ){
 		_cmd = SYSTEM_CMD_REAR_SIDE_VIEW;
 		Vps_printf("In GrpxSrcLink_putCmd, CMD_REQ_REAR_VIEW, CMD : %d", _cmd);
-		status = System_linkControl(gGrpxSrcLinkID, _cmd, NULL, 0, TRUE); //gGrpxSrcLinkID °´Ã¼°¡ µÎ°³.
+		status = System_linkControl(gGrpxSrcLinkID, _cmd, NULL, 0, TRUE); //gGrpxSrcLinkID ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½Î°ï¿½.
 		Vps_printf("   CMD Send %s gGrpxSrcLinkID\n", ( status == 0x0)?"Success":"Fail");
 		gFullFront = 0;
 	} else if( _cmd == IRDA_KEY_RIGHT ){
 		_cmd = SYSTEM_CMD_RIGH_SIDE_VIEW;
 		Vps_printf("In GrpxSrcLink_putCmd, CMD_REQ_RIGHT_VIEW, CMD : %d", _cmd);
-		status = System_linkControl(gGrpxSrcLinkID, _cmd, NULL, 0, TRUE); //gGrpxSrcLinkID °´Ã¼°¡ µÎ°³.
+		status = System_linkControl(gGrpxSrcLinkID, _cmd, NULL, 0, TRUE); //gGrpxSrcLinkID ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½Î°ï¿½.
 		Vps_printf("   CMD Send %s gGrpxSrcLinkID\n", ( status == 0x0)?"Success":"Fail");
 		gFullFront = 0;
 	} else if( _cmd == IRDA_KEY_LEFT ){
 		_cmd = SYSTEM_CMD_LEFT_SIDE_VIEW;
 		Vps_printf("In GrpxSrcLink_putCmd, CMD_REQ_LEFT_VIEW, CMD : %d", _cmd);
-		status = System_linkControl(gGrpxSrcLinkID, _cmd, NULL, 0, TRUE); //gGrpxSrcLinkID °´Ã¼°¡ µÎ°³.
+		status = System_linkControl(gGrpxSrcLinkID, _cmd, NULL, 0, TRUE); //gGrpxSrcLinkID ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½Î°ï¿½.
 		Vps_printf("   CMD Send %s gGrpxSrcLinkID\n", ( status == 0x0)?"Success":"Fail");
 		gFullFront = 0;
 	}else if( _cmd == IRDA_KEY_FULL ){
@@ -157,34 +158,34 @@ void GrpxLink_putCmd( uint8_t _cmd )
 			_cmd = SYSTEM_CMD_FULL_FRONT_VIEW;
 			Vps_printf("In GrpxSrcLink_putCmd, IRDA_KEY_FULL, Front, CMD : %d", _cmd);
 			gFullFront = 1;
-			status = System_linkControl(gGrpxSrcLinkID, _cmd, NULL, 0, TRUE); //gGrpxSrcLinkID °´Ã¼°¡ µÎ°³.
+			status = System_linkControl(gGrpxSrcLinkID, _cmd, NULL, 0, TRUE); //gGrpxSrcLinkID ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½Î°ï¿½.
 			Vps_printf("   CMD Send %s gGrpxSrcLinkID\n", ( status == 0x0)?"Success":"Fail");
 		} else {
 
 			_cmd = SYSTEM_CMD_FULL_REAR_VIEW;
 			Vps_printf("In GrpxSrcLink_putCmd, IRDA_KEY_FULL, Rear, CMD : %d", _cmd);
 			gFullFront = 0;
-			status = System_linkControl(gGrpxSrcLinkID, _cmd, NULL, 0, TRUE); //gGrpxSrcLinkID °´Ã¼°¡ µÎ°³.
+			status = System_linkControl(gGrpxSrcLinkID, _cmd, NULL, 0, TRUE); //gGrpxSrcLinkID ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½Î°ï¿½.
 			Vps_printf("   CMD Send %s gGrpxSrcLinkID\n", ( status == 0x0)?"Success":"Fail");
 		}
 	} else if( _cmd == IRDA_KEY_PWR ){
 #if 1
 		_cmd = SYSTEM_CMD_FILE_SAVE_START;
 		Vps_printf("In GrpxSrcLink_putCmd, IRDA_KEY_PWR, File Save, CMD : %d", _cmd);
-		status = System_linkControl(gGrpxSrcLinkID, _cmd, NULL, 0, TRUE); //gGrpxSrcLinkID °´Ã¼°¡ µÎ°³.
+		status = System_linkControl(gGrpxSrcLinkID, _cmd, NULL, 0, TRUE); //gGrpxSrcLinkID ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½Î°ï¿½.
 		Vps_printf("   CMD Send %s gGrpxSrcLinkID\n", ( status == 0x0)?"Success":"Fail");
 #else
 		if( TestFileSave == 0){
 			TestFileSave = 1;
 			_cmd = SYSTEM_CMD_FILE_SAVE_START;
 			Vps_printf("In GrpxSrcLink_putCmd, IRDA_KEY_PWR, File Save, CMD : %d", _cmd);
-			status = System_linkControl(gGrpxSrcLinkID, _cmd, NULL, 0, TRUE); //gGrpxSrcLinkID °´Ã¼°¡ µÎ°³.
+			status = System_linkControl(gGrpxSrcLinkID, _cmd, NULL, 0, TRUE); //gGrpxSrcLinkID ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½Î°ï¿½.
 			Vps_printf("   CMD Send %s gGrpxSrcLinkID\n", ( status == 0x0)?"Success":"Fail");
 		} else {
 			TestFileSave = 0;
 			_cmd = SYSTEM_CMD_FILE_SAVE_DONE;
 			Vps_printf("In GrpxSrcLink_putCmd, IRDA_KEY_PWR, File Save Done, CMD : %d", _cmd);
-			status = System_linkControl(gGrpxSrcLinkID, _cmd, NULL, 0, TRUE); //gGrpxSrcLinkID °´Ã¼°¡ µÎ°³.
+			status = System_linkControl(gGrpxSrcLinkID, _cmd, NULL, 0, TRUE); //gGrpxSrcLinkID ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½Î°ï¿½.
 			Vps_printf("   CMD Send %s gGrpxSrcLinkID\n", ( status == 0x0)?"Success":"Fail");
 		}
 #endif
@@ -263,32 +264,32 @@ void PutCmd_Button(UInt32 nState )
 		AlgLinkControlPrm.controlCmd = SYSTEM_CMD_FRONT_SIDE_VIEW;
 		status = System_linkControl( gE500AlgLinkID_0, ALGORITHM_LINK_CMD_CONFIG, &AlgLinkControlPrm, sizeof(AlgLinkControlPrm), TRUE);
 		status = System_linkControl( gE500AlgLinkID_1, ALGORITHM_LINK_CMD_CONFIG, &AlgLinkControlPrm, sizeof(AlgLinkControlPrm), TRUE);
-		status = System_linkControl(gGrpxSrcLinkID, SYSTEM_CMD_FRONT_SIDE_VIEW, NULL, 0, TRUE); //gGrpxSrcLinkID °´Ã¼°¡ µÎ°³.
+		status = System_linkControl(gGrpxSrcLinkID, SYSTEM_CMD_FRONT_SIDE_VIEW, NULL, 0, TRUE); //gGrpxSrcLinkID ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½Î°ï¿½.
 	} else if( nState == 1 ){ //IRDA_KEY_DOWN
 		AlgLinkControlPrm.controlCmd = SYSTEM_CMD_REAR_SIDE_VIEW;
 		status = System_linkControl( gE500AlgLinkID_0, ALGORITHM_LINK_CMD_CONFIG, &AlgLinkControlPrm, sizeof(AlgLinkControlPrm), TRUE);
 		status = System_linkControl( gE500AlgLinkID_1, ALGORITHM_LINK_CMD_CONFIG, &AlgLinkControlPrm, sizeof(AlgLinkControlPrm), TRUE);
-		status = System_linkControl(gGrpxSrcLinkID, SYSTEM_CMD_REAR_SIDE_VIEW, NULL, 0, TRUE); //gGrpxSrcLinkID °´Ã¼°¡ µÎ°³.
+		status = System_linkControl(gGrpxSrcLinkID, SYSTEM_CMD_REAR_SIDE_VIEW, NULL, 0, TRUE); //gGrpxSrcLinkID ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½Î°ï¿½.
 	} else if( nState == 2 ){ //IRDA_KEY_LEFT
 		AlgLinkControlPrm.controlCmd = SYSTEM_CMD_LEFT_SIDE_VIEW;
 		status = System_linkControl( gE500AlgLinkID_0, ALGORITHM_LINK_CMD_CONFIG, &AlgLinkControlPrm, sizeof(AlgLinkControlPrm), TRUE);
 		status = System_linkControl( gE500AlgLinkID_1, ALGORITHM_LINK_CMD_CONFIG, &AlgLinkControlPrm, sizeof(AlgLinkControlPrm), TRUE);
-		status = System_linkControl(gGrpxSrcLinkID, SYSTEM_CMD_LEFT_SIDE_VIEW, NULL, 0, TRUE); //gGrpxSrcLinkID °´Ã¼°¡ µÎ°³.
+		status = System_linkControl(gGrpxSrcLinkID, SYSTEM_CMD_LEFT_SIDE_VIEW, NULL, 0, TRUE); //gGrpxSrcLinkID ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½Î°ï¿½.
 	} else if( nState == 3 ){ //IRDA_KEY_RIGHT
 		AlgLinkControlPrm.controlCmd = SYSTEM_CMD_RIGH_SIDE_VIEW;
 		status = System_linkControl( gE500AlgLinkID_0, ALGORITHM_LINK_CMD_CONFIG, &AlgLinkControlPrm, sizeof(AlgLinkControlPrm), TRUE);
 		status = System_linkControl( gE500AlgLinkID_1, ALGORITHM_LINK_CMD_CONFIG, &AlgLinkControlPrm, sizeof(AlgLinkControlPrm), TRUE);
-		status = System_linkControl(gGrpxSrcLinkID, SYSTEM_CMD_RIGH_SIDE_VIEW, NULL, 0, TRUE); //gGrpxSrcLinkID °´Ã¼°¡ µÎ°³.
+		status = System_linkControl(gGrpxSrcLinkID, SYSTEM_CMD_RIGH_SIDE_VIEW, NULL, 0, TRUE); //gGrpxSrcLinkID ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½Î°ï¿½.
 	}else if( nState == 4 ){ //IRDA_KEY_FULL - Front
 		AlgLinkControlPrm.controlCmd = SYSTEM_CMD_FULL_FRONT_VIEW;
 		status = System_linkControl( gE500AlgLinkID_0, ALGORITHM_LINK_CMD_CONFIG, &AlgLinkControlPrm, sizeof(AlgLinkControlPrm), TRUE);
 		status = System_linkControl( gE500AlgLinkID_1, ALGORITHM_LINK_CMD_CONFIG, &AlgLinkControlPrm, sizeof(AlgLinkControlPrm), TRUE);
-		status = System_linkControl(gGrpxSrcLinkID, SYSTEM_CMD_FULL_FRONT_VIEW, NULL, 0, TRUE); //gGrpxSrcLinkID °´Ã¼°¡ µÎ°³.
+		status = System_linkControl(gGrpxSrcLinkID, SYSTEM_CMD_FULL_FRONT_VIEW, NULL, 0, TRUE); //gGrpxSrcLinkID ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½Î°ï¿½.
 	} else if( nState == 5 ){ //IRDA_KEY_FULL - Rear
 		AlgLinkControlPrm.controlCmd = SYSTEM_CMD_FULL_REAR_VIEW;
 		status = System_linkControl( gE500AlgLinkID_0, ALGORITHM_LINK_CMD_CONFIG, &AlgLinkControlPrm, sizeof(AlgLinkControlPrm), TRUE);
 		status = System_linkControl( gE500AlgLinkID_1, ALGORITHM_LINK_CMD_CONFIG, &AlgLinkControlPrm, sizeof(AlgLinkControlPrm), TRUE);
-		status = System_linkControl(gGrpxSrcLinkID, SYSTEM_CMD_FULL_REAR_VIEW, NULL, 0, TRUE); //gGrpxSrcLinkID °´Ã¼°¡ µÎ°³.
+		status = System_linkControl(gGrpxSrcLinkID, SYSTEM_CMD_FULL_REAR_VIEW, NULL, 0, TRUE); //gGrpxSrcLinkID ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½Î°ï¿½.
 	}
 	Vps_printf("AVM-E500 : CMD Send %s PutCmd_Button\n", ( status == 0x0)?"Success":"Fail");
 }

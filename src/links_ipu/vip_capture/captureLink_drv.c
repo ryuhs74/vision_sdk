@@ -760,7 +760,7 @@ Void filesave_tsk_front(UArg arg0, UArg arg1)
 		if( fp != NULL){
 			int ret = 0;
 
-			Convert_YUV420SP/*Convert_YUV422P*/(rear_dataAddr,outbuf );
+			Convert_YUV422P/*Convert_YUV422P*/(rear_dataAddr,outbuf );
 
 			ret = fwrite(outbuf/*rear_dataAddr*/, 1, FILE_SIZE, fp);
 
@@ -792,7 +792,7 @@ Void filesave_tsk_front(UArg arg0, UArg arg1)
 		if( fp != NULL){
 			int ret = 0;
 
-			Convert_YUV420SP/*Convert_YUV422P*/(front_dataAddr,outbuf );
+			Convert_YUV422P/*Convert_YUV422P*/(front_dataAddr,outbuf );
 
 			ret = fwrite(outbuf/*front_dataAddr*/, 1, FILE_SIZE, fp);
 
@@ -824,7 +824,7 @@ Void filesave_tsk_front(UArg arg0, UArg arg1)
 		if( fp != NULL){
 			int ret = 0;
 
-			Convert_YUV420SP/*Convert_YUV422P*/(left_dataAddr,outbuf );
+			Convert_YUV422P/*Convert_YUV422P*/(left_dataAddr,outbuf );
 			ret = fwrite(outbuf/*left_dataAddr*/, 1, FILE_SIZE, fp);
 
 			if( ret == 0)
@@ -855,7 +855,7 @@ Void filesave_tsk_front(UArg arg0, UArg arg1)
 		if( fp != NULL){
 			int ret = 0;
 
-			Convert_YUV420SP/*Convert_YUV422P*/(right_dataAddr,outbuf );
+			Convert_YUV422P/*Convert_YUV422P*/(right_dataAddr,outbuf );
 			ret = fwrite(outbuf/*right_dataAddr*/, 1, FILE_SIZE, fp);
 
 			if( ret == 0)
