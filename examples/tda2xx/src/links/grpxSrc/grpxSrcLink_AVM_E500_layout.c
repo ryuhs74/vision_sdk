@@ -39,9 +39,9 @@
 
 //#define AVME500_FRAME_THICKNESS  (10)
 
-#define CAR_START_X		197
+#define CAR_START_X		191
 #define CAR_START_Y		158
-#define CAR_WIDTH		168
+#define CAR_WIDTH		170
 #define CAR_HEIGHT		404
 #define X_MINUS	8
 #define TOP_VIEW_TEXT_START_X	(552-X_MINUS-3)
