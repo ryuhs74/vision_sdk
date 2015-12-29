@@ -308,7 +308,7 @@ Int32 Draw2D_AVME500_FullView( GrpxSrcLink_Obj *pObj )
 	regionMidleBar.colorFormat = DRAW2D_TRANSPARENT_COLOR_FORMAT;
 	regionMidleBar.startX = 197;//182;
 	regionMidleBar.startY = 158;//142;
-	regionMidleBar.width  = 156;
+	regionMidleBar.width  = 168;//156;
 	regionMidleBar.height = 404;
 	Draw2D_fillRegion(pObj->draw2DHndl,&regionMidleBar);
 
