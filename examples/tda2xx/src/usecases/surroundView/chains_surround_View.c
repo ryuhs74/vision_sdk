@@ -600,6 +600,83 @@ void testCameraEEPROM(void)
 #endif
 }
 
+Int32 WriteCameraBin(char* fileName, int cameraChannel)
+{
+	Fvid2_Handle handle = ChainsCommon_GetSensorCreateParams()->sensorHandle[cameraChannel];
+	Bsp_VidSensorEepromRdWrParams WriteEepRomParams;
+	FILE* wfp = NULL;
+	Int32 status = FVID2_EFAIL;
+
+	//write
+	WriteEepRomParams.eepromAddr = 0;
+	WriteEepRomParams.numBuf = 0x10000;
+	WriteEepRomParams.eepromBuf = Utils_memAlloc(	UTILS_HEAPID_DDR_CACHED_SR,
+													WriteEepRomParams.numBuf,
+													32);
+	wfp = fopen(fileName, "r");
+	if(wfp != NULL)
+	{
+		Vps_printf("write Camera Bin[%s]\n",fileName);
+		fread(WriteEepRomParams.eepromBuf, 1, WriteEepRomParams.numBuf, wfp);
+		fclose(wfp);
+		status = Fvid2_control(  handle,
+							     IOCTL_BSP_VID_SENSOR_EEPROM_WRITE,
+								 &WriteEepRomParams,
+								 NULL);
+	}else
+	{
+		Vps_printf("FILE OPEN ERROR\n");
+	}
+
+	Utils_memFree( UTILS_HEAPID_DDR_CACHED_SR, WriteEepRomParams.eepromBuf, WriteEepRomParams.numBuf);
+	return status;
+}
+
+Int32 ReadCameraBin(char* fileName, int cameraChannel)
+{
+	Fvid2_Handle handle = ChainsCommon_GetSensorCreateParams()->sensorHandle[cameraChannel];
+	Bsp_VidSensorEepromRdWrParams ReadEepRomParams;
+	FILE* rfp = NULL;
+	Int32 status = FVID2_EFAIL;
+
+	//write
+	ReadEepRomParams.eepromAddr = 0;
+	ReadEepRomParams.numBuf = 0x10000;
+	ReadEepRomParams.eepromBuf = Utils_memAlloc(	UTILS_HEAPID_DDR_CACHED_SR,
+													ReadEepRomParams.numBuf,
+													32);
+
+	rfp = fopen(fileName, "w+");
+	if(rfp != NULL)
+	{
+		Vps_printf("Read Camera Bin[%s]\n",fileName);
+		status = Fvid2_control(	handle,
+								IOCTL_BSP_VID_SENSOR_EEPROM_READ,
+								&ReadEepRomParams,
+								NULL);
+
+		fwrite(ReadEepRomParams.eepromBuf, 1, ReadEepRomParams.numBuf, rfp);
+		fclose(rfp);
+	}else
+	{
+		Vps_printf("FILE OPEN ERROR\n");
+	}
+
+	Utils_memFree( UTILS_HEAPID_DDR_CACHED_SR, ReadEepRomParams.eepromBuf, ReadEepRomParams.numBuf);
+	return status;
+}
+
+void WriteCameraEEPROM(void)
+{
+	if(ReadCameraBin("fat:0:c_org.bin",0) == FVID2_SOK)
+	{
+		if(WriteCameraBin("fat:0:camera.bin",0) == FVID2_SOK)
+		{
+			ReadCameraBin("fat:0:c_verify.bin",0);
+		}
+	}
+}
+
 /**
  *******************************************************************************
  *
@@ -779,6 +856,11 @@ Void Chains_surround_View(Chains_Ctrl *chainsCfg)
 		case 'c':
 		{
 			testCameraEEPROM();
+			break;
+		}
+		case 'd':
+		{
+			WriteCameraEEPROM();
 			break;
 		}
 		default:
