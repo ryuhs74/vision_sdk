@@ -418,6 +418,9 @@ static int UART_ParseCmd(uint8_t *rxBuf)
 			Vps_printf("In BUTTON_2_LONG_PRESSED\n");
 			break;
 		}
+		buf[0] = CMD_SEND_BUTTON_PRESSED;
+		buf[1] = ACK;
+		UART_SendCmd(DEV_ID_AVM_MICOM, DEV_ID_AVM_DSP, buf, 2);
 		break;
 	case CMD_REQ_LVDS_STATUS:
 		break;
