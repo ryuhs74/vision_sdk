@@ -39,8 +39,10 @@
 
 //#define AVME500_FRAME_THICKNESS  (10)
 
-//#define CAR_START_X		200
-//#define CAR_START_Y		200
+#define CAR_START_X		191
+#define CAR_START_Y		158
+#define CAR_WIDTH		170
+#define CAR_HEIGHT		404
 #define X_MINUS	8
 #define TOP_VIEW_TEXT_START_X	(552-X_MINUS-3)
 #define TOP_VIEW_TEXT_START_Y	524
@@ -260,7 +262,7 @@ Int32 Draw2D_AVME500_TopView( GrpxSrcLink_Obj *pObj )
 		/* CMASK Image */
 		/* TODO : Change Co-ordinates as per the requirement */
 		bmpPrm.bmpIdx = DRAW2D_BMP_IDX_CARMASK;
-		Draw2D_drawBmp(pObj->draw2DHndl, 197, 158, &bmpPrm );
+		Draw2D_drawBmp(pObj->draw2DHndl, CAR_START_X, CAR_START_Y, &bmpPrm );
 	}
 
 	bmpPrm.bmpIdx = DRAW2D_BMP_IDX_TOP_VIEW_TXT;
@@ -306,10 +308,10 @@ Int32 Draw2D_AVME500_FullView( GrpxSrcLink_Obj *pObj )
 	//Car Image transparent coloring
 	regionMidleBar.color  = DRAW2D_TRANSPARENT_COLOR;
 	regionMidleBar.colorFormat = DRAW2D_TRANSPARENT_COLOR_FORMAT;
-	regionMidleBar.startX = 197;//182;
-	regionMidleBar.startY = 158;//142;
-	regionMidleBar.width  = 156;
-	regionMidleBar.height = 404;
+	regionMidleBar.startX = CAR_START_X;//182;
+	regionMidleBar.startY = CAR_START_Y;//142;
+	regionMidleBar.width  = CAR_WIDTH;//156;
+	regionMidleBar.height = CAR_HEIGHT;
 	Draw2D_fillRegion(pObj->draw2DHndl,&regionMidleBar);
 
 	//Top View, Side View Separation Bar of the transparent coloring
