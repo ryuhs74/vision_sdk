@@ -13,6 +13,8 @@
  */
 #include "chains_surround_View_priv.h"
 #include <examples/tda2xx/include/chains_common.h>
+#include <examples/tda2xx/include/video_sensor.h>
+#include <fvid2/fvid2.h>
 
 
 #define CAPTURE_SENSOR_WIDTH      (1280)
@@ -490,6 +492,114 @@ static Void chains_surround_View_SwitchDisplayChannel(
     }
 }
 
+void testCameraEEPROM(void)
+{
+	Fvid2_Handle handle = ChainsCommon_GetSensorCreateParams()->sensorHandle[0];
+	Bsp_VidSensorEepromRdWrParams eepRomParams;
+
+	UInt8 testReadBuf[64] = {0};
+	UInt8 testWriteBuf[64] = {0};
+
+	int i = 0;
+
+	eepRomParams.eepromAddr = 0;
+	eepRomParams.numBuf = 64;
+	eepRomParams.eepromBuf = testReadBuf;
+	Fvid2_control(	handle,
+					IOCTL_BSP_VID_SENSOR_EEPROM_READ,
+					&eepRomParams,
+					NULL);
+	for (i = 0; i < 8; i++)
+	{
+		Vps_printf(	"Read:[%d] %02X %02X %02X %02X %02X %02X %02X %02X\n",
+					i,
+					testReadBuf[0+(i*8)],
+					testReadBuf[1+(i*8)],
+					testReadBuf[2+(i*8)],
+					testReadBuf[3+(i*8)],
+					testReadBuf[4+(i*8)],
+					testReadBuf[5+(i*8)],
+					testReadBuf[6+(i*8)],
+					testReadBuf[7+(i*8)]);
+
+	}
+	memset(testWriteBuf,0x11,64);
+	eepRomParams.eepromBuf = testWriteBuf;
+	Fvid2_control(	handle,
+					IOCTL_BSP_VID_SENSOR_EEPROM_WRITE,
+					&eepRomParams,
+					NULL);
+	memset(testWriteBuf,0,64);
+	Fvid2_control(	handle,
+					IOCTL_BSP_VID_SENSOR_EEPROM_READ,
+					&eepRomParams,
+					NULL);
+	for (i = 0; i < 8; i++)
+	{
+		Vps_printf(	"Write:[%d] %02X %02X %02X %02X %02X %02X %02X %02X\n",
+					i,
+					testWriteBuf[0+(i*8)],
+					testWriteBuf[1+(i*8)],
+					testWriteBuf[2+(i*8)],
+					testWriteBuf[3+(i*8)],
+					testWriteBuf[4+(i*8)],
+					testWriteBuf[5+(i*8)],
+					testWriteBuf[6+(i*8)],
+					testWriteBuf[7+(i*8)]);
+
+	}
+
+	eepRomParams.eepromBuf = testReadBuf;
+	Fvid2_control(	handle,
+					IOCTL_BSP_VID_SENSOR_EEPROM_WRITE,
+					&eepRomParams,
+					NULL);
+
+	Fvid2_control(	handle,
+					IOCTL_BSP_VID_SENSOR_EEPROM_READ,
+					&eepRomParams,
+					NULL);
+	for (i = 0; i < 8; i++)
+	{
+		Vps_printf(	"Read:[%d] %02X %02X %02X %02X %02X %02X %02X %02X\n",
+					i,
+					testReadBuf[0+(i*8)],
+					testReadBuf[1+(i*8)],
+					testReadBuf[2+(i*8)],
+					testReadBuf[3+(i*8)],
+					testReadBuf[4+(i*8)],
+					testReadBuf[5+(i*8)],
+					testReadBuf[6+(i*8)],
+					testReadBuf[7+(i*8)]);
+
+	}
+#if 0
+	FILE* fp = NULL;
+	eepRomParams.eepromAddr = 0;
+	eepRomParams.numBuf = 0x10000;
+	eepRomParams.eepromBuf = Utils_memAlloc(UTILS_HEAPID_DDR_CACHED_SR,
+											eepRomParams.numBuf,
+											32);
+	Fvid2_control(	handle,
+					IOCTL_BSP_VID_SENSOR_EEPROM_READ,
+					&eepRomParams,
+					NULL);
+
+
+
+	fp = fopen("fat:0:Camera.bin", "w+");
+	if(fp != NULL)
+	{
+		fwrite(eepRomParams.eepromBuf, 1, eepRomParams.numBuf, fp);
+		fclose(fp);
+	}else
+	{
+		Vps_printf("FILE OPEN ERROR\n");
+	}
+	Utils_memFree( UTILS_HEAPID_DDR_CACHED_SR, eepRomParams.eepromBuf, eepRomParams.numBuf);
+#endif
+}
+
 /**
  *******************************************************************************
  *
@@ -526,108 +636,156 @@ Void Chains_surround_View(Chains_Ctrl *chainsCfg)
 
     chains_surround_View_StartApp(&svChainsObj);
 
-    while(!done)
-    {
-        ch = Chains_menuRunTime();
-        switch(ch)
-        {
-            case '0':
-                done = TRUE;
-                break;
-            case 'p':
-            case 'P':
-                ChainsCommon_PrintStatistics();
-                chains_surround_View_printStatistics(&svChainsObj.ucObj);
-                break;
-            case '1':
-                chains_surround_View_SwitchDisplayChannel(&svChainsObj);
-                break;
-            case '2':
-            {
-            	//int i = 0; //�������� ���� �ϴ� ������ ����, ���߿� Save Prm ����ü�� �ٲ۴�.
-            	gisCapture = 1;
-            	Vps_printf("**********************************gisCapture : %d\n", gisCapture);
-            	//ryuhs74@20151029 - Add File Save Command
-
-            	/*
-            	 System_linkControl(svChainsObj.ucObj.Save_SaveLinkID,
-            			           SYSTEM_CMD_FILE_SAVE,
-            			           NULL, //Save Prm ����ü�� ���� ����
-								   0,//Save Prm ����ü�� ���� ����
-								   TRUE);
-				*/
-            }
-            	break;
-            	/*
-            	 *
-
-#define  (0x00000009)
-
-#define  (0x00000010)
-
-#define  (0x00000011)
-
-#define  (0x00000012)
-
-#define  (0x00000013)
-            	*/
-            case '3':
-            	Vps_printf("In chains_main, SYSTEM_CMD_FRONT_SIDE_VIEW\n");
-            	System_linkControl(svChainsObj.ucObj.Alg_SurroundViewLink_0_ID , SYSTEM_CMD_FRONT_SIDE_VIEW, NULL, 0, TRUE); //gGrpxSrcLinkID ��ü�� �ΰ�.
-            	System_linkControl(svChainsObj.ucObj.Alg_SurroundViewLink_1_ID , SYSTEM_CMD_FRONT_SIDE_VIEW, NULL, 0, TRUE); //gGrpxSrcLinkID ��ü�� �ΰ�.
-            	Vps_printf("   CMD Send chains_main\n");
-            	break;
-            case '4':
-            	Vps_printf("In chains_main, SYSTEM_CMD_REAR_SIDE_VIEW\n");
-            	System_linkControl(svChainsObj.ucObj.Alg_SurroundViewLink_0_ID , SYSTEM_CMD_REAR_SIDE_VIEW, NULL, 0, TRUE); //gGrpxSrcLinkID ��ü�� �ΰ�.
-            	System_linkControl(svChainsObj.ucObj.Alg_SurroundViewLink_1_ID , SYSTEM_CMD_REAR_SIDE_VIEW, NULL, 0, TRUE); //gGrpxSrcLinkID ��ü�� �ΰ�.
-            	Vps_printf("   CMD Send chains_main\n");
-            	break;
-            case '5':
-            	Vps_printf("In chains_main, SYSTEM_CMD_RIGH_SIDE_VIEW\n");
-				System_linkControl(svChainsObj.ucObj.Alg_SurroundViewLink_0_ID , SYSTEM_CMD_RIGH_SIDE_VIEW, NULL, 0, TRUE); //gGrpxSrcLinkID ��ü�� �ΰ�.
-				System_linkControl(svChainsObj.ucObj.Alg_SurroundViewLink_1_ID , SYSTEM_CMD_RIGH_SIDE_VIEW, NULL, 0, TRUE); //gGrpxSrcLinkID ��ü�� �ΰ�.
-				Vps_printf("   CMD Send chains_main\n");
-            	break;
-            case '6':
-            	Vps_printf("In chains_main, SYSTEM_CMD_LEFT_SIDE_VIEW\n");
-				System_linkControl(svChainsObj.ucObj.Alg_SurroundViewLink_0_ID , SYSTEM_CMD_LEFT_SIDE_VIEW, NULL, 0, TRUE); //gGrpxSrcLinkID ��ü�� �ΰ�.
-				System_linkControl(svChainsObj.ucObj.Alg_SurroundViewLink_1_ID , SYSTEM_CMD_LEFT_SIDE_VIEW, NULL, 0, TRUE); //gGrpxSrcLinkID ��ü�� �ΰ�.
-				Vps_printf("   CMD Send chains_main\n");
-                break;
-            case '7':
-            	Vps_printf("In chains_main, SYSTEM_CMD_FULL_FRONT_VIEW\n");
-				System_linkControl(svChainsObj.ucObj.Alg_SurroundViewLink_0_ID , SYSTEM_CMD_FULL_FRONT_VIEW, NULL, 0, TRUE); //gGrpxSrcLinkID ��ü�� �ΰ�.
-				System_linkControl(svChainsObj.ucObj.Alg_SurroundViewLink_1_ID , SYSTEM_CMD_FULL_FRONT_VIEW, NULL, 0, TRUE); //gGrpxSrcLinkID ��ü�� �ΰ�.
-				Vps_printf("   CMD Send chains_main\n");
-                break;
-            case '8':
-            	Vps_printf("In chains_main, SYSTEM_CMD_FULL_REAR_VIEW\n");
-				System_linkControl(svChainsObj.ucObj.Alg_SurroundViewLink_0_ID , SYSTEM_CMD_FULL_REAR_VIEW, NULL, 0, TRUE); //gGrpxSrcLinkID ��ü�� �ΰ�.
-				System_linkControl(svChainsObj.ucObj.Alg_SurroundViewLink_1_ID , SYSTEM_CMD_FULL_REAR_VIEW, NULL, 0, TRUE); //gGrpxSrcLinkID ��ü�� �ΰ�.
-				Vps_printf("   CMD Send chains_main\n");
-                break;
-            case '9':
-            	Vps_printf("In chains_main, SYSTEM_CMD_PRINT_STATISTICS\n");
-				System_linkControl(svChainsObj.ucObj.Alg_SurroundViewLink_0_ID , SYSTEM_CMD_PRINT_STATISTICS, NULL, 0, TRUE); //gGrpxSrcLinkID ��ü�� �ΰ�.
-				System_linkControl(svChainsObj.ucObj.Alg_SurroundViewLink_1_ID , SYSTEM_CMD_PRINT_STATISTICS, NULL, 0, TRUE); //gGrpxSrcLinkID ��ü�� �ΰ�.
-				Vps_printf("   CMD Send chains_main\n");
-                break;
-            case 'a':
-            	Vps_printf("In chains_main, SYSTEM_CMD_PRINT_STATISTICS\n");
-				System_linkControl(svChainsObj.ucObj.CaptureLinkID , SYSTEM_CMD_PRINT_STATISTICS, NULL, 0, TRUE); //gGrpxSrcLinkID ��ü�� �ΰ�.
-				Vps_printf("   CMD Send chains_main\n");
-				break;
-            case 'b':
-            	Vps_printf("In chains_main, SYSTEM_CMD_STOP To CaptureLinkID\n");
-            	System_linkControl(svChainsObj.ucObj.CaptureLinkID , SYSTEM_CMD_STOP, NULL, 0, TRUE); //gGrpxSrcLinkID ��ü�� �ΰ�.
-            	Vps_printf("   CMD Send chains_main\n");
-            	break;
-            default:
-                Vps_printf("\nUnsupported option '%c'. Please try again\n", ch);
-                break;
-        }
-    }
+	while (!done)
+	{
+		ch = Chains_menuRunTime();
+		switch (ch)
+		{
+		case '0':
+			done = TRUE;
+			break;
+		case 'p':
+		case 'P':
+			ChainsCommon_PrintStatistics();
+			chains_surround_View_printStatistics(&svChainsObj.ucObj);
+			break;
+		case '1':
+			chains_surround_View_SwitchDisplayChannel(&svChainsObj);
+			break;
+		case '2':
+		{
+			gisCapture = 1;
+			Vps_printf(	"**********************************gisCapture : %d\n",
+						gisCapture);
+			//ryuhs74@20151029 - Add File Save Command
+		}
+			break;
+		case '3':
+			Vps_printf("In chains_main, SYSTEM_CMD_FRONT_SIDE_VIEW\n");
+			System_linkControl(	svChainsObj.ucObj.Alg_SurroundViewLink_0_ID,
+								SYSTEM_CMD_FRONT_SIDE_VIEW,
+								NULL,
+								0,
+								TRUE); //gGrpxSrcLinkID ��ü�� �ΰ�.
+			System_linkControl(	svChainsObj.ucObj.Alg_SurroundViewLink_1_ID,
+								SYSTEM_CMD_FRONT_SIDE_VIEW,
+								NULL,
+								0,
+								TRUE); //gGrpxSrcLinkID ��ü�� �ΰ�.
+			Vps_printf("   CMD Send chains_main\n");
+			break;
+		case '4':
+			Vps_printf("In chains_main, SYSTEM_CMD_REAR_SIDE_VIEW\n");
+			System_linkControl(	svChainsObj.ucObj.Alg_SurroundViewLink_0_ID,
+								SYSTEM_CMD_REAR_SIDE_VIEW,
+								NULL,
+								0,
+								TRUE); //gGrpxSrcLinkID ��ü�� �ΰ�.
+			System_linkControl(	svChainsObj.ucObj.Alg_SurroundViewLink_1_ID,
+								SYSTEM_CMD_REAR_SIDE_VIEW,
+								NULL,
+								0,
+								TRUE); //gGrpxSrcLinkID ��ü�� �ΰ�.
+			Vps_printf("   CMD Send chains_main\n");
+			break;
+		case '5':
+			Vps_printf("In chains_main, SYSTEM_CMD_RIGH_SIDE_VIEW\n");
+			System_linkControl(	svChainsObj.ucObj.Alg_SurroundViewLink_0_ID,
+								SYSTEM_CMD_RIGH_SIDE_VIEW,
+								NULL,
+								0,
+								TRUE); //gGrpxSrcLinkID ��ü�� �ΰ�.
+			System_linkControl(	svChainsObj.ucObj.Alg_SurroundViewLink_1_ID,
+								SYSTEM_CMD_RIGH_SIDE_VIEW,
+								NULL,
+								0,
+								TRUE); //gGrpxSrcLinkID ��ü�� �ΰ�.
+			Vps_printf("   CMD Send chains_main\n");
+			break;
+		case '6':
+			Vps_printf("In chains_main, SYSTEM_CMD_LEFT_SIDE_VIEW\n");
+			System_linkControl(	svChainsObj.ucObj.Alg_SurroundViewLink_0_ID,
+								SYSTEM_CMD_LEFT_SIDE_VIEW,
+								NULL,
+								0,
+								TRUE); //gGrpxSrcLinkID ��ü�� �ΰ�.
+			System_linkControl(	svChainsObj.ucObj.Alg_SurroundViewLink_1_ID,
+								SYSTEM_CMD_LEFT_SIDE_VIEW,
+								NULL,
+								0,
+								TRUE); //gGrpxSrcLinkID ��ü�� �ΰ�.
+			Vps_printf("   CMD Send chains_main\n");
+			break;
+		case '7':
+			Vps_printf("In chains_main, SYSTEM_CMD_FULL_FRONT_VIEW\n");
+			System_linkControl(	svChainsObj.ucObj.Alg_SurroundViewLink_0_ID,
+								SYSTEM_CMD_FULL_FRONT_VIEW,
+								NULL,
+								0,
+								TRUE); //gGrpxSrcLinkID ��ü�� �ΰ�.
+			System_linkControl(	svChainsObj.ucObj.Alg_SurroundViewLink_1_ID,
+								SYSTEM_CMD_FULL_FRONT_VIEW,
+								NULL,
+								0,
+								TRUE); //gGrpxSrcLinkID ��ü�� �ΰ�.
+			Vps_printf("   CMD Send chains_main\n");
+			break;
+		case '8':
+			Vps_printf("In chains_main, SYSTEM_CMD_FULL_REAR_VIEW\n");
+			System_linkControl(	svChainsObj.ucObj.Alg_SurroundViewLink_0_ID,
+								SYSTEM_CMD_FULL_REAR_VIEW,
+								NULL,
+								0,
+								TRUE); //gGrpxSrcLinkID ��ü�� �ΰ�.
+			System_linkControl(	svChainsObj.ucObj.Alg_SurroundViewLink_1_ID,
+								SYSTEM_CMD_FULL_REAR_VIEW,
+								NULL,
+								0,
+								TRUE); //gGrpxSrcLinkID ��ü�� �ΰ�.
+			Vps_printf("   CMD Send chains_main\n");
+			break;
+		case '9':
+			Vps_printf("In chains_main, SYSTEM_CMD_PRINT_STATISTICS\n");
+			System_linkControl(	svChainsObj.ucObj.Alg_SurroundViewLink_0_ID,
+								SYSTEM_CMD_PRINT_STATISTICS,
+								NULL,
+								0,
+								TRUE); //gGrpxSrcLinkID ��ü�� �ΰ�.
+			System_linkControl(	svChainsObj.ucObj.Alg_SurroundViewLink_1_ID,
+								SYSTEM_CMD_PRINT_STATISTICS,
+								NULL,
+								0,
+								TRUE); //gGrpxSrcLinkID ��ü�� �ΰ�.
+			Vps_printf("   CMD Send chains_main\n");
+			break;
+		case 'a':
+			Vps_printf("In chains_main, SYSTEM_CMD_PRINT_STATISTICS\n");
+			System_linkControl(	svChainsObj.ucObj.CaptureLinkID,
+								SYSTEM_CMD_PRINT_STATISTICS,
+								NULL,
+								0,
+								TRUE); //gGrpxSrcLinkID ��ü�� �ΰ�.
+			Vps_printf("   CMD Send chains_main\n");
+			break;
+		case 'b':
+			Vps_printf("In chains_main, SYSTEM_CMD_STOP To CaptureLinkID\n");
+			System_linkControl(	svChainsObj.ucObj.CaptureLinkID,
+								SYSTEM_CMD_STOP,
+								NULL,
+								0,
+								TRUE); //gGrpxSrcLinkID ��ü�� �ΰ�.
+			Vps_printf("   CMD Send chains_main\n");
+			break;
+		case 'c':
+		{
+			testCameraEEPROM();
+			break;
+		}
+		default:
+			Vps_printf("\nUnsupported option '%c'. Please try again\n", ch);
+			break;
+		}
+	}
 
     chains_surround_View_StopAndDeleteApp(&svChainsObj);
 }
