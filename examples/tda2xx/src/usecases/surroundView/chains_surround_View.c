@@ -600,7 +600,33 @@ void testCameraEEPROM(void)
 #endif
 }
 
-Int32 WriteCameraBin(char* fileName, int cameraChannel)
+#define OFFSET1_ADDR	0x09EC
+#define OFFSET2_ADDR	0x09ED
+
+Int32 ReadCameraOffset(int cameraChannel, UInt8* offset)
+{
+	Fvid2_Handle handle = ChainsCommon_GetSensorCreateParams()->sensorHandle[cameraChannel];
+	Bsp_VidSensorEepromRdWrParams ReadEepRomParams;
+
+	Int32 status = FVID2_EFAIL;
+
+	if(offset != NULL)
+	{
+		ReadEepRomParams.eepromAddr = OFFSET1_ADDR;
+		ReadEepRomParams.numBuf = 2;
+		ReadEepRomParams.eepromBuf = offset;
+
+		status = Fvid2_control(	handle,
+								IOCTL_BSP_VID_SENSOR_EEPROM_READ,
+								&ReadEepRomParams,
+								NULL);
+	}
+
+
+	return status;
+}
+
+Int32 WriteCameraBin(char* fileName, int cameraChannel, UInt8* offset)
 {
 	Fvid2_Handle handle = ChainsCommon_GetSensorCreateParams()->sensorHandle[cameraChannel];
 	Bsp_VidSensorEepromRdWrParams WriteEepRomParams;
@@ -619,6 +645,11 @@ Int32 WriteCameraBin(char* fileName, int cameraChannel)
 		Vps_printf("write Camera Bin[%s]\n",fileName);
 		fread(WriteEepRomParams.eepromBuf, 1, WriteEepRomParams.numBuf, wfp);
 		fclose(wfp);
+		if(offset != NULL)
+		{
+			WriteEepRomParams.eepromBuf[OFFSET1_ADDR] = offset[0];
+			WriteEepRomParams.eepromBuf[OFFSET2_ADDR] = offset[1];
+		}
 		status = Fvid2_control(  handle,
 							     IOCTL_BSP_VID_SENSOR_EEPROM_WRITE,
 								 &WriteEepRomParams,
@@ -632,7 +663,7 @@ Int32 WriteCameraBin(char* fileName, int cameraChannel)
 	return status;
 }
 
-Int32 ReadCameraBin(char* fileName, int cameraChannel)
+Int32 ReadCameraBin(char* fileName, int cameraChannel, UInt8* offset)
 {
 	Fvid2_Handle handle = ChainsCommon_GetSensorCreateParams()->sensorHandle[cameraChannel];
 	Bsp_VidSensorEepromRdWrParams ReadEepRomParams;
@@ -654,8 +685,13 @@ Int32 ReadCameraBin(char* fileName, int cameraChannel)
 								IOCTL_BSP_VID_SENSOR_EEPROM_READ,
 								&ReadEepRomParams,
 								NULL);
-
+		if(offset != NULL)
+		{
+			offset[0] = ReadEepRomParams.eepromBuf[OFFSET1_ADDR];
+			offset[1] = ReadEepRomParams.eepromBuf[OFFSET2_ADDR];
+		}
 		fwrite(ReadEepRomParams.eepromBuf, 1, ReadEepRomParams.numBuf, rfp);
+		Vps_printf("EEPROM Offset[%02X %02X]\n",offset[0],offset[1]);
 		fclose(rfp);
 	}else
 	{
@@ -668,11 +704,12 @@ Int32 ReadCameraBin(char* fileName, int cameraChannel)
 
 void WriteCameraEEPROM(void)
 {
-	if(ReadCameraBin("fat:0:c_org.bin",0) == FVID2_SOK)
+	UInt8 offset[2];
+	if(ReadCameraBin("fat:0:c_org.bin", 0, offset) == FVID2_SOK)
 	{
-		if(WriteCameraBin("fat:0:camera.bin",0) == FVID2_SOK)
+		if(WriteCameraBin("fat:0:camera.bin",0, offset) == FVID2_SOK)
 		{
-			ReadCameraBin("fat:0:c_verify.bin",0);
+			ReadCameraBin("fat:0:c_verify.bin",0, offset);
 		}
 	}
 }
