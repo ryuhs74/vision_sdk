@@ -338,6 +338,20 @@ Int32 Draw2D_AVME500_FullView( GrpxSrcLink_Obj *pObj )
 	return SYSTEM_LINK_STATUS_SOK;
 }
 
+Int32 Draw2D_AVME500_ColorBarTestView( GrpxSrcLink_Obj *pObj )
+{
+	Draw2D_BmpPrm bmpPrm;
+	int i=0;
+
+	bmpPrm.bmpIdx = DRAW2D_BMP_IDX_COLORBARTEST;
+
+
+	for(i=0; i<36;i++)
+		Draw2D_drawBmp(pObj->draw2DHndl, 0, i*20, &bmpPrm);
+
+	return SYSTEM_LINK_STATUS_SOK;
+}
+
 Int32 GrpxSrcLink_drawAVM_E500Layout(GrpxSrcLink_Obj *pObj) // 이 함수를 TOP / FULL 그리는 함수를 다시 나눈다.
 {
     /* fill full buffer with background color */

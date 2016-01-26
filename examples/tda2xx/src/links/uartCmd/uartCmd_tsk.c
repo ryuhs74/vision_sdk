@@ -247,16 +247,8 @@ static UInt32 nState = 0;
 
 void PutCmd_Button(UInt32 nState )
 {
-	//static UInt32 nState = 0;
 	Int32 status;
 	AlgorithmLink_ControlParams AlgLinkControlPrm;
-
-/*
-	if( nState >= 5)
-		nState = 0;
-	else
-		nState++;
-*/
 
 	Vps_printf("AVM-E500 : In PutCmd_Button, nState: %d", nState);
 
@@ -290,6 +282,8 @@ void PutCmd_Button(UInt32 nState )
 		status = System_linkControl( gE500AlgLinkID_0, ALGORITHM_LINK_CMD_CONFIG, &AlgLinkControlPrm, sizeof(AlgLinkControlPrm), TRUE);
 		status = System_linkControl( gE500AlgLinkID_1, ALGORITHM_LINK_CMD_CONFIG, &AlgLinkControlPrm, sizeof(AlgLinkControlPrm), TRUE);
 		status = System_linkControl(gGrpxSrcLinkID, SYSTEM_CMD_FULL_REAR_VIEW, NULL, 0, TRUE); //gGrpxSrcLinkID ��ü�� �ΰ�.
+	} else if( nState == 6 ){
+		status = System_linkControl(gGrpxSrcLinkID, SYSTEM_CMD_COLORBARTEST_UI, NULL, 0, TRUE); //gGrpxSrcLinkID ��ü�� �ΰ�.
 	}
 	Vps_printf("AVM-E500 : CMD Send %s PutCmd_Button\n", ( status == 0x0)?"Success":"Fail");
 }
@@ -396,7 +390,7 @@ static int UART_ParseCmd(uint8_t *rxBuf)
 		{
 		case BUTTON_1_SHORT_PRESSED:
 			Vps_printf("In BUTTON_1_SHORT_PRESSED\n");
-			if( nState >= 5)
+			if( nState >= 6)
 				nState = 0;
 			else
 				nState++;
@@ -409,7 +403,7 @@ static int UART_ParseCmd(uint8_t *rxBuf)
 		case BUTTON_2_SHORT_PRESSED :
 			Vps_printf("In BUTTON_2_SHORT_PRESSED\n");
 			if( nState <= 0)
-				nState = 5;
+				nState = 6;
 			else
 				nState--;
 			PutCmd_Button(nState);

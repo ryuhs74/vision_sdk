@@ -43,6 +43,7 @@ static VIEW_MODE gCurViewmode;
 Int32 GrpxSrcLink_drawAVM_E500Button(GrpxSrcLink_Obj *pObj);
 Int32 Draw2D_AVME500_TopView( GrpxSrcLink_Obj *pObj );
 Int32 Draw2D_AVME500_FullView( GrpxSrcLink_Obj *pObj );
+Int32 Draw2D_AVME500_ColorBarTestView( GrpxSrcLink_Obj *pObj );
 void GrpxSrcLink_displayTxt(GrpxSrcLink_Obj *pObj, char* pStr, UInt32 isDisplay);
 void GrpxSrcLink_Clear_E500UI(GrpxSrcLink_Obj *pObj);
 
@@ -518,14 +519,20 @@ Int32 GrpxSrcLink_runDisplayE500Stats(GrpxSrcLink_Obj *pObj)
 {
     Int32  status = SYSTEM_LINK_STATUS_SOK;
 
+    if( gCurViewmode == SETTING_VIEW)
+    	GrpxSrcLink_drawAVM_E500Layout(pObj);
+
 
 	if( pObj->createArgs.sViewmode.viewmode == TOP_VIEW && gCurViewmode != TOP_VIEW){ //ryuhs74@20151103 - AVM Top View
 		Draw2D_AVME500_TopView( pObj );
 	} else if( pObj->createArgs.sViewmode.viewmode == FULL_VIEW && gCurViewmode != FULL_VIEW){ //ryuhs74@20151103 - AVM Full View
 		Draw2D_AVME500_FullView( pObj );
+	} else if( pObj->createArgs.sViewmode.viewmode == SETTING_VIEW){
+		Draw2D_AVME500_ColorBarTestView( pObj );
 	}
 
-	GrpxSrcLink_drawAVM_E500Button(pObj);
+	if( pObj->createArgs.sViewmode.viewmode != SETTING_VIEW)
+		GrpxSrcLink_drawAVM_E500Button(pObj);
 
 	pObj->createArgs.sViewmode.prvVient =  pObj->createArgs.sViewmode.viewnt;
 	System_sendLinkCmd(pObj->createArgs.outQueParams.nextLink, SYSTEM_CMD_NEW_DATA, NULL);
@@ -872,6 +879,15 @@ Void GrpxSrcLink_tskMain(struct Utils_TskHndl * pTsk, Utils_MsgHndl * pMsg)
                 	 GrpxSrcLink_drawAVM_E500Layout(pObj);
                 	 System_sendLinkCmd(pObj->createArgs.outQueParams.nextLink, SYSTEM_CMD_NEW_DATA, NULL);
                 	 Utils_tskAckOrFreeMsg(pMsg, SYSTEM_LINK_STATUS_SOK);
+                	 break;
+                 case SYSTEM_CMD_COLORBARTEST_UI:
+                	 pObj->createArgs.sViewmode.viewmode = SETTING_VIEW;
+
+					 Vps_printf("CMD Call SYSTEM_CMD_FRONT_SIDE_VIEW viewmode : %d, viewnt: %d\n",
+							 pObj->createArgs.sViewmode.viewmode,
+							 pObj->createArgs.sViewmode.viewnt);
+					 GrpxSrcLink_runDisplayE500Stats(pObj);
+					 Utils_tskAckOrFreeMsg(pMsg, SYSTEM_LINK_STATUS_SOK);
                 	 break;
                 	 //ryuhs74@20151103 - Add AVM-E500 Draw Layout END
                  default:

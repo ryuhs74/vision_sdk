@@ -76,6 +76,8 @@ Int32 Draw2D_getBmpProperty_Setting_sel(Draw2D_BmpProperty *pProp);
 Int32 Draw2D_getBmpProperty_Full_view_Txt(Draw2D_BmpProperty *pProp);
 Int32 Draw2D_getBmpProperty_Top_view_Txt(Draw2D_BmpProperty *pProp);
 Int32 Draw2D_getBmpProperty_carmask(Draw2D_BmpProperty *pProp);
+Int32 Draw2D_getBmpProperty_ColorBarTest(Draw2D_BmpProperty *pProp);
+Int32 Draw2D_getBmpProperty07(Draw2D_BmpProperty *pProp);
 //#else
 Int32 Draw2D_getFontProperty00(Draw2D_FontProperty *pProp);
 Int32 Draw2D_getFontProperty01(Draw2D_FontProperty *pProp);
