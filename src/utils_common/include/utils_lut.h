@@ -12,7 +12,8 @@
 typedef enum
 {
 	TOP_VIEW,
-	FULL_VIEW
+	FULL_VIEW,
+	SETTING_VIEW
 }VIEW_MODE;
 
 typedef enum

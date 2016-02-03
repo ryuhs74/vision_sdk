@@ -190,6 +190,8 @@
 #define SYSTEM_CMD_CLEAR_E500_UI (0x00000016)
 
 #define SYSTEM_CMD_REDRAW_E500_UI (0x00000017)
+
+#define SYSTEM_CMD_COLORBARTEST_UI (0x00000018)
 /**
  *******************************************************************************
  *
