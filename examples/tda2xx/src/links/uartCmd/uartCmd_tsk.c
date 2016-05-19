@@ -364,9 +364,9 @@ static int UART_ParseCmd(uint8_t *rxBuf)
 		case IRDA_KEY_RIGHT : //RIGHT - IRDA_KEY_RIGHT = (0x0A)
 		case IRDA_KEY_FULL : //Full - IRDA_KEY_FULL = (0x05),
 
-			//AlgLink_putCmd( GET_ARG1(rxBuf) );
-			//GrpxLink_putCmd( GET_ARG1(rxBuf) );
-			chains_surround_View_SwitchDisplayCh( GET_ARG1(rxBuf));
+			AlgLink_putCmd( GET_ARG1(rxBuf) );
+			GrpxLink_putCmd( GET_ARG1(rxBuf) );
+			//chains_surround_View_SwitchDisplayCh( GET_ARG1(rxBuf));
 			break;
 		} //ryuhs74@20151020 - Add HDMI On/Off Test End
 		break;
@@ -390,7 +390,7 @@ static int UART_ParseCmd(uint8_t *rxBuf)
 		{
 		case BUTTON_1_SHORT_PRESSED:
 			Vps_printf("In BUTTON_1_SHORT_PRESSED\n");
-			if( nState >= 6)
+			if( nState >= 5)
 				nState = 0;
 			else
 				nState++;
@@ -403,7 +403,7 @@ static int UART_ParseCmd(uint8_t *rxBuf)
 		case BUTTON_2_SHORT_PRESSED :
 			Vps_printf("In BUTTON_2_SHORT_PRESSED\n");
 			if( nState <= 0)
-				nState = 6;
+				nState = 5;
 			else
 				nState--;
 			PutCmd_Button(nState);
