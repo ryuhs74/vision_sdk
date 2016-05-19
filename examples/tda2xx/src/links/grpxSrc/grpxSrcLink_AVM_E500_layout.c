@@ -69,6 +69,23 @@
 //#define COLOR_RED2       (0x4C34FF)
 
 UInt32 gGrpxSrcLinkID;
+#define VERSION_TXT "Ver 1.0"
+
+void drawVersionInfo( Draw2D_Handle pCtx, UInt32 startX, UInt32 startY, UInt32 fontIdx )
+{
+	Draw2D_FontPrm fontPrm;
+	Draw2D_FontProperty fontProp;
+	char verString[10];
+
+	fontPrm.fontIdx = fontIdx;
+
+	Draw2D_getFontProperty(&fontPrm, &fontProp);
+
+	strcpy(verString, VERSION_TXT);
+
+	Draw2D_clearString(pCtx, startX, startY, strlen(verString), &fontPrm );
+	Draw2D_drawString(pCtx, startX, startY, verString,  &fontPrm );
+}
 
 Int32 GrpxSrcLink_drawAVM_E500NorButton( GrpxSrcLink_Obj *pObj )
 {
@@ -267,6 +284,7 @@ Int32 Draw2D_AVME500_TopView( GrpxSrcLink_Obj *pObj )
 
 	bmpPrm.bmpIdx = DRAW2D_BMP_IDX_TOP_VIEW_TXT;
 	Draw2D_drawBmp(pObj->draw2DHndl, TOP_VIEW_TEXT_START_X, TOP_VIEW_TEXT_START_Y, &bmpPrm);
+	//drawVersionInfo( pObj->draw2DHndl, TOP_VIEW_TEXT_START_X + 45, TOP_VIEW_TEXT_START_Y+40, 7 );
 
 	return SYSTEM_LINK_STATUS_SOK;
 }
@@ -334,6 +352,7 @@ Int32 Draw2D_AVME500_FullView( GrpxSrcLink_Obj *pObj )
 
 	bmpPrm.bmpIdx = DRAW2D_BMP_IDX_FULL_VIEW_TXT;
 	Draw2D_drawBmp(pObj->draw2DHndl, FULL_VIEW_TEXT_START_X, FULL_VIEW_TEXT_START_Y, &bmpPrm);
+	drawVersionInfo( pObj->draw2DHndl, FULL_VIEW_TEXT_START_X+220, FULL_VIEW_TEXT_START_Y + 120, 7 );
 
 	return SYSTEM_LINK_STATUS_SOK;
 }
